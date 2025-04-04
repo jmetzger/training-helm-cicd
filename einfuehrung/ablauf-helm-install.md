@@ -16,4 +16,6 @@ Wenn der Befehl `helm install` ausgeführt wird, passiert intern Folgendes:
 1. **Ausgabe**:
    * Helm gibt den Status des Installationsprozesses aus, einschließlich der erstellten Ressourcen und etwaiger Fehler.
 
-Kurz gesagt: Helm rendert Kubernetes-Ressourcen aus einem Chart und kommuniziert mit der Kubernetes-API, um diese Ressourcen zu erstellen und ein Release zu verwalten.
+## Long story short 
+
+  * Helm rendert Kubernetes-Ressourcen aus einem Chart und kommuniziert mit der Kubernetes-API, um diese Ressourcen zu erstellen und ein Release zu verwalten.

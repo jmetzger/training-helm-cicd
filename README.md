@@ -8,7 +8,7 @@
      * [Was ist in helm ein chart?](einfuehrung/helm-chart.md)
      * [Warum Helm in Kubernetes verwenden ?](einfuehrung/warum-helm-verwenden.md)
      * Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)
-     * Braucht helm das Programm kubectl ?
+     * [Braucht helm das Programm kubectl ?](einfuehrung/braucht-helm-kubectl.md)
        
   1. Helm Installation und Konfiguration (inkl. kubectl) 
      * [Installation von kubectl unter Linux](kubectl/installation/linux.md)

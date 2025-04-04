@@ -3,7 +3,7 @@
 ## Explanation 
 
   * {{- -> trim on left side
-  * -}} -> trim on right side 
+  * -}} -> trim on right side / ALSO: new lines 
   * trim tabs, whitespaces a.s.o. (see ref)
 
 ## Walkthrough 

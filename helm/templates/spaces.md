@@ -34,6 +34,22 @@ helm template ..
 helm template --debug ..
 ```
 
+```
+# now with new lines
+nano test2.yaml
+```
+
+```
+# {{23 -}}
+newline here
+```
+
+```
+helm template ..
+helm template --debug ..
+```
+
+
 ## Reference:
 
   * https://pkg.go.dev/text/template#hdr-Text_and_spaces

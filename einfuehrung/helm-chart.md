@@ -11,17 +11,7 @@
 - **Chart.yaml**: Metainformationen zum Chart (Name, Version, etc.)
 - **Abhängigkeiten**: Optional können andere Charts mit eingebunden werden
 
----
 
-## Was kann Helm?
-
-- **Installieren** von Anwendungen in Kubernetes (`helm install`)
-- **Upgraden** von bestehenden Installationen (`helm upgrade`)
-- **Rollbacks** durchführen, falls etwas schiefläuft (`helm rollback`)
-- **Anpassen** von Anwendungen durch Konfigurationswerte (`values.yaml`)
-- **Veröffentlichen** eigener Charts (z. B. in einem Helm-Repository)
-
----
 
 ## Warum sollte man Helm verwenden?
 
@@ -31,5 +21,3 @@
 - **Große Community**: Viele fertige Charts für beliebte Software wie Prometheus, Grafana, nginx, etc.
 
 ---
-
-Wenn du möchtest, kann ich dir ein einfaches Beispiel-Chart zeigen oder einen Helm-Befehl erklären. Sag einfach Bescheid!

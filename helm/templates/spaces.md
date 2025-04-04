@@ -10,7 +10,7 @@
 
 ```
 cd
-mkdir helm-exercises
+mkdir -p helm-exercises
 cd helm-exercises
 ```
 

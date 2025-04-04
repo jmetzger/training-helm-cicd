@@ -63,6 +63,7 @@ nano whitespace-test.tpl
    ```
 
 ```
+cd ..
 helm template .
 ```
 

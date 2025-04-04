@@ -6,13 +6,17 @@
      * Was ist helm ? 
      * Warum Helm in Kubernetes verwenden ?
      * Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)
-    
-## Backlog
-
-  1. Helm Grundlagen
+     * Braucht helm das Programm kubectl ?
+       
+  1. Helm Installation und Konfiguration (inkl. kubectl) 
      * [Installation von kubectl unter Linux](kubectl/installation/linux.md)
+     * [Konfiguration von kubectl mit namespaces]
      * [Installation von helm unter Linux](helm/installation/linux.md)
      * [Installation bash completion](helm/installation/bash-completion.md)
+
+
+
+## Backlog 
 
   1. Grundlagen
      * [Feature / No-Features von Helm](/helm/grundlagen/features-no-features.md)

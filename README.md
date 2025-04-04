@@ -6,7 +6,7 @@
      * [Was ist helm ?](einfuehrung/was-ist-helm.md)
      * [Was kann helm ?](einfuehrung/was-kann-helm.md)
      * [Was ist in helm ein chart?](einfuehrung/helm-chart.md)
-     * Warum Helm in Kubernetes verwenden ?
+     * [Warum Helm in Kubernetes verwenden ?](einfuehrung/warum-helm-verwenden.md)
      * Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)
      * Braucht helm das Programm kubectl ?
        

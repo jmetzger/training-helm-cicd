@@ -64,6 +64,6 @@ nano whitespace-test.tpl
 
 ```
 cd ..
-helm template .
+helm template --debug .
 ```
 

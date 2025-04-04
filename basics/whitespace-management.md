@@ -64,6 +64,3 @@ nano whitespace-test.tpl
 helm template .
 ```
 
-## Fazit
-
-Mit diesen Übungen kannst du dich gezielt auf die Whitespace-Kontrolle in Helm/Go-Templates konzentrieren. Experimentiere in jedem Schritt mit den verschiedenen Operatoren (`{{ ... }}`, `{{- ... }}`, `{{ ... -}}`, `{{- ... -}}`), um ein Gefühl dafür zu bekommen, wann und wo du Leerzeichen oder Zeilenumbrüche entfernen oder beibehalten willst. So stellst du sicher, dass dein gerendertes YAML lesbar und korrekt formatiert ist.

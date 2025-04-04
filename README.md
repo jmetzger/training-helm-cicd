@@ -16,6 +16,8 @@
      * [Installation von helm unter Linux](helm/installation/linux.md)
      * [Installation bash completion](helm/installation/bash-completion.md)
 
+  1. Spezial: Umgang mit Einrückungen
+     * [Whitespaces meistern mit "-"](basics/whitespace-management.md)
 
 
 ## Backlog 

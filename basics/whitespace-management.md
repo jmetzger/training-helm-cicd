@@ -11,59 +11,8 @@
   Entfernt den Whitespace links (vor) dem Ausdruck.  
 
 - `{{ ... -}}`:  
-  Entfernt den Whitespace rechts (nach) dem Ausdruck.  
+  Entfernt den Whitespace rechts (nach) dem Ausdruck, aber AUCH Zeilenumbrüche 
 
 - `{{- ... -}}`:  
-  Entfernt Whitespace sowohl links als auch rechts des Ausdrucks.
-
-## Übung
-
-```
-cd
-mkdir -p helm-exercises
-cd helm-exercises
-mkdir 01-whitespaces 
-cd 01-whitespaces
-```
-
-```
-nano Chart.yaml
-```
-
-
-```
-apiVersion: v2
-name: whitespaces-test 
-version: 0.1.0
-appVersion: 1.0.0
-```
-
-
-```
-mkdir -p templates
-cd templates 
-nano whitespace-test.tpl
-```
-
-
-   ```gotemplate
-   apiVersion: v1
-   kind: ConfigMap
-   metadata:
-     name: whitespace-test
-   data:
-     # Beispiel ohne Whitespace-Kontrolle
-     key1:    {{ .Chart.Name }}
-     # Beispiel mit Whitespace-Kontrolle (links entfernt)
-     key2:    {{- .Chart.Name }}
-     # Beispiel mit Whitespace-Kontrolle (rechts entfernt)
-     key3:    {{ .Chart.Name -}}
-     # Beispiel mit Whitespace-Kontrolle (links und rechts entfernt)
-     key4:    {{- .Chart.Name -}}
-   ```
-
-```
-cd ..
-helm template --debug .
-```
+  Entfernt Whitespace sowohl links als auch rechts des Ausdrucks, aber AUCH Zeilenumbrüche 
 

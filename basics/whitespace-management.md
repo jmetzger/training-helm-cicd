@@ -27,7 +27,7 @@ cd 01-whitespaces
 ```
 
 ```
-nano Chart.yml
+nano Chart.yaml
 ```
 
 

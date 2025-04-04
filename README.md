@@ -12,14 +12,13 @@
        
   1. Helm Installation und Konfiguration (inkl. kubectl) 
      * [Installation von kubectl unter Linux](kubectl/installation/linux.md)
-     * [Konfiguration von kubectl mit namespaces]
+     * [Konfiguration von kubectl mit namespaces](kubectl/kubectl-einrichten.md)
      * [Installation von helm unter Linux](helm/installation/linux.md)
      * [Installation bash completion](helm/installation/bash-completion.md)
 
   1. Spezial: Umgang mit Einrückungen
      * [Whitespaces meistern mit "-"](basics/whitespace-management.md)
      * [Exercise Whitespaces](/helm/templates/spaces.md)
-
 
 ## Backlog 
 

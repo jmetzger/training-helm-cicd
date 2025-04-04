@@ -9,6 +9,12 @@
 ## Walkthrough 
 
 ```
+cd
+mkdir helm-exercises
+cd helm-exercises
+```
+
+```
 # When ever we encounter error while parsing yaml, we can use comment !!!
 helm create testenv
 cd testenv/templates

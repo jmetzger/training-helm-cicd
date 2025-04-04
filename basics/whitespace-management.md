@@ -40,6 +40,8 @@ appVersion: 1.0.0
 
 
 ```
+mkdir -p templates
+cd templates 
 nano whitespace-test.tpl
 ```
 
@@ -51,13 +53,13 @@ nano whitespace-test.tpl
      name: whitespace-test
    data:
      # Beispiel ohne Whitespace-Kontrolle
-     key1: "value1" {{ .Chart.Name }}
+     key1:    {{ .Chart.Name }}
      # Beispiel mit Whitespace-Kontrolle (links entfernt)
-     key2: "value2" {{- .Chart.Name }}
+     key2:    {{- .Chart.Name }}
      # Beispiel mit Whitespace-Kontrolle (rechts entfernt)
-     key3: "value3" {{ .Chart.Name -}}
+     key3:    {{ .Chart.Name -}}
      # Beispiel mit Whitespace-Kontrolle (links und rechts entfernt)
-     key4: "value4" {{- .Chart.Name -}}
+     key4:    {{- .Chart.Name -}}
    ```
 
 ```

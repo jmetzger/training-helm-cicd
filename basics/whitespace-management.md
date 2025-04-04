@@ -1,1 +1,53 @@
+# Whitespace-Kontrolle
 
+## Grundlagen 
+
+  * In Helm (bzw. in Go-Templates) hast du verschiedene Möglichkeiten, den Umgang mit Whitespace (z. B. Leerzeichen, Zeilenumbrüche) zu steuern:
+
+- `{{ ... }}`:  
+  Standardvariante. Lässt den Whitespace außerhalb der geschweiften Klammern unverändert.
+
+- `{{- ... }}`:  
+  Entfernt den Whitespace links (vor) dem Ausdruck.  
+
+- `{{ ... -}}`:  
+  Entfernt den Whitespace rechts (nach) dem Ausdruck.  
+
+- `{{- ... -}}`:  
+  Entfernt Whitespace sowohl links als auch rechts des Ausdrucks.
+
+## Übung
+
+```
+cd
+mkdir -p helm-exercises
+cd helm-exercises
+mkdir 01-whitespaces 
+cd 01-whitespaces 
+nano whitespace-test.tpl
+```
+
+
+   ```gotemplate
+   apiVersion: v1
+   kind: ConfigMap
+   metadata:
+     name: whitespace-test
+   data:
+     # Beispiel ohne Whitespace-Kontrolle
+     key1: "value1" {{ .Chart.Name }}
+     # Beispiel mit Whitespace-Kontrolle (links entfernt)
+     key2: "value2" {{- .Chart.Name }}
+     # Beispiel mit Whitespace-Kontrolle (rechts entfernt)
+     key3: "value3" {{ .Chart.Name -}}
+     # Beispiel mit Whitespace-Kontrolle (links und rechts entfernt)
+     key4: "value4" {{- .Chart.Name -}}
+   ```
+
+```
+helm template .
+```
+
+## Fazit
+
+Mit diesen Übungen kannst du dich gezielt auf die Whitespace-Kontrolle in Helm/Go-Templates konzentrieren. Experimentiere in jedem Schritt mit den verschiedenen Operatoren (`{{ ... }}`, `{{- ... }}`, `{{ ... -}}`, `{{- ... -}}`), um ein Gefühl dafür zu bekommen, wann und wo du Leerzeichen oder Zeilenumbrüche entfernen oder beibehalten willst. So stellst du sicher, dass dein gerendertes YAML lesbar und korrekt formatiert ist.

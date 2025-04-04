@@ -1,5 +1,11 @@
 # Ablauf helm install 
 
+## Grafik 
+
+![Helm Ablauf](/images/helm-ablauf.png)
+
+## Der Weg 
+
 Wenn der Befehl `helm install` ausgeführt wird, passiert intern Folgendes:
 
 1. **Chart-Abfrage**:

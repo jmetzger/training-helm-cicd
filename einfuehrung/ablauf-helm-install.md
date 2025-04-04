@@ -2,7 +2,7 @@
 
 ## Grafik 
 
-![](/images/helm_flowchart_compressed_30kb.jpg | width=100)
+![](/images/helm_flowchart_300px.jpg | width=100)
 
 ## Der Weg 
 

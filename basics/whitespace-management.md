@@ -23,7 +23,23 @@ cd
 mkdir -p helm-exercises
 cd helm-exercises
 mkdir 01-whitespaces 
-cd 01-whitespaces 
+cd 01-whitespaces
+```
+
+```
+nano Chart.yml
+```
+
+
+```
+apiVersion: v2
+name: whitespaces-test 
+version: 0.1.0
+appVersion: 1.0.0
+```
+
+
+```
 nano whitespace-test.tpl
 ```
 

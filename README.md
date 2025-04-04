@@ -5,7 +5,7 @@
   1. Helm Einfuehrung 
      * Was ist helm ? 
      * Warum Helm in Kubernetes verwenden ?
-     * Überblick über den Ablauf bei der Nutzung von helm
+     * Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)
 
 
 

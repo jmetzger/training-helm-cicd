@@ -9,8 +9,7 @@ cd helm-exercises
 helm create example-toyaml 
 cd example-toyaml
 rm -fR values.yaml
-rm -fR templates/*.yaml
-rm -fR templates/tests/*
+rm -fR templates/*
 ```
 
 ```

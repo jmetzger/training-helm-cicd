@@ -15,6 +15,9 @@
      * [Konfiguration von kubectl mit namespaces](kubectl/kubectl-einrichten.md)
      * [Installation von helm unter Linux](helm/installation/linux.md)
      * [Installation bash completion](helm/installation/bash-completion.md)
+    
+  1. Helm - Spickzettel
+     * [Wichtig: Helm Spickzettel](helm/spickzettel.md)
 
   1. Spezial: Umgang mit Einrückungen
      * [Whitespaces meistern mit "-"](basics/whitespace-management.md)

@@ -15,6 +15,11 @@ kubectl create secret docker-registry regcred --docker-server=registry.do.t3isp.
 ```
 
 ```
+kubectl create secret generic mariadb-secret --from-literal=MARIADB_ROOT_PASSWORD=11abc432 --dry-run=client -o yaml > 02-secret.yml
+```
+
+
+```
 nano 02-pod.yaml
 ```
 
@@ -27,6 +32,9 @@ spec:
   containers:
   - name: private-reg-container
     image: registry.do.t3isp.de/mariadb:11.4.5
+    envFrom:
+      - secretRef:
+          name: mariadb-secret
   imagePullSecrets:
   - name: regcred
 ```

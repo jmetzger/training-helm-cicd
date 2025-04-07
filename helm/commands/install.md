@@ -54,6 +54,13 @@ helm -n app-<namenskuerzel> list
 helm -n app-<namenskuerzel> history 
 ```
 
+### Uninstall 
+
+```
+helm -n app-<namenskuerzel> uninstall my-nginx 
+# namespace wird nicht gelöscht 
+# crd's werden auch nicht gelöscht 
+```
 
 ## Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
 

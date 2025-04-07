@@ -1,6 +1,13 @@
 # Chart runterladen und evtl entpacken (auch bestimmte version) 
 
 ```
+cd 
+mkdir -p charts
+cd charts
+```
+
+
+```
 # Vorher müssen wir den Repo-Eintrag anlegen 
 helm repo add bitnami https://charts.bitnami.com/bitnami 
 

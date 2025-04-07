@@ -45,6 +45,16 @@ cd ..
 helm upgrade --install my-nginx bitnami/nginx --namespace app-<nameskuerzel> -f prod/values.yaml  
 ```
 
+### Umschauen 
+
+```
+kubectl -n app-<namenskuerzel> get pods
+helm -n app-<namenskuerzel> info my-nginx 
+helm -n app-<namenskuerzel> list
+helm -n app-<namenskuerzel> history 
+```
+
+
 ## Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
 
   * if memory of container is bigger than limit an OOM-Killer will be trriger

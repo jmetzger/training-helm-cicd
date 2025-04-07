@@ -18,7 +18,10 @@
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 # Kann sehr lang sein 
-helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | less 
+helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | less
+
+helm -n app-jm template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
+
 ```
 
     

@@ -34,10 +34,10 @@ nano values.yaml
 resources:
    requests:
      cpu: 0.1
-       memory: 150Mi
-     limits:
-       cpu: 0.1
-       memory: 150Mi
+     memory: 150Mi
+   limits:
+     cpu: 0.1
+     memory: 150Mi
 ```
 
 ```

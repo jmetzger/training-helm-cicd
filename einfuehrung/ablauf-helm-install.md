@@ -19,7 +19,7 @@ Wenn der Befehl `helm install` ausgeführt wird, passiert intern Folgendes:
 1. **Release-Verwaltung**:
    * Helm speichert die Chart- und Versionsinformationen in der Helm-Release-Datenbank (in Kubernetes als Secret)
    * Dies ermöglicht eine spätere Verwaltung und Aktualisierung des Releases.
-1. **Ausgabe**:
+1. **Ausgabe** (templates/NOTES.txt):
    * Helm gibt den Status des Installationsprozesses aus, einschließlich der erstellten Ressourcen und etwaiger Fehler.
 
 ## Long story short 

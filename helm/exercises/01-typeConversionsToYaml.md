@@ -4,8 +4,8 @@
 
 ```
 cd
-mkdir -p helm-examples
-cd helm-examples 
+mkdir -p helm-exercises
+cd helm-exercises
 helm create example-toyaml 
 cd example-toyaml
 rm -fR values.yaml

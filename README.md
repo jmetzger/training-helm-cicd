@@ -19,8 +19,9 @@
   1. Helm - Spickzettel
      * [Wichtig: Helm Spickzettel](helm/spickzettel.md)
 
-  1. Installation helm - charts
+  1. Arbeiten mit helm - charts
      * [Installation, Upgrade, Uninstall helm-Chart exercise](helm/commands/install.md)
+     * [Informationen aus nicht installierten Helm-Charts bekommen](helm/commands/show.md)
 
   1. Spezial: Umgang mit Einrückungen
      * [Whitespaces meistern mit "-"](basics/whitespace-management.md)

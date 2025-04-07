@@ -1,19 +1,21 @@
-# Template 
+# template und template --debug  
 
-## Warum ?
+## template 
+
+### Warum ?
 
   * Ich will vorher sehen, wie mein Manifest ausschaut, bevor ich es zum Api-Server schicke.
 
-## Was macht das ? 
+### Was macht das ? 
 
   * Rendered das Template.
 
-## Was macht es nicht ? 
+### Was macht es nicht ? 
 
   * Überprüft NICHT anhand der API-Definition
     * z.B. sind die Felder richtig gesetzt bei Deployment
    
-## Beispiel: 
+### Beispiel: 
 
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -24,4 +26,15 @@ helm -n app-jm template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^
 
 ```
 
+## template --debug 
+
+### Warum ? 
+
+  * Zeigt mein template auch an, wenn ein yaml-Einrückungsfehler oder Syntax - fehler da ist. 
+
+### Beispiel 
+
+```
+helm -n app-jm template my-nginx bitnami/nginx --version 19.0.4 --debug
+```
     

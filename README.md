@@ -22,6 +22,7 @@
   1. Arbeiten mit helm - charts
      * [Installation, Upgrade, Uninstall helm-Chart exercise](helm/commands/install.md)
      * [Informationen aus nicht installierten Helm-Charts bekommen](helm/commands/show.md)
+     * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
 
   1. Spezial: Umgang mit Einrückungen
      * [Whitespaces meistern mit "-"](basics/whitespace-management.md)
@@ -38,7 +39,6 @@
 
   1. Helm-Befehle und -Funktionen
      * [Repo einrichten](/helm/commands/repo.md)
-     * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
      * [Suche in Repo und Artifacts Hub](/helm/commands/search.md)
      * [Anzeigen von Informationen aus dem Chart von Online](/helm/commands/show.md)
      * [Upgrade und auftretende Probleme](/helm/commands/upgrade.md)

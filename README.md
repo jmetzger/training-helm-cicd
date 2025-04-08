@@ -73,11 +73,6 @@
      * [Advanced Testing mit chart-testing](helm/test/advanced-testing/advanced-testing-with-chart-testing.md)
      * [Chart auf github veröffentlichen](helm/create-charts/publish/publish-on-github.md)
 
-  1. FlowControl Helm-Charts (if,with,range)
-     * [if](/helm/templates/flow-control/01-if.md)
-     * [with](/helm/templates/flow-control/02-with.md)
-     * [range](/helm/templates/flow-control/03-range.md)
-      
   1. Sicherheit von helm-Chart
      * [Grundlagen / Best Practices](helm/security/best-practices.md)
      * [Security Encrypted Passwords in helm](/helm/security/secrets-password.md)

@@ -25,7 +25,7 @@
      * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
     
   1. Tipps & Tricks
-     * [kubernetes manifests mit privatem Repo]()
+     * [kubernetes manifests mit privatem Repo](helm/exercises/02-pod-from-private-repo.md)
      * [helm chart mit images auf privatem Repo](helm/exercises/03-helm-nginx-image-from-private-repo.md)
 
   1. Spezial: Umgang mit Einrückungen

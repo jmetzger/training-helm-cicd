@@ -14,7 +14,10 @@ rm -fR *.yaml
 ```
 
 ```
-# vi values.yml
+nano ../values.yaml
+```
+
+```
 # Adjust values.yaml file accordingly
 favorite:
   food: PIZZA

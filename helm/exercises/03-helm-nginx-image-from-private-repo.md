@@ -40,6 +40,7 @@ resources:
 
 
 ```
-cd ..
-helm upgrade --install my-nginx bitnami/nginx -f prod/values
+cd
+cd manifests/nginx-values
+helm upgrade --install my-nginx bitnami/nginx -f prod/values.yaml
 ```

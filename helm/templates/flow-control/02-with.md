@@ -46,6 +46,10 @@ data:
 ### Step 2a: Does not work because scope does not fit 
 
 ```
+nano cm.yaml
+```
+
+```
   {{- with .Values.favorite }}
   drink: {{ .drink | default "tea" | quote }}
   food: {{ .food | upper | quote }}
@@ -53,6 +57,11 @@ data:
   {{- end }}
 
 ```
+
+```
+helm template --debug ..
+```
+
 
 ### Step 2b: Solution 1: (Outside with) 
 

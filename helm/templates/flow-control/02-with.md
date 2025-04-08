@@ -27,7 +27,7 @@ favorite:
 ### Step 1: 
 
 ```
-# nano cm.yaml
+nano cm.yaml
 ```
 
 ```

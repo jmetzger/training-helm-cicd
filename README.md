@@ -34,6 +34,9 @@
 
   1. Type - Conversions
      * [Exercise toYaml](helm/exercises/01-typeConversionsToYaml.md)
+    
+  1. Helm mit gitlab ci/cd
+     * [Helm mit gitlab ci/cd ausrollen](helm/gitlab-ci-cd/example-helm-kubernetes.md)
 
 ## Backlog 
 

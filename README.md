@@ -36,7 +36,7 @@
      * [Exercise toYaml](helm/exercises/01-typeConversionsToYaml.md)
     
   1. Flow Control
-     * [if](/helm/templates/flow-control/02-if-only.md)
+     * [if](/helm/templates/flow-control/02-only-if.md)
      * [with](/helm/templates/flow-control/02-with.md)
      * [range](/helm/templates/flow-control/03-range.md)
     

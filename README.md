@@ -23,6 +23,10 @@
      * [Installation, Upgrade, Uninstall helm-Chart exercise](helm/commands/install.md)
      * [Informationen aus nicht installierten Helm-Charts bekommen](helm/commands/show.md)
      * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
+    
+  1. Tipps & Tricks
+     * [kubernetes manifests mit privatem Repo]()
+     * [helm chart mit images auf privatem Repo](helm/exercises/03-helm-nginx-image-from-private-repo.md)
 
   1. Spezial: Umgang mit Einrückungen
      * [Whitespaces meistern mit "-"](basics/whitespace-management.md)

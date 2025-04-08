@@ -14,27 +14,28 @@ nano values.yaml
 ```
 
 ```
+
 global:
-  imageRegistry: "registry.do.t3isp.de"
-  imagePullSecrets:
-    - regcred
+  security:
+     allowInsecureImages: true
+
+
+image:
+  registry: "registry.do.t3isp.de"
+  repository: nginx
+  # tag: 1.27.4
+  pullSecrets:
+    - regcred-do
 
 extraDeploy:
   - apiVersion: v1
     data:
-      .dockerconfigjson: <get-from-trainer>
+      .dockerconfigjson: <gibts-from-trainer>
+    kind: Secret
     metadata:
-       name: regcred
+       name: regcred-do
     type: kubernetes.io/dockerconfigjson
 
-
-resources:
-   requests:
-     cpu: 0.1
-     memory: 150Mi
-   limits:
-     cpu: 0.1
-     memory: 150Mi
 ```
 
 

@@ -25,6 +25,10 @@ favorite:
 ## Step 3: Probably the best solution 
 
 ```
+nano cm.yaml
+```
+
+```
 apiVersion: v1
 kind: ConfigMap
 metadata:

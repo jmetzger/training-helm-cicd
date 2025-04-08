@@ -48,3 +48,5 @@ deploy:
 
 
 ## Reference: Example Project (Public)
+
+  * https://gitlab.com/jmetzger/training-helm-chart-kubernetes-gitlab-ci-cd

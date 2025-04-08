@@ -5,8 +5,11 @@
 ### Preparation 
 
 ```
-helm create testenv
-cd testenv/templates
+cd
+mkdir -p helm-exercises
+cd helm-exercises 
+helm create with-example
+cd with-example/templates
 rm -fR *.yaml
 ```
 

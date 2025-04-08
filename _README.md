@@ -2,10 +2,48 @@
 
 
 ## Agenda
-  1. Helm Grundlagen
+  1. Helm Einfuehrung 
+     * [Was ist helm ?](#was-ist-helm-)
+     * [Was kann helm ?](#was-kann-helm-)
+     * [Was ist in helm ein chart?](#was-ist-in-helm-ein-chart)
+     * [Warum Helm in Kubernetes verwenden ?](#warum-helm-in-kubernetes-verwenden-)
+     * [Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)](#überblick-über-den-ablauf-bei-der-nutzung-von-helm-kommando-install)
+     * [Braucht helm das Programm kubectl ?](#braucht-helm-das-programm-kubectl-)
+       
+  1. Helm Installation und Konfiguration (inkl. kubectl) 
      * [Installation von kubectl unter Linux](#installation-von-kubectl-unter-linux)
+     * [Konfiguration von kubectl mit namespaces](#konfiguration-von-kubectl-mit-namespaces)
      * [Installation von helm unter Linux](#installation-von-helm-unter-linux)
      * [Installation bash completion](#installation-bash-completion)
+    
+  1. Helm - Spickzettel
+     * [Wichtig: Helm Spickzettel](#wichtig-helm-spickzettel)
+
+  1. Arbeiten mit helm - charts
+     * [Installation, Upgrade, Uninstall helm-Chart exercise](#installation-upgrade-uninstall-helm-chart-exercise)
+     * [Informationen aus nicht installierten Helm-Charts bekommen](#informationen-aus-nicht-installierten-helm-charts-bekommen)
+     * [Chart runterladen und evtl. entpacken und bestimmte Version](#chart-runterladen-und-evtl-entpacken-und-bestimmte-version)
+    
+  1. Tipps & Tricks
+     * [kubernetes manifests mit privatem Repo](#kubernetes-manifests-mit-privatem-repo)
+     * [helm chart mit images auf privatem Repo](#helm-chart-mit-images-auf-privatem-repo)
+
+  1. Spezial: Umgang mit Einrückungen
+     * [Whitespaces meistern mit "-"](#whitespaces-meistern-mit-"-")
+     * [Exercise Whitespaces](#exercise-whitespaces)
+
+  1. Type - Conversions
+     * [Exercise toYaml](#exercise-toyaml)
+    
+  1. Flow Control
+     * [if](#if)
+     * [with](#with)
+     * [range](#range)
+    
+  1. Helm mit gitlab ci/cd
+     * [Helm mit gitlab ci/cd ausrollen](#helm-mit-gitlab-cicd-ausrollen)
+
+## Backlog 
 
   1. Grundlagen
      * [Feature / No-Features von Helm](#feature--no-features-von-helm)
@@ -13,7 +51,6 @@
 
   1. Helm-Befehle und -Funktionen
      * [Repo einrichten](#repo-einrichten)
-     * [Chart runterladen und evtl. entpacken und bestimmte Version](#chart-runterladen-und-evtl-entpacken-und-bestimmte-version)
      * [Suche in Repo und Artifacts Hub](#suche-in-repo-und-artifacts-hub)
      * [Anzeigen von Informationen aus dem Chart von Online](#anzeigen-von-informationen-aus-dem-chart-von-online)
      * [Upgrade und auftretende Probleme](#upgrade-und-auftretende-probleme)
@@ -36,11 +73,6 @@
      * [Advanced Testing mit chart-testing](#advanced-testing-mit-chart-testing)
      * [Chart auf github veröffentlichen](#chart-auf-github-veröffentlichen)
 
-  1. FlowControl Helm-Charts (if,with,range)
-     * [if](#if)
-     * [with](#with)
-     * [range](#range)
-      
   1. Sicherheit von helm-Chart
      * [Grundlagen / Best Practices](#grundlagen--best-practices)
      * [Security Encrypted Passwords in helm](#security-encrypted-passwords-in-helm)
@@ -55,6 +87,7 @@
   1. Tipps & Tricks
      * [Set namespace in config of kubectl](#set-namespace-in-config-of-kubectl)
      * [Create Ingress Redirect](#create-ingress-redirect)
+     * [Helm Charts - Development - Best practices](https://helm.sh/docs/howto/charts_tips_and_tricks/)
 
   1. Integration mit anderen Tools
      * [yamllint für Syntaxcheck von yaml - Dateien](#yamllint-für-syntaxcheck-von-yaml---dateien)
@@ -64,7 +97,88 @@
 
 <div class="page-break"></div>
 
-## Helm Grundlagen
+## Helm Einfuehrung 
+
+### Was ist helm ?
+
+
+  * Paketmanager für Kubernetes
+  * Ermöglicht Anwendungen in einem Kubernetes-Cluster zu definieren, zu installieren und zu verwalten
+    *  ähnlich wie `apt` bei Debian oder `yum` bei CentOS, aber speziell für Kubernetes.
+
+### Was kann helm ?
+
+
+- **Installieren** und **Deinstallieren** von Anwendungen in Kubernetes (`helm install / helm uninstall`)
+- **Upgraden** von bestehenden Installationen (`helm upgrade`)
+- **Rollbacks** durchführen, falls etwas schiefläuft (`helm rollback`)
+- **Anpassen** von Anwendungen durch Konfigurationswerte (`values.yaml`)
+- **Veröffentlichen** eigener Charts (z. B. in einem Helm-Repository)
+
+### Was ist in helm ein chart?
+
+
+### Definition 
+
+  * Ein **Helm Chart** ist ein Paket, das alle nötigen Kubernetes-Ressourcen beschreibt, um eine Anwendung oder einen Dienst bereitzustellen.
+
+### Es enthält: 
+
+- **Templates**: Vorlagen in YAML-Format, die dynamisch Werte einsetzen
+- **values.yaml**: Eine Datei mit Konfigurationswerten
+- **Chart.yaml**: Metainformationen zum Chart (Name, Version, etc.)
+- **Abhängigkeiten**: Optional können andere Charts mit eingebunden werden
+
+### Formate / Ort 
+
+  * Verzeichnis z.B. meine-app (und in dem Verzeichnis die bekannte Struktur von oben)
+  * tar.gz (Tape-Archive mit gnuzip komprimiert)
+  * URL 
+
+### Warum Helm in Kubernetes verwenden ?
+
+
+- **Wiederverwendbarkeit**: Ein Chart kann mehrfach und in unterschiedlichen Umgebungen genutzt werden.
+- **Konfigurierbarkeit**: Anpassung an verschiedene Umgebungen wie Entwicklung, Test, Produktion.
+- **Automatisierbarkeit**: Ideal für den Einsatz in CI/CD-Pipelines.
+- **Große Community**: Viele fertige Charts für beliebte Software wie Prometheus, Grafana, nginx, etc.
+
+
+### Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)
+
+
+### Grafik 
+
+![](/images/helm_flowchart_300px.jpg)
+
+### Der Weg 
+
+Wenn der Befehl `helm install` ausgeführt wird, passiert intern Folgendes:
+
+1. **Chart-Abfrage**:
+    * Helm sucht Chart lokal oder im Repos und lädt es herunter.
+1. **Chart-Templating**:
+    * Helm rendert die Templates im Chart.
+    * Variablen werden (wie in der `values.yaml` definiert) in die Templates eingefügt.
+    * Dadurch werden manifeste für Kubernetes-Ressourcen (z. B. Deployments, Services) erstellt.
+1. **Kubernetes API**:
+   * Das gerenderte Kubernetes Manifest wird an den Kubernetes-API geschickt.
+1. **Release-Verwaltung**:
+   * Helm speichert die Chart- und Versionsinformationen in der Helm-Release-Datenbank (in Kubernetes als Secret)
+   * Dies ermöglicht eine spätere Verwaltung und Aktualisierung des Releases.
+1. **Ausgabe** (templates/NOTES.txt):
+   * Helm gibt den Status des Installationsprozesses aus, einschließlich der erstellten Ressourcen und etwaiger Fehler.
+
+### Long story short 
+
+  * Helm rendert Kubernetes-Ressourcen aus einem Chart und kommuniziert mit der Kubernetes-API, um diese Ressourcen zu erstellen und ein Release zu verwalten.
+
+### Braucht helm das Programm kubectl ?
+
+
+  * helm braucht zwar kubectl nicht, es verwendet aber auch die .kube/config - Datei per Default  
+
+## Helm Installation und Konfiguration (inkl. kubectl) 
 
 ### Installation von kubectl unter Linux
 
@@ -80,6 +194,34 @@ sudo su -
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 ## install the kubectl to the right directory
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+```
+
+### Konfiguration von kubectl mit namespaces
+
+
+### config einrichten 
+
+```
+cd
+mkdir .kube
+cd .kube
+cp -a /tmp/config config
+ls -la
+## Alternative: nano config befüllen 
+## das bekommt ihr aus Eurem Cluster Management Tool 
+```
+
+```
+kubectl cluster-info
+```
+
+### Arbeitsbereich konfigurieren 
+
+```
+kubectl create ns jochen
+kubectl get ns
+kubectl config set-context --current --namespace jochen
+kubectl get pods
 ```
 
 ### Installation von helm unter Linux
@@ -116,12 +258,692 @@ exit
 su - tln11
 ```
 
+## Helm - Spickzettel
+
+### Wichtig: Helm Spickzettel
+
+
+### Alle helm-releases anzeigen 
+
+```
+## im eigenen Namespace 
+helm list
+## in allen Namespaces
+helm list -A
+## für einen speziellen
+helm -n kube-system list 
+```
+
+### Helm - Chart installieren 
+
+```
+## Empfehlung mit namespace
+## Repo hinzufügen für Client 
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install my-nginx bitnami/nginx --version 19.0.1 --create-namespace --namespace=app-<namenskuerzel>
+```
+
+### Helm - Suche  
+
+```
+## welche Repos sind konfiguriert
+helm repo list
+helm search repo bitnami
+helm search hub
+```
+
+## Arbeiten mit helm - charts
+
+### Installation, Upgrade, Uninstall helm-Chart exercise
+
+
+### Install 
+
+```
+## Installiert 
+helm install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
+## Zeigt an, was er ausrollen würde 
+helm install my-nginx bitnami/nginx --version 19.0.4 --dry-run # auch für uninstall, upgrade 
+```
+
+```
+## noch besser
+## Installiert 
+helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
+```
+
+
+### Exercise: Upgrade to new version 
+
+```
+cd 
+mkdir -p nginx-values 
+cd nginx-values
+mkdir prod
+cd prod
+```
+
+```
+nano values.yaml
+```
+
+```
+resources:
+   requests:
+     cpu: 0.1
+     memory: 150Mi
+   limits:
+     cpu: 0.1
+     memory: 150Mi
+```
+
+```
+cd ..
+helm upgrade --install my-nginx bitnami/nginx --namespace app-<nameskuerzel> -f prod/values.yaml  
+```
+
+#### Umschauen 
+
+```
+kubectl -n app-<namenskuerzel> get pods
+helm -n app-<namenskuerzel> status my-nginx 
+helm -n app-<namenskuerzel> list
+helm -n app-<namenskuerzel> history 
+```
+
+#### Uninstall 
+
+```
+helm -n app-<namenskuerzel> uninstall my-nginx 
+## namespace wird nicht gelöscht 
+## crd's werden auch nicht gelöscht 
+```
+
+### Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
+
+  * if memory of container is bigger than limit an OOM-Killer will be trriger
+  * How to fix. Use memory limit in the application too !
+    * https://techcommunity.microsoft.com/blog/appsonazureblog/unleashing-javascript-applications-a-guide-to-boosting-memory-limits-in-node-js/4080857
+
+### Informationen aus nicht installierten Helm-Charts bekommen
+
+
+```
+helm show values bitnami/mariadb
+helm show values bitnami/mariadb | grep -B 20 -i "image:"
+## recommendation -> redirect to file
+helm show values bitnami/mariadb > default-values.yaml 
+```
+
+```
+## Zeigt Chart-Definition, Readme usw. (=alles) an 
+helm show all bitnami/mariadb 
+```
+
+```
+helm show readme
+helm show readme bitnami/mariadb
+helm show chart bitnami/mariadb
+```
+
+```
+helm show crds bitnami/mariadb
+```
+
+
+### Chart runterladen und evtl. entpacken und bestimmte Version
+
+
+```
+cd 
+mkdir -p charts
+cd charts
+```
+
+
+```
+## Vorher müssen wir den Repo-Eintrag anlegen 
+helm repo add bitnami https://charts.bitnami.com/bitnami 
+
+## Lädt die letzte herunter
+helm pull bitnami/mariadb
+
+## Lädt bestimmte chart-version runter 
+helm pull bitnami/mariadb --version 12.1.6
+## evtl. entpacken wenn gewünscht
+## tar xvf mariadb-12.1.6.tgz
+
+## Schnelle Variante
+helm pull bitnami/mariadb --version 12.1.6 --untar
+```
+
+## Tipps & Tricks
+
+### kubernetes manifests mit privatem Repo
+
+
+### Exercise 
+
+```
+mkdir -p manifests
+cd manifests
+mkdir private-repo
+cd private-repo
+```
+
+```
+kubectl create secret docker-registry regcred --docker-server=registry.do.t3isp.de \
+--docker-username=11trainingdo --docker-password=<sehr-geheim> --dry-run=client -o yaml > 01-secret.yaml 
+```
+
+```
+kubectl create secret generic mariadb-secret --from-literal=MARIADB_ROOT_PASSWORD=11abc432 --dry-run=client -o yaml > 02-secret.yml
+```
+
+
+```
+nano 02-pod.yaml
+```
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: private-reg
+spec:
+  containers:
+  - name: private-reg-container
+    image: registry.do.t3isp.de/mariadb:11.4.5
+    envFrom:
+      - secretRef:
+          name: mariadb-secret
+  imagePullSecrets:
+  - name: regcred
+```
+
+```
+kubectl apply -f .
+kubectl get pods -o wide private-reg
+kubectl describe pods private-reg 
+
+### helm chart mit images auf privatem Repo
+
+
+### Walkthrough 
+
+```
+cd
+mkdir -p manifests
+cd manifests
+mkdir nginx-values
+cd nginx-values
+mkdir prod
+cd prod 
+nano values.yaml
+```
+
+```
+
+global:
+  security:
+     allowInsecureImages: true
+
+
+image:
+  registry: "registry.do.t3isp.de"
+  repository: nginx
+  # tag: 1.27.4
+  pullSecrets:
+    - regcred-do
+
+extraDeploy:
+  - apiVersion: v1
+    data:
+      .dockerconfigjson: <gibts-from-trainer>
+    kind: Secret
+    metadata:
+       name: regcred-do
+    type: kubernetes.io/dockerconfigjson
+
+```
+
+
+
+```
+cd
+cd manifests/nginx-values
+helm upgrade --install my-nginx bitnami/nginx -f prod/values.yaml
+```
+
+## Spezial: Umgang mit Einrückungen
+
+### Whitespaces meistern mit "-"
+
+
+### Grundlagen 
+
+  * In Helm (bzw. in Go-Templates) hast du verschiedene Möglichkeiten, den Umgang mit Whitespace (z. B. Leerzeichen, Zeilenumbrüche) zu steuern:
+
+- `{{ ... }}`:  
+  Standardvariante. Lässt den Whitespace außerhalb der geschweiften Klammern unverändert.
+
+- `{{- ... }}`:  
+  Entfernt den Whitespace links (vor) dem Ausdruck.  
+
+- `{{ ... -}}`:  
+  Entfernt den Whitespace rechts (nach) dem Ausdruck, aber AUCH Zeilenumbrüche 
+
+- `{{- ... -}}`:  
+  Entfernt Whitespace sowohl links als auch rechts des Ausdrucks, aber AUCH Zeilenumbrüche 
+
+
+### Exercise Whitespaces
+
+
+### Explanation 
+
+  * {{- -> trim on left side
+  * -}} -> trim on right side / ALSO: new lines 
+  * trim tabs, whitespaces a.s.o. (see ref)
+
+### Walkthrough 
+
+```
+cd
+mkdir -p helm-exercises
+cd helm-exercises
+```
+
+```
+## When ever we encounter error while parsing yaml, we can use comment !!!
+helm create testenv
+cd testenv/templates
+rm -fR *.yaml
+```
+
+```
+nano test.yaml
+```
+
+```
+## "{{23 -}} < {{- 45}}"
+```
+
+```
+helm template .. 
+helm template --debug ..
+```
+
+```
+## now with new lines
+nano test2.yaml
+```
+
+```
+## {{23 -}}
+newline here
+```
+
+```
+helm template ..
+helm template --debug ..
+```
+
+
+### Reference:
+
+  * https://pkg.go.dev/text/template#hdr-Text_and_spaces
+
+## Type - Conversions
+
+### Exercise toYaml
+
+
+### Exercise 
+
+```
+cd
+mkdir -p helm-exercises
+cd helm-exercises
+helm create example-toyaml 
+cd example-toyaml
+rm -fR values.yaml
+rm -fR templates/*
+```
+
+```
+nano templates/configmap.yaml  
+```
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  app-config.yaml: |
+    {{- toYaml .Values.appConfig | nindent 4 }}
+```
+
+```
+nano values.yaml  
+```
+
+```
+appConfig:
+  server:
+    port: 8080
+    host: "0.0.0.0"
+  features:
+    auth: true
+    metrics: true
+  database:
+    user: "admin"
+    password: "secret"
+    hosts:
+      - db1.example.com
+      - db2.example.com
+```
+
+```
+helm template .
+```
+
+
+### Ref: https://helm.sh/docs/chart_template_guide/function_list/#type-conversion-functions
+
+## Flow Control
+
+### if
+
+
+### Prepare (if not done yet)
+
+```
+helm create iftest
+cd iftest/templates
+rm -f *.yaml
+```
+
+
+### Step 2: values-file erweitern 
+
+```
+nano ../values.yaml
+```
+
+```
+## Adjust values.yaml file accordingly
+favorite:
+  food: PIZZA
+  drink: coffee
+```
+
+### Step 3: Probably the best solution 
+
+```
+nano cm.yaml
+```
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
+  {{- if eq .Values.favorite.drink "coffee"}}
+  {{ "mug: true" }}
+  {{- end }}
+```
+
+```
+helm template ..
+```
+
+### Step 4: change favorite drin 
+
+```
+nano ../values.yaml
+```
+
+```
+## Adjust values.yaml file accordingly
+favorite:
+  food: PIZZA
+  drink: tea 
+```
+
+```
+helm template ..
+```
+
+
+### Reference
+
+  * https://helm.sh/docs/chart_template_guide/control_structures/
+
+### with
+
+
+### Walkthrough 
+
+#### Preparation 
+
+```
+cd
+mkdir -p helm-exercises
+cd helm-exercises 
+helm create with-example
+cd with-example/templates
+rm -fR *.yaml
+```
+
+```
+nano ../values.yaml
+```
+
+```
+## Adjust values.yaml file accordingly
+favorite:
+  food: PIZZA
+  drink: coffee
+```
+
+#### Step 1: 
+
+```
+nano cm.yaml
+```
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
+  {{- with .Values.favorite }}
+  drink: {{ .drink | default "tea" | quote }}
+  food: {{ .food | upper | quote }}
+  {{- end }}
+```
+
+#### Step 2a: Does not work because scope does not fit 
+
+```
+nano cm.yaml
+```
+
+```
+  {{- with .Values.favorite }}
+  drink: {{ .drink | default "tea" | quote }}
+  food: {{ .food | upper | quote }}
+  release: {{ .Release.Name }}
+  {{- end }}
+
+```
+
+```
+helm template --debug ..
+```
+
+
+#### Step 2b: Solution 1: (Outside with) 
+
+```
+  {{- with .Values.favorite }}
+  drink: {{ .drink | default "tea" | quote }}
+  food: {{ .food | upper | quote }}
+  {{- end }}
+  release: {{ .Release.Name }}
+
+```
+
+#### Step 2c: Changing the scope 
+
+```
+  {{- with .Values.favorite }}
+  drink: {{ .drink | default "tea" | quote }}
+  food: {{ .food | upper | quote }}
+  release: {{ $.Release.Name }}
+  {{- end }}
+
+```
+
+
+### range
+
+
+### Preparation
+
+```
+helm create testenv
+cd testenv/templates
+rm -f *.yaml
+```
+
+### Step 1: Values.yaml 
+
+```
+favorite:
+  drink: coffee
+  food: pizza
+pizzaToppings:
+  - mushrooms
+  - cheese
+  - peppers
+  - onions
+```
+
+### Step 2 (Version 1):
+
+```
+## nano cm.yaml 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
+  {{- with .Values.favorite }}
+  drink: {{ .drink | default "tea" | quote }}
+  food: {{ .food | upper | quote }}
+  {{- end }}
+  toppings: |-
+    {{- range .Values.pizzaToppings }}
+    - {{ . | title | quote }}
+    {{- end }}    
+```
+
+### Step 3 (Version 2 - works as well) 
+
+  * Accessing the parent scope
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
+  {{- with .Values.favorite }}
+  drink: {{ .drink | default "tea" | quote }}
+  food: {{ .food | upper | quote }}
+  toppings: |-
+    {{- range $.Values.pizzaToppings }}
+    - {{ . | title | quote }}
+    {{- end }}    
+  {{- end }}
+```
+
+## Helm mit gitlab ci/cd
+
+### Helm mit gitlab ci/cd ausrollen
+
+
+### Step 1: Create gitlab - repo and pipeline 
+
+```
+1. Create new repo on gitlab 
+2. Click on pipeline Editor and creat .gitlab-ci.yml with Button 
+
+```
+
+### Step 2: Push your helm chart files to repo 
+
+
+   * Now looks like this
+
+![image](https://github.com/user-attachments/assets/5e88593b-5b31-4adf-a2bb-e5e9a5129be5)
+
+### Step 3: Add your KUBECONFIG as Variable (type: File) to Variables 
+
+  * https://gitlab.com/jmetzger/training-helm-chart-kubernetes-gitlab-ci-cd/-/settings/ci_cd#js-cicd-variables-settings
+
+![image](https://github.com/user-attachments/assets/b5168cf3-dd74-4d86-becf-e807985dd471)
+
+### Step 4: Create a pipeline for deployment 
+
+```
+stages:          # List of stages for jobs, and their order of execution
+  - deploy
+
+variables:
+  APP_NAME: my-first-app
+
+deploy:
+  stage: deploy
+  image: 
+    name: alpine/helm:3.2.1
+## Important to unset entrypoint 
+    entrypoint: [""]
+  script:
+    - ls -la
+    - cd; mkdir .kube; cd .kube; cat $KUBECONFIG_SECRET > config; ls -la;
+    - cd $CI_PROJECT_DIR; helm upgrade ${APP_NAME} ./charts/my-app --install --namespace ${APP_NAME} --create-namespace -f ./config/values.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+      when: always
+
+```
+
+
+### Reference: Example Project (Public)
+
+  * https://gitlab.com/jmetzger/training-helm-chart-kubernetes-gitlab-ci-cd
+
 ## Grundlagen
 
 ### Feature / No-Features von Helm
 
 
   * Sortiert, die Manifeste bzw. Objekte bereits automatisch in der richtigen Reihenfolge für das Anwenden (apply) gegen den Server (Kube-Api-Server) 
+
+### Which order is it ?
+
+  * see also Internals [Helm Sorting Objects](/helm/internals.md)
+
 
 ### TopLevel Objekte
 
@@ -152,25 +974,6 @@ helm repo update
 ```
 
 
-### Chart runterladen und evtl. entpacken und bestimmte Version
-
-
-```
-## Vorher müssen wir den Repo-Eintrag anlegen 
-helm repo add bitnami https://charts.bitnami.com/bitnami 
-
-## Lädt die letzte herunter
-helm pull bitnami/mariadb
-
-## Lädt bestimmte chart-version runter 
-helm pull bitnami/mariadb --version 12.1.6
-## evtl. entpacken wenn gewünscht
-## tar xvf mariadb-12.1.6.tgz
-
-## Schnelle Variante
-helm pull bitnami/mariadb --version 12.1.6 --untar
-```
-
 ### Suche in Repo und Artifacts Hub
 
 
@@ -198,6 +1001,8 @@ helm search repo bitnami/mariadb --versions
 ```
 helm show values bitnami/mariadb
 helm show values bitnami/mariadb | grep -B 20 -i "image:"
+## recommendation -> redirect to file
+helm show values bitnami/mariadb > default-values.yaml 
 ```
 
 ```
@@ -209,6 +1014,10 @@ helm show all bitnami/mariadb
 helm show readme
 helm show readme bitnami/mariadb
 helm show chart bitnami/mariadb
+```
+
+```
+helm show crds bitnami/mariadb
 ```
 
 
@@ -268,16 +1077,22 @@ helm get -n my-application notes my-botti
 ### Explanation 
 
   * {{- -> trim on left side
-  * -}} -> trim on right side 
+  * -}} -> trim on right side / ALSO: new lines 
   * trim tabs, whitespaces a.s.o. (see ref)
 
 ### Walkthrough 
 
 ```
+cd
+mkdir -p helm-exercises
+cd helm-exercises
+```
+
+```
 ## When ever we encounter error while parsing yaml, we can use comment !!!
 helm create testenv
 cd testenv/templates
-rm -f *.yaml
+rm -fR *.yaml
 ```
 
 ```
@@ -292,6 +1107,22 @@ nano test.yaml
 helm template .. 
 helm template --debug ..
 ```
+
+```
+## now with new lines
+nano test2.yaml
+```
+
+```
+## {{23 -}}
+newline here
+```
+
+```
+helm template ..
+helm template --debug ..
+```
+
 
 ### Reference:
 
@@ -767,243 +1598,6 @@ helm pull githubrepo/guestbook
 ```
 
 
-## FlowControl Helm-Charts (if,with,range)
-
-### if
-
-
-### Prepare (if not done yet)
-
-```
-helm create testenv
-cd testenv/templates
-rm -f *.yaml
-```
-
-### Step 1: Simple inline
-
-
-```
-## Adjust values.yaml file accordingly
-favorite:
-  food: PIZZA
-  drink: coffee
-```
-
-```
-nano iftest.yaml
-```
-
-```
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-configmap
-data:
-  myvalue: "Hello World"
-  drink: {{ .Values.favorite.drink | default "tea" | quote }}
-  food: {{ .Values.favorite.food | upper | quote }}
-  {{ if eq .Values.favorite.drink "coffee" }}mug: "true"{{ end }}
-
-```
-
-```
-helm template ..
-```
-
-### Step 2: (Problem) That will produce food: "PIZZA"mug: "true" because it consumed newlines on both sides.
-
-```
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-configmap
-data:
-  myvalue: "Hello World"
-  drink: {{ .Values.favorite.drink | default "tea" | quote }}
-  food: {{ .Values.favorite.food | upper | quote }}
-  {{- if eq .Values.favorite.drink "coffee" -}}
-  mug: "true"
-  {{- end -}}
-
-```
-
-### Step 3: Other solution 
-
-```
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-configmap
-data:
-  myvalue: "Hello World"
-  drink: {{ .Values.favorite.drink | default "tea" | quote }}
-  food: {{ .Values.favorite.food | upper | quote }}
-  {{- if eq .Values.favorite.drink "coffee"}}{{ nindent 2 "mug: true" }}
-  {{- end }}
-```
-
-### Step 4: Probably the best solution 
-
-```
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-configmap
-data:
-  myvalue: "Hello World"
-  drink: {{ .Values.favorite.drink | default "tea" | quote }}
-  food: {{ .Values.favorite.food | upper | quote }}
-  {{- if eq .Values.favorite.drink "coffee"}}
-  {{ "mug: true" }}
-  {{- end }}
-
-```
-
-
-### Reference
-
-  * https://helm.sh/docs/chart_template_guide/control_structures/
-
-### with
-
-
-### Walkthrough 
-
-#### Preparation 
-
-```
-helm create testenv
-cd testenv/templates
-rm -fR *.yaml
-```
-
-```
-## vi values.yml
-## Adjust values.yaml file accordingly
-favorite:
-  food: PIZZA
-  drink: coffee
-```
-
-#### Step 1: 
-
-```
-## nano cm.yaml
-```
-
-```
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-configmap
-data:
-  myvalue: "Hello World"
-  {{- with .Values.favorite }}
-  drink: {{ .drink | default "tea" | quote }}
-  food: {{ .food | upper | quote }}
-  {{- end }}
-```
-
-#### Step 2a: Does not work because scope does not fit 
-
-```
-  {{- with .Values.favorite }}
-  drink: {{ .drink | default "tea" | quote }}
-  food: {{ .food | upper | quote }}
-  release: {{ .Release.Name }}
-  {{- end }}
-
-```
-
-#### Step 2b: Solution 1: (Outside with) 
-
-```
-  {{- with .Values.favorite }}
-  drink: {{ .drink | default "tea" | quote }}
-  food: {{ .food | upper | quote }}
-  {{- end }}
-  release: {{ .Release.Name }}
-
-```
-
-#### Step 2c: Changing the scope 
-
-```
-  {{- with .Values.favorite }}
-  drink: {{ .drink | default "tea" | quote }}
-  food: {{ .food | upper | quote }}
-  release: {{ $.Release.Name }}
-  {{- end }}
-
-```
-
-
-### range
-
-
-### Preparation
-
-```
-helm create testenv
-cd testenv/templates
-rm -f *.yaml
-```
-
-### Step 1: Values.yaml 
-
-```
-favorite:
-  drink: coffee
-  food: pizza
-pizzaToppings:
-  - mushrooms
-  - cheese
-  - peppers
-  - onions
-```
-
-### Step 2 (Version 1):
-
-```
-## nano cm.yaml 
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-configmap
-data:
-  myvalue: "Hello World"
-  {{- with .Values.favorite }}
-  drink: {{ .drink | default "tea" | quote }}
-  food: {{ .food | upper | quote }}
-  {{- end }}
-  toppings: |-
-    {{- range .Values.pizzaToppings }}
-    - {{ . | title | quote }}
-    {{- end }}    
-```
-
-### Step 3 (Version 2 - works as well) 
-
-  * Accessing the parent scope
-
-```
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-configmap
-data:
-  myvalue: "Hello World"
-  {{- with .Values.favorite }}
-  drink: {{ .drink | default "tea" | quote }}
-  food: {{ .food | upper | quote }}
-  toppings: |-
-    {{- range $.Values.pizzaToppings }}
-    - {{ . | title | quote }}
-    {{- end }}    
-  {{- end }}
-```
-
 ## Sicherheit von helm-Chart
 
 ### Grundlagen / Best Practices
@@ -1175,6 +1769,10 @@ helm template --validate -f prod-values.yaml testprojekt
 ## oder aber direkt release installation
 helm install --dry-run -f prod-values.yaml testprojekt
 ```
+
+### Helm Charts - Development - Best practices
+
+  * https://helm.sh/docs/howto/charts_tips_and_tricks/
 
 ## Integration mit anderen Tools
 

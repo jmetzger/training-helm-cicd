@@ -53,12 +53,13 @@ helm -n cert-manager-<namenskuerzel> uninstall cert-manager
 ## CRD's noch da ? 
 
 ```
-kubectl get crds
+kubectl get crds | grep cert 
 ```
 
 
 ## CRD's händisch löschen 
 
 ```
-kubectl delete crd ...
+# Variante 1
+kubectl delete crd certificaterequests.cert-manager.io certificates.cert-manager.io  challenges.acme.cert-manager.io  clusterissuers.cert-manager.io  issuers.cert-manager.io orders.acme.cert-manager.io
 ```

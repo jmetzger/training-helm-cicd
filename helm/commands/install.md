@@ -19,6 +19,10 @@ helm install my-nginx bitnami/nginx --version 19.0.4 --dry-run # auch für unins
 helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
 ```
 
+```
+# überprüfen // laufen die pods 
+kubectl -n app-<namenskuerzel> get all 
+```
 
 ## Exercise: Upgrade to new version 
 

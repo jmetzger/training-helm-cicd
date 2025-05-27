@@ -14,5 +14,5 @@
 ## Formate / Ort 
 
   * Verzeichnis z.B. meine-app (und in dem Verzeichnis die bekannte Struktur von oben)
-  * tar.gz (Tape-Archive mit gnuzip komprimiert)
+  * tgz (Tape-Archive mit gnuzip komprimiert)
   * URL 

@@ -14,11 +14,14 @@ helm pull jetstack/cert-manager --untar
 ls -la
 cd cert-manager
 ls -la
+cd templates
+ls -la crds.yaml 
 ```
 
 ## Schritt 3: Installieren 
 
 ```
+cd 
 mkdir cm-values
 cd cm-values
 nano values.yaml

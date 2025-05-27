@@ -27,6 +27,12 @@ kubectl -n app-<namenskuerzel> get all
 ## Exercise: Upgrade to new version 
 
 ```
+# Recherche wie die Werte gesetzt werden (artifacthub.io) oder
+helm show values bitnami/nginx
+helm show values bitnami/nginx | less
+```
+
+```
 cd 
 mkdir -p nginx-values 
 cd nginx-values

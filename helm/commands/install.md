@@ -76,7 +76,7 @@ helm -n app-<namenskuerzel> history my-nginx
 helm -n app-<namenskuerzel> uninstall my-nginx 
 # namespace wird nicht gelöscht
 # händisch löschen
-kubectl delete ns my-nginx 
+kubectl delete ns app-<namenskuerzel>
 # crd's werden auch nicht gelöscht 
 ```
 

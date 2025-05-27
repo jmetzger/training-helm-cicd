@@ -3,6 +3,10 @@
 ## Install 
 
 ```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+
+```
 # Installiert 
 helm install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
 # Zeigt an, was er ausrollen würde 

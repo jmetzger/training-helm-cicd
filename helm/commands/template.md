@@ -12,8 +12,9 @@
 
 ### Was macht es nicht ? 
 
-  * Überprüft NICHT anhand der API-Definition
-    * z.B. sind die Felder richtig gesetzt bei Deployment
+
+  * Da er erst nicht an den schickt,
+  * Überpüft er nicht, ob der Syntax korrekt ist, nur ob das yaml-format eingehalten wird  
    
 ### Beispiel: 
 
@@ -21,7 +22,6 @@
 helm repo add bitnami https://charts.bitnami.com/bitnami
 # Kann sehr lang sein 
 helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | less
-
 helm -n app-jm template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
 
 ```

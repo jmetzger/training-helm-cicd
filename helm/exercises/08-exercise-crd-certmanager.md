@@ -34,6 +34,7 @@ crds:
 
 ```
 helm install cert-manager jetstack/cert-manager --namespace cert-manager-<namenskuerzel> --create-namespace -f values.yaml
+kubectl -n cert-manager-<namenskuerzel> get all
 ```
 
 ## CRD's da ? 

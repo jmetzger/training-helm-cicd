@@ -65,6 +65,8 @@ helm upgrade --install my-nginx bitnami/nginx --namespace app-<nameskuerzel> -f 
 kubectl -n app-<namenskuerzel> get pods
 helm -n app-<namenskuerzel> status my-nginx 
 helm -n app-<namenskuerzel> list
+# alle helm charts anzeigen, die im gesamten Cluster installierst wurden 
+helm -n app-<namenskuerzel> list -A
 helm -n app-<namenskuerzel> history my-nginx 
 ```
 

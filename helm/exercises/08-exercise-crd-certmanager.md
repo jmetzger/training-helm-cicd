@@ -40,7 +40,7 @@ kubectl -n cert-manager-<namenskuerzel> get all
 ## CRD's da ? 
 
 ```
-kubectl get crds
+kubectl get crds | grep cert
 ```
 
 

@@ -24,6 +24,7 @@
      * [Nur fertiges manifest ausgeben ohne Installation](helm/commands/template.md)
      * [Informationen aus nicht installierten Helm-Charts bekommen](helm/commands/show.md)
      * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
+     * [Aufräumen von CRD's nach deinstalliert](helm/exercises/08-exercise-crd-certmanager.md)
     
   1. Tipps & Tricks
      * [kubernetes manifests mit privatem Repo](helm/exercises/02-pod-from-private-repo.md)

@@ -4,7 +4,7 @@
 
 ### Warum ?
 
-  * Ich will vorher sehen, wie mein Manifest ausschaut, bevor ich es zum Api-Server schicke.
+  * Ich will vorher sehen, wie mein Manifest ausschaut, bevor ich es zum Kube-API-Server schicke.
 
 ### Was macht das ? 
 

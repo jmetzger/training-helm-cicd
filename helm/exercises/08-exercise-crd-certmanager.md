@@ -1,6 +1,22 @@
 # Exercise cert-manager - CRD's 
 
-## Installieren 
+## Schritt 1: repo hinzufügen 
+```
+helm repo add jetstack https://charts.jetstack.io
+```
+
+## Schritt 2: chart runterladen und entpacken (zum Gucken) 
+
+```
+helm pull jetstack/cert-manager
+ls -la
+helm pull jetstack/cert-manager --untar
+ls -la
+cd cert-manager
+ls -la
+```
+
+## Schritt 3: Installieren 
 
 ```
 mkdir cm-values
@@ -14,8 +30,6 @@ crds:
 ```
 
 ```
-helm repo add jetstack https://charts.jetstack.io
-helm repo update
 helm install cert-manager jetstack/cert-manager --namespace cert-manager-<namenskuerzel> --create-namespace -f values.yaml
 ```
 

@@ -64,6 +64,6 @@ helm -n app-<namenskuerzel> uninstall my-nginx
 
 ## Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
 
-  * if memory of container is bigger than limit an OOM-Killer will be trriger
+  * if memory of container is bigger than limit an OOM-Killer will be triggered
   * How to fix. Use memory limit in the application too !
     * https://techcommunity.microsoft.com/blog/appsonazureblog/unleashing-javascript-applications-a-guide-to-boosting-memory-limits-in-node-js/4080857

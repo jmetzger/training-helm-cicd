@@ -28,3 +28,12 @@ helm repo list
 helm search repo bitnami
 helm search hub
 ```
+
+## Helm - template 
+
+```
+# Rendern des Templates
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm template my-nginx bitnami/nginx
+helm template bitnami/nginx
+```  

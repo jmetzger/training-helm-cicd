@@ -56,7 +56,8 @@ helm template .
 helm lint .
 # Akzeptiert der API das so, wie ich es ihm schicke 
 helm -n app-<namenskuerzel> install app . --dry-run  
-helm -n app-<namenskuerzel> upgrade --install app . --create-namespace  
+helm -n app-<namenskuerzel> upgrade --install app . --create-namespace
+kubectl -n app-<namenskuerzel> get all 
 ```
 
 

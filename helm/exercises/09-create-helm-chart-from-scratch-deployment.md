@@ -1,5 +1,7 @@
 # Create helm chart from scratch with Deployment object 
 
+  * Really simple version to start 
+
 # Step 1: Create sample chart 
 
 ```
@@ -17,3 +19,32 @@ cd templates
 rm -fR tests
 rm -fR *.yaml 
 ```
+
+# Step 3: Create Deployment manifest 
+
+```
+nano deployment.yaml
+```
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 8 # tells deployment to run 8 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.22
+        ports:
+        - containerPort: 80
+```        
+

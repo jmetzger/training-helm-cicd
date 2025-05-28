@@ -8,7 +8,7 @@ mkdir -p helm-exercises
 cd helm-exercises 
 helm create iftest
 cd iftest/templates
-rm -f *.yaml
+rm -fR *.yaml
 ```
 
 

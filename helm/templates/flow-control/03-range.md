@@ -3,6 +3,9 @@
 ## Preparation
 
 ```
+cd
+mkdir -p helm-exercises
+cd helm-exercises 
 helm create testenv
 cd testenv/templates
 rm -f *.yaml

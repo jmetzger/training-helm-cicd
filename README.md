@@ -15,7 +15,10 @@
      * [Konfiguration von kubectl mit namespaces](kubectl/kubectl-einrichten.md)
      * [Installation von helm unter Linux](helm/installation/linux.md)
      * [Installation bash completion](helm/installation/bash-completion.md)
-    
+
+  1. Helm Grundlagen
+     * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)
+      
   1. Helm - Spickzettel
      * [Wichtig: Helm Spickzettel](helm/spickzettel.md)
 
@@ -54,8 +57,7 @@
 
   1. Grundlagen
      * [Feature / No-Features von Helm](/helm/grundlagen/features-no-features.md)
-     * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)
-
+   
   1. Tipps & Tricks
      * [kubernetes manifests mit privatem Repo](helm/exercises/02-pod-from-private-repo.md)
      * [helm chart mit images auf privatem Repo](helm/exercises/03-helm-nginx-image-from-private-repo.md)

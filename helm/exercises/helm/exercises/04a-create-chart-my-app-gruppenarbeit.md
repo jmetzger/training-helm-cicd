@@ -16,16 +16,16 @@ helm create my-app
 
 ```
 # Variante 1:
-helm install my-app-release my-app
+helm -n my-app-<namenskuerzel> install my-app-release my-app --create-namespace 
 ```
 
 ```
 # Variante 2:
 cd my-app
-helm install my-app-release .
+helm -n my-app-<namenskuerzel> install my-app-release . --create-namespace 
 ```
 
 ```
-kubectl get all
-kubectl get pods 
+kubectl -n my-app-<namenskuerzel> get all
+kubectl -n my-app-<namenskuerzel> get pods 
 ```

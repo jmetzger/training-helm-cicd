@@ -15,18 +15,22 @@
      * [Konfiguration von kubectl mit namespaces](#konfiguration-von-kubectl-mit-namespaces)
      * [Installation von helm unter Linux](#installation-von-helm-unter-linux)
      * [Installation bash completion](#installation-bash-completion)
-    
+
+  1. Helm Grundlagen
+     * [TopLevel Objekte](#toplevel-objekte)
+      
   1. Helm - Spickzettel
      * [Wichtig: Helm Spickzettel](#wichtig-helm-spickzettel)
 
   1. Arbeiten mit helm - charts
      * [Installation, Upgrade, Uninstall helm-Chart exercise](#installation-upgrade-uninstall-helm-chart-exercise)
+     * [Nur fertiges manifest ausgeben ohne Installation](#nur-fertiges-manifest-ausgeben-ohne-installation)
      * [Informationen aus nicht installierten Helm-Charts bekommen](#informationen-aus-nicht-installierten-helm-charts-bekommen)
      * [Chart runterladen und evtl. entpacken und bestimmte Version](#chart-runterladen-und-evtl-entpacken-und-bestimmte-version)
-    
-  1. Tipps & Tricks
-     * [kubernetes manifests mit privatem Repo](#kubernetes-manifests-mit-privatem-repo)
-     * [helm chart mit images auf privatem Repo](#helm-chart-mit-images-auf-privatem-repo)
+     * [Aufräumen von CRD's nach dem Deinstallieren](#aufräumen-von-crd's-nach-dem-deinstallieren)
+
+  1. Helm Charts entwickelmn
+     * [eigenes helm chart erstellen (Gruppe)](#eigenes-helm-chart-erstellen-gruppe)
 
   1. Spezial: Umgang mit Einrückungen
      * [Whitespaces meistern mit "-"](#whitespaces-meistern-mit-"-")
@@ -43,11 +47,20 @@
   1. Helm mit gitlab ci/cd
      * [Helm mit gitlab ci/cd ausrollen](#helm-mit-gitlab-cicd-ausrollen)
 
+  1. Metrics - Server
+     * [Metrics - Server mit helm installieren und verwenden](#metrics---server-mit-helm-installieren-und-verwenden)
+    
+  1. helm - Dokumentation
+     * [Helm Documentation](https://helm.sh/docs/)
+
 ## Backlog 
 
   1. Grundlagen
      * [Feature / No-Features von Helm](#feature--no-features-von-helm)
-     * [TopLevel Objekte](#toplevel-objekte)
+   
+  1. Tipps & Tricks
+     * [kubernetes manifests mit privatem Repo](#kubernetes-manifests-mit-privatem-repo)
+     * [helm chart mit images auf privatem Repo](#helm-chart-mit-images-auf-privatem-repo)
 
   1. Helm-Befehle und -Funktionen
      * [Repo einrichten](#repo-einrichten)
@@ -132,7 +145,7 @@
 ### Formate / Ort 
 
   * Verzeichnis z.B. meine-app (und in dem Verzeichnis die bekannte Struktur von oben)
-  * tar.gz (Tape-Archive mit gnuzip komprimiert)
+  * tgz (Tape-Archive mit gnuzip komprimiert)
   * URL 
 
 ### Warum Helm in Kubernetes verwenden ?
@@ -258,6 +271,24 @@ exit
 su - tln11
 ```
 
+## Helm Grundlagen
+
+### TopLevel Objekte
+
+
+### .Chart 
+
+ * Zieht alle Infomationen aus der Chart.yaml
+ * Alle Eigenschaften fangen mit einem grossen Buchstaben, statt klein wie im Chart, z.B. .Chart.Name
+
+### .Values 
+
+ * Ansprechen der Values bzw. Default Values
+
+### .Release 
+
+ * Ansprechen aller Eigenschaften aus der Release z.B. Release.Name 
+
 ## Helm - Spickzettel
 
 ### Wichtig: Helm Spickzettel
@@ -292,12 +323,25 @@ helm search repo bitnami
 helm search hub
 ```
 
+### Helm - template 
+
+```
+## Rendern des Templates
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm template my-nginx bitnami/nginx
+helm template bitnami/nginx
+```  
+
 ## Arbeiten mit helm - charts
 
 ### Installation, Upgrade, Uninstall helm-Chart exercise
 
 
 ### Install 
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
 
 ```
 ## Installiert 
@@ -312,8 +356,18 @@ helm install my-nginx bitnami/nginx --version 19.0.4 --dry-run # auch für unins
 helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
 ```
 
+```
+## überprüfen // laufen die pods 
+kubectl -n app-<namenskuerzel> get all 
+```
 
 ### Exercise: Upgrade to new version 
+
+```
+## Recherche wie die Werte gesetzt werden (artifacthub.io) oder
+helm show values bitnami/nginx
+helm show values bitnami/nginx | less
+```
 
 ```
 cd 
@@ -339,7 +393,7 @@ resources:
 
 ```
 cd ..
-helm upgrade --install my-nginx bitnami/nginx --namespace app-<nameskuerzel> -f prod/values.yaml  
+helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app-<nameskuerzel> -f prod/values.yaml  
 ```
 
 #### Umschauen 
@@ -348,22 +402,68 @@ helm upgrade --install my-nginx bitnami/nginx --namespace app-<nameskuerzel> -f 
 kubectl -n app-<namenskuerzel> get pods
 helm -n app-<namenskuerzel> status my-nginx 
 helm -n app-<namenskuerzel> list
-helm -n app-<namenskuerzel> history 
+## alle helm charts anzeigen, die im gesamten Cluster installierst wurden 
+helm -n app-<namenskuerzel> list -A
+helm -n app-<namenskuerzel> history my-nginx 
 ```
 
 #### Uninstall 
 
 ```
 helm -n app-<namenskuerzel> uninstall my-nginx 
-## namespace wird nicht gelöscht 
+## namespace wird nicht gelöscht
+## händisch löschen
+kubectl delete ns app-<namenskuerzel>
 ## crd's werden auch nicht gelöscht 
 ```
 
 ### Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
 
-  * if memory of container is bigger than limit an OOM-Killer will be trriger
+  * if memory of container is bigger than limit an OOM-Killer will be triggered
   * How to fix. Use memory limit in the application too !
     * https://techcommunity.microsoft.com/blog/appsonazureblog/unleashing-javascript-applications-a-guide-to-boosting-memory-limits-in-node-js/4080857
+
+### Nur fertiges manifest ausgeben ohne Installation
+
+
+### template 
+
+#### Warum ?
+
+  * Ich will vorher sehen, wie mein Manifest ausschaut, bevor ich es zum Kube-API-Server schicke.
+
+#### Was macht das ? 
+
+  * Rendered das Template.
+
+#### Was macht es nicht ? 
+
+
+  * Da er erst nicht an den schickt,
+  * Überpüft er nicht, ob der Syntax korrekt ist, nur ob das yaml-format eingehalten wird  
+   
+#### Beispiel: 
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+## Kann sehr lang sein 
+helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | less
+helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
+
+```
+
+### template --debug 
+
+#### Warum ? 
+
+  * Zeigt mein template auch an, wenn ein yaml-Einrückungsfehler oder Syntax - fehler da ist. 
+
+#### Beispiel 
+
+```
+helm -n app-jm template my-nginx bitnami/nginx --version 19.0.4 --debug
+```
+    
 
 ### Informationen aus nicht installierten Helm-Charts bekommen
 
@@ -381,7 +481,6 @@ helm show all bitnami/mariadb
 ```
 
 ```
-helm show readme
 helm show readme bitnami/mariadb
 helm show chart bitnami/mariadb
 ```
@@ -417,102 +516,106 @@ helm pull bitnami/mariadb --version 12.1.6
 helm pull bitnami/mariadb --version 12.1.6 --untar
 ```
 
-## Tipps & Tricks
-
-### kubernetes manifests mit privatem Repo
+### Aufräumen von CRD's nach dem Deinstallieren
 
 
-### Exercise 
-
+### Schritt 1: repo hinzufügen 
 ```
-mkdir -p manifests
-cd manifests
-mkdir private-repo
-cd private-repo
+helm repo add jetstack https://charts.jetstack.io
 ```
 
-```
-kubectl create secret docker-registry regcred --docker-server=registry.do.t3isp.de \
---docker-username=11trainingdo --docker-password=<sehr-geheim> --dry-run=client -o yaml > 01-secret.yaml 
-```
+### Schritt 2: chart runterladen und entpacken (zum Gucken) 
 
 ```
-kubectl create secret generic mariadb-secret --from-literal=MARIADB_ROOT_PASSWORD=11abc432 --dry-run=client -o yaml > 02-secret.yml
+helm pull jetstack/cert-manager
+ls -la
+helm pull jetstack/cert-manager --untar
+ls -la
+cd cert-manager
+ls -la
+cd templates
+ls -la crds.yaml 
 ```
 
+### Schritt 3: Installieren 
 
 ```
-nano 02-pod.yaml
-```
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: private-reg
-spec:
-  containers:
-  - name: private-reg-container
-    image: registry.do.t3isp.de/mariadb:11.4.5
-    envFrom:
-      - secretRef:
-          name: mariadb-secret
-  imagePullSecrets:
-  - name: regcred
-```
-
-```
-kubectl apply -f .
-kubectl get pods -o wide private-reg
-kubectl describe pods private-reg 
-
-### helm chart mit images auf privatem Repo
-
-
-### Walkthrough 
-
-```
-cd
-mkdir -p manifests
-cd manifests
-mkdir nginx-values
-cd nginx-values
-mkdir prod
-cd prod 
+cd 
+mkdir cm-values
+cd cm-values
 nano values.yaml
 ```
 
 ```
+crds:
+  enabled: true
+```
 
-global:
-  security:
-     allowInsecureImages: true
+```
+helm install cert-manager jetstack/cert-manager --namespace cert-manager-<namenskuerzel> --create-namespace -f values.yaml
+kubectl -n cert-manager-<namenskuerzel> get all
+```
 
+### CRD's da ? 
 
-image:
-  registry: "registry.do.t3isp.de"
-  repository: nginx
-  # tag: 1.27.4
-  pullSecrets:
-    - regcred-do
-
-extraDeploy:
-  - apiVersion: v1
-    data:
-      .dockerconfigjson: <gibts-from-trainer>
-    kind: Secret
-    metadata:
-       name: regcred-do
-    type: kubernetes.io/dockerconfigjson
-
+```
+kubectl get crds | grep cert
 ```
 
 
+### Deinstallieren 
 
 ```
-cd
-cd manifests/nginx-values
-helm upgrade --install my-nginx bitnami/nginx -f prod/values.yaml
+helm -n cert-manager-<namenskuerzel> uninstall cert-manager
+```
+
+### CRD's noch da ? 
+
+```
+kubectl get crds | grep cert 
+```
+
+
+### CRD's händisch löschen 
+
+```
+## Variante 1
+kubectl delete crd certificaterequests.cert-manager.io certificates.cert-manager.io  challenges.acme.cert-manager.io  clusterissuers.cert-manager.io  issuers.cert-manager.io orders.acme.cert-manager.io
+```
+
+## Helm Charts entwickelmn
+
+### eigenes helm chart erstellen (Gruppe)
+
+
+### Chart erstellen 
+
+```
+cd 
+mkdir my-charts
+cd my-charts
+```
+
+```
+helm create my-app
+``` 
+
+### Install helm - chart 
+
+```
+## Variante 1:
+helm -n my-app-<namenskuerzel> install my-app-release my-app --create-namespace 
+```
+
+```
+## Variante 2:
+cd my-app
+helm -n my-app-<namenskuerzel> install my-app-release . --create-namespace 
+```
+
+```
+kubectl -n my-app-<namenskuerzel> get all
+kubectl -n my-app-<namenskuerzel> get pods 
 ```
 
 ## Spezial: Umgang mit Einrückungen
@@ -650,7 +753,9 @@ helm template .
 ```
 
 
-### Ref: https://helm.sh/docs/chart_template_guide/function_list/#type-conversion-functions
+### Ref: 
+ 
+  * https://helm.sh/docs/chart_template_guide/function_list/#type-conversion-functions
 
 ## Flow Control
 
@@ -660,15 +765,21 @@ helm template .
 ### Prepare (if not done yet)
 
 ```
+cd
+mkdir -p helm-exercises
+cd helm-exercises 
 helm create iftest
 cd iftest/templates
-rm -f *.yaml
+rm -fR *.yaml
 ```
 
 
 ### Step 2: values-file erweitern 
 
 ```
+rm ../values.yaml
+rm -fR tests
+rm -fR NOTES.txt
 nano ../values.yaml
 ```
 
@@ -933,6 +1044,39 @@ deploy:
 
   * https://gitlab.com/jmetzger/training-helm-chart-kubernetes-gitlab-ci-cd
 
+## Metrics - Server
+
+### Metrics - Server mit helm installieren und verwenden
+
+
+### Warum ? 
+
+  * Es wird ein API bereitgestellt, die Informationen zu den Auslastung von Pods und Nodes sammelt
+
+### Installation 
+
+```
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
+helm -n kube-system upgrade --install my-metrics-server metrics-server/metrics-server --version 3.12.2
+```
+
+  * Achtung, danach geht es nicht sofort, es dauert einen Momeent bis ich es verwenden kann (geschätzt 5 Minuten) 
+
+### Verwendung 
+
+```
+kubectl top pods
+## Pods in allen Namespaces 
+kubectl top pods -A
+kubectl top nodes
+```
+
+## helm - Dokumentation
+
+### Helm Documentation
+
+  * https://helm.sh/docs/
+
 ## Grundlagen
 
 ### Feature / No-Features von Helm
@@ -945,21 +1089,103 @@ deploy:
   * see also Internals [Helm Sorting Objects](/helm/internals.md)
 
 
-### TopLevel Objekte
+## Tipps & Tricks
+
+### kubernetes manifests mit privatem Repo
 
 
-### .Chart 
+### Exercise 
 
- * Zieht alle Infomationen aus der Chart.yaml
- * Alle Eigenschaften fangen mit einem grossen Buchstaben, statt klein wie im Chart, z.B. .Chart.Name
+```
+mkdir -p manifests
+cd manifests
+mkdir private-repo
+cd private-repo
+```
 
-### .Values 
+```
+kubectl create secret docker-registry regcred --docker-server=registry.do.t3isp.de \
+--docker-username=11trainingdo --docker-password=<sehr-geheim> --dry-run=client -o yaml > 01-secret.yaml 
+```
 
- * Ansprechen der Values bzw. Default Values
+```
+kubectl create secret generic mariadb-secret --from-literal=MARIADB_ROOT_PASSWORD=11abc432 --dry-run=client -o yaml > 02-secret.yml
+```
 
-### .Release 
 
- * Ansprechen aller Eigenschaften aus der Release z.B. Release.Name 
+```
+nano 02-pod.yaml
+```
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: private-reg
+spec:
+  containers:
+  - name: private-reg-container
+    image: registry.do.t3isp.de/mariadb:11.4.5
+    envFrom:
+      - secretRef:
+          name: mariadb-secret
+  imagePullSecrets:
+  - name: regcred
+```
+
+```
+kubectl apply -f .
+kubectl get pods -o wide private-reg
+kubectl describe pods private-reg 
+
+### helm chart mit images auf privatem Repo
+
+
+### Walkthrough 
+
+```
+cd
+mkdir -p manifests
+cd manifests
+mkdir nginx-values
+cd nginx-values
+mkdir prod
+cd prod 
+nano values.yaml
+```
+
+```
+
+global:
+  security:
+     allowInsecureImages: true
+
+
+image:
+  registry: "registry.do.t3isp.de"
+  repository: nginx
+  # tag: 1.27.4
+  pullSecrets:
+    - regcred-do
+
+extraDeploy:
+  - apiVersion: v1
+    data:
+      .dockerconfigjson: <gibts-from-trainer>
+    kind: Secret
+    metadata:
+       name: regcred-do
+    type: kubernetes.io/dockerconfigjson
+
+```
+
+
+
+```
+cd
+cd manifests/nginx-values
+helm upgrade --install my-nginx bitnami/nginx -f prod/values.yaml
+```
 
 ## Helm-Befehle und -Funktionen
 
@@ -1011,7 +1237,6 @@ helm show all bitnami/mariadb
 ```
 
 ```
-helm show readme
 helm show readme bitnami/mariadb
 helm show chart bitnami/mariadb
 ```

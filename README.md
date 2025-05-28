@@ -25,10 +25,9 @@
      * [Informationen aus nicht installierten Helm-Charts bekommen](helm/commands/show.md)
      * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
      * [Aufräumen von CRD's nach dem Deinstallieren](helm/exercises/08-exercise-crd-certmanager.md)
-    
-  1. Tipps & Tricks
-     * [kubernetes manifests mit privatem Repo](helm/exercises/02-pod-from-private-repo.md)
-     * [helm chart mit images auf privatem Repo](helm/exercises/03-helm-nginx-image-from-private-repo.md)
+
+  1. Helm Charts entwickelmn
+     * [eigenes helm chart erstellen (Gruppe)](/helm/exercises/04a-create-chart-my-app-gruppenarbeit.md)    
 
   1. Spezial: Umgang mit Einrückungen
      * [Whitespaces meistern mit "-"](basics/whitespace-management.md)
@@ -56,6 +55,10 @@
   1. Grundlagen
      * [Feature / No-Features von Helm](/helm/grundlagen/features-no-features.md)
      * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)
+
+  1. Tipps & Tricks
+     * [kubernetes manifests mit privatem Repo](helm/exercises/02-pod-from-private-repo.md)
+     * [helm chart mit images auf privatem Repo](helm/exercises/03-helm-nginx-image-from-private-repo.md)
 
   1. Helm-Befehle und -Funktionen
      * [Repo einrichten](/helm/commands/repo.md)

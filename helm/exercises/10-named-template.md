@@ -73,7 +73,7 @@ spec:
         - name: web
           image: "nginx:latest"
           ports:
-            {{ include "range.containerPort" . }}
+            {{ include "range.containerPort" . | nindent 12 }}
 ```
 
 ```

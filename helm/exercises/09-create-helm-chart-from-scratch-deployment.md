@@ -53,4 +53,9 @@ spec:
 ```
 cd ..
 helm template .
+helm lint .
+# Akzeptiert der API das so, wie ich es ihm schicke 
+helm -n app-<namenskuerzel> install . --dry-run  
 ```
+
+

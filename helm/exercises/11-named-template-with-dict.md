@@ -8,12 +8,13 @@
 ## Step 1: Put in file starting _helpers.tpl 
 
 ```
-{{/* Definiere ein named template namens "mychart.containerPort" */}}
-{{- define "range.containerPort" -}}
-- name: http
-  containerPort: 80
+{{/* Named template mit Parametern */}}
+{{- define "mychart.containerPort" -}}
+- name: {{ .name }}
+  containerPort: {{ .port }}
   protocol: TCP
 {{- end }}
+
 ```
 
 ## Step 2: templates/deployment.yaml 

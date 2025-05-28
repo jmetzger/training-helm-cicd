@@ -16,7 +16,8 @@ rm -fR *.yaml
 
 ```
 rm ../values.yaml
-rm -fR tests 
+rm -fR tests
+rm -fR NOTES.txt
 nano ../values.yaml
 ```
 

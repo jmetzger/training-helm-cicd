@@ -47,6 +47,9 @@
 
   1. Metrics - Server
      * [Metrics - Server mit helm installieren und verwenden](/helm/metrics-server.md)
+    
+  1. helm - Dokumentation
+     * [Helm Documentation](https://helm.sh/docs/)
 
 ## Backlog 
 

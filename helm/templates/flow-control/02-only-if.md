@@ -3,6 +3,9 @@
 ## Prepare (if not done yet)
 
 ```
+cd
+mkdir -p helm-exercises
+cd helm-exercises 
 helm create iftest
 cd iftest/templates
 rm -f *.yaml

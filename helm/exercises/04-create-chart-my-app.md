@@ -17,9 +17,9 @@ helm create my-app
 ```
 # Variante 1:
 helm install my-app-release my-app
-``
+```
 
-``
+```
 # Variante 2:
 cd my-app
 helm install my-app-release .

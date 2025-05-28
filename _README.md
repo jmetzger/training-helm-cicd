@@ -29,7 +29,7 @@
      * [Chart runterladen und evtl. entpacken und bestimmte Version](#chart-runterladen-und-evtl-entpacken-und-bestimmte-version)
      * [Aufräumen von CRD's nach dem Deinstallieren](#aufräumen-von-crd's-nach-dem-deinstallieren)
 
-  1. Helm Charts entwickelmn
+  1. Helm Charts entwickeln
      * [eigenes helm chart erstellen (Gruppe)](#eigenes-helm-chart-erstellen-gruppe)
 
   1. Spezial: Umgang mit Einrückungen
@@ -43,6 +43,10 @@
      * [if](#if)
      * [with](#with)
      * [range](#range)
+
+  1. Named Templates
+     *  [named template](helm/exercises/10-named-template.md)
+     *  [named template with dict](/helm/exercises/11-named-template-with-dict.md)
     
   1. Helm mit gitlab ci/cd
      * [Helm mit gitlab ci/cd ausrollen](#helm-mit-gitlab-cicd-ausrollen)
@@ -583,7 +587,7 @@ kubectl get crds | grep cert
 kubectl delete crd certificaterequests.cert-manager.io certificates.cert-manager.io  challenges.acme.cert-manager.io  clusterissuers.cert-manager.io  issuers.cert-manager.io orders.acme.cert-manager.io
 ```
 
-## Helm Charts entwickelmn
+## Helm Charts entwickeln
 
 ### eigenes helm chart erstellen (Gruppe)
 
@@ -887,6 +891,12 @@ nano cm.yaml
 ```
 
 ```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
   {{- with .Values.favorite }}
   drink: {{ .drink | default "tea" | quote }}
   food: {{ .food | upper | quote }}
@@ -903,6 +913,12 @@ helm template --debug ..
 #### Step 2b: Solution 1: (Outside with) 
 
 ```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
   {{- with .Values.favorite }}
   drink: {{ .drink | default "tea" | quote }}
   food: {{ .food | upper | quote }}
@@ -911,9 +927,21 @@ helm template --debug ..
 
 ```
 
+```
+helm template --debug ..
+```
+
+
+
 #### Step 2c: Changing the scope 
 
 ```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
   {{- with .Values.favorite }}
   drink: {{ .drink | default "tea" | quote }}
   food: {{ .food | upper | quote }}
@@ -922,6 +950,9 @@ helm template --debug ..
 
 ```
 
+```
+helm template --debug ..
+```
 
 ### range
 
@@ -929,8 +960,11 @@ helm template --debug ..
 ### Preparation
 
 ```
-helm create testenv
-cd testenv/templates
+cd
+mkdir -p helm-exercises
+cd helm-exercises 
+helm create range
+cd range/templates
 rm -f *.yaml
 ```
 
@@ -987,6 +1021,8 @@ data:
     {{- end }}    
   {{- end }}
 ```
+
+## Named Templates
 
 ## Helm mit gitlab ci/cd
 

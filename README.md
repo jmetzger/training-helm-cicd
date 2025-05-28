@@ -45,6 +45,9 @@
   1. Helm mit gitlab ci/cd
      * [Helm mit gitlab ci/cd ausrollen](helm/gitlab-ci-cd/example-helm-kubernetes.md)
 
+  1. Metrics - Server
+     * [Metrics - Server mit helm installieren und verwenden](/helm/metrics-server.md)
+
 ## Backlog 
 
   1. Grundlagen

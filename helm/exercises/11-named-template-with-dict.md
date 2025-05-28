@@ -9,7 +9,7 @@
 
 ```
 {{/* Named template mit Parametern */}}
-{{- define "mychart.containerPort" -}}
+{{- define "range.containerPort" -}}
 - name: {{ .name }}
   containerPort: {{ .port }}
   protocol: TCP

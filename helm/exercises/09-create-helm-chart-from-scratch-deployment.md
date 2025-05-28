@@ -48,3 +48,9 @@ spec:
         - containerPort: 80
 ```        
 
+## Step 4: Testen des Charts 
+
+```
+cd ..
+helm template .
+```

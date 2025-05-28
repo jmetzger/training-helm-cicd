@@ -16,6 +16,7 @@ rm -fR *.yaml
 
 ```
 rm ../values.yaml
+rm -fR tests 
 nano ../values.yaml
 ```
 

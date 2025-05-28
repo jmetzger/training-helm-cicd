@@ -6,8 +6,8 @@
 cd
 mkdir -p helm-exercises
 cd helm-exercises 
-helm create testenv
-cd testenv/templates
+helm create range
+cd range/templates
 rm -f *.yaml
 ```
 

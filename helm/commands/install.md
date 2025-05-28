@@ -56,7 +56,7 @@ resources:
 
 ```
 cd ..
-helm upgrade --install my-nginx bitnami/nginx --namespace app-<nameskuerzel> -f prod/values.yaml  
+helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app-<nameskuerzel> -f prod/values.yaml  
 ```
 
 ### Umschauen 

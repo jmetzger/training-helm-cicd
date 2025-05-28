@@ -1,6 +1,12 @@
 # Get information from release 
 
 ```
+# evtl namespace verwenden, wenn im Namespace installiert
+helm get values my-nginx -n app-ms
+```
+
+
+```
 # Zeige alle user geänderten values an 
 helm get values my-nginx
 # Zeige alle values, auch defaults an 

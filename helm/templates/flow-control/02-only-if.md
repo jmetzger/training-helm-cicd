@@ -15,6 +15,7 @@ rm -fR *.yaml
 ## Step 2: values-file erweitern 
 
 ```
+rm ../values.yaml
 nano ../values.yaml
 ```
 

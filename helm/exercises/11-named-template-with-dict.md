@@ -38,7 +38,7 @@ spec:
         - name: web
           image: "nginx:latest"
           ports:
-            {{ include "range.containerPort" . }}
+            {{ include "range.containerPort" (dict "name" "http" "port" 8080) | nindent 2 }}
 ```
 
 ```

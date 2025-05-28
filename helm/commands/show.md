@@ -13,7 +13,6 @@ helm show all bitnami/mariadb
 ```
 
 ```
-helm show readme
 helm show readme bitnami/mariadb
 helm show chart bitnami/mariadb
 ```

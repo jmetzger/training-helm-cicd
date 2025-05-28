@@ -29,7 +29,7 @@
      * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
      * [Aufräumen von CRD's nach dem Deinstallieren](helm/exercises/08-exercise-crd-certmanager.md)
 
-  1. Helm Charts entwickelmn
+  1. Helm Charts entwickeln
      * [eigenes helm chart erstellen (Gruppe)](/helm/exercises/04a-create-chart-my-app-gruppenarbeit.md)    
 
   1. Spezial: Umgang mit Einrückungen
@@ -43,6 +43,10 @@
      * [if](/helm/templates/flow-control/02-only-if.md)
      * [with](/helm/templates/flow-control/02-with.md)
      * [range](/helm/templates/flow-control/03-range.md)
+
+  1. Named Templates
+     *  [named template](helm/exercises/10-named-template.md)
+     *  
     
   1. Helm mit gitlab ci/cd
      * [Helm mit gitlab ci/cd ausrollen](helm/gitlab-ci-cd/example-helm-kubernetes.md)

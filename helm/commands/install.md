@@ -27,7 +27,7 @@ kubectl -n app-<namenskuerzel> get all
 ## Exercise: Upgrade to new version 
 
 ```
-# Recherche wie die Werte gesetzt werden (artifacthub.io) oder
+# Recherchiere wie die Werte gesetzt werden (artifacthub.io) oder verwende die folgenden Befehle:
 helm show values bitnami/nginx
 helm show values bitnami/nginx | less
 ```
@@ -74,6 +74,8 @@ helm -n app-<namenskuerzel> history my-nginx
 
 ```
 helm -n app-tln1 get values my-nginx
+helm -n app-tln1 get manifest my-nginx
+helm -n app-tln1 get manifest my-nginx | grep "150Mi" -A4 -B4 
 
 ```
 

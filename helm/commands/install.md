@@ -76,7 +76,9 @@ helm -n app-<namenskuerzel> history my-nginx
 helm -n app-tln1 get values my-nginx
 helm -n app-tln1 get manifest my-nginx
 helm -n app-tln1 get manifest my-nginx | grep "150Mi" -A4 -B4 
-
+# Can I see all values use -> YES
+# Look for COMPUTED VALUES in get all ->
+helm -n app-tln1 get all my-nginx 
 ```
 
 ### Uninstall 

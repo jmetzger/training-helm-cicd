@@ -16,6 +16,9 @@
      * [Installation von helm unter Linux](helm/installation/linux.md)
      * [Installation bash completion](helm/installation/bash-completion.md)
 
+  1. Helm Internals
+     * [Helm template - Rendering Prozess](helm/internals/helm-template-ablauf.md)
+
   1. Helm Grundlagen
      * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)
       

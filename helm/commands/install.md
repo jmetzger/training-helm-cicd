@@ -70,6 +70,13 @@ helm -n app-<namenskuerzel> list -A
 helm -n app-<namenskuerzel> history my-nginx 
 ```
 
+### Umschauen get 
+
+```
+helm -n app-tln1 get values my-nginx
+
+```
+
 ### Uninstall 
 
 ```

@@ -56,7 +56,9 @@ nano values.yaml
 
 ```
 # unten anfügen 
-redis: false
+redis:
+  enabled:
+    false
 ```
 
 ```

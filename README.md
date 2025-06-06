@@ -63,6 +63,7 @@
     
   1. helm - Dokumentation
      * [Helm Documentation](https://helm.sh/docs/)
+     * [Built in TopLevel - Objects like .Release](https://helm.sh/docs/chart_template_guide/builtin_objects/)
 
 ## Backlog 
 

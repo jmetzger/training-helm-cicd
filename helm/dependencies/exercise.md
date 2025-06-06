@@ -25,7 +25,7 @@ ls -la Chart.lock
 ```
 
 ```
-rm -fR chart
+rm -fR charts
 helm build update
 ```
 

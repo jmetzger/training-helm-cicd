@@ -17,7 +17,8 @@
      * [Installation bash completion](helm/installation/bash-completion.md)
 
   1. Helm Internals
-     * [Helm template - Rendering Prozess](helm/internals/helm-template-ablauf.md)
+     * [Helm template - Rendering Prozess](/helm/internals/helm-template-ablauf.md)
+     * [helm vs. kubectl vs. oc](/helm/internals/helm-vs-oc-vs-kubectl.md)
 
   1. Helm Grundlagen
      * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)

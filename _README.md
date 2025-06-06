@@ -2,6 +2,9 @@
 
 
 ## Agenda
+  1. Kubernetes
+     * [Aufbau von Browser zu Applikation - Schaubild](#aufbau-von-browser-zu-applikation---schaubild)
+
   1. Helm Einfuehrung 
      * [Was ist helm ?](#was-ist-helm-)
      * [Was kann helm ?](#was-kann-helm-)
@@ -15,6 +18,17 @@
      * [Konfiguration von kubectl mit namespaces](#konfiguration-von-kubectl-mit-namespaces)
      * [Installation von helm unter Linux](#installation-von-helm-unter-linux)
      * [Installation bash completion](#installation-bash-completion)
+
+  1. Helm Internals
+     * [Helm template - Rendering Prozess](#helm-template---rendering-prozess)
+     * [helm vs. kubectl vs. oc](#helm-vs-kubectl-vs-oc)
+
+  1. Helm - best practices
+     * [Wann quotes in yaml und in resources  (Kubernetes/OCP)](#wann-quotes-in-yaml-und-in-resources--kubernetesocp)
+     * [Gute Struktur für Values und Charts](#gute-struktur-für-values-und-charts)
+
+  1. Helm - Advanced
+     * [Helm Dependencies Exercise](#helm-dependencies-exercise)
 
   1. Helm Grundlagen
      * [TopLevel Objekte](#toplevel-objekte)
@@ -56,6 +70,7 @@
     
   1. helm - Dokumentation
      * [Helm Documentation](https://helm.sh/docs/)
+     * [Built in TopLevel - Objects like .Release](https://helm.sh/docs/chart_template_guide/builtin_objects/)
 
 ## Backlog 
 
@@ -113,6 +128,13 @@
      * [helm template --validate - gegen api-server testen](#helm-template---validate---gegen-api-server-testen)
 
 <div class="page-break"></div>
+
+## Kubernetes
+
+### Aufbau von Browser zu Applikation - Schaubild
+
+
+![image](https://github.com/user-attachments/assets/0f2086fd-2265-4a01-9bdc-09955c4b8e74)
 
 ## Helm Einfuehrung 
 
@@ -275,6 +297,222 @@ exit
 su - tln11
 ```
 
+## Helm Internals
+
+### Helm template - Rendering Prozess
+
+
+### Ablauf 
+
+![Helm Template - Rendering Ablauf](/images/helm-template-ablauf.svg)
+
+### Aufbau des Kontext:
+
+  * Helm baut einen Kontext auf:
+  * bedeutet bei Helm, dass für jedes Chart (und Subchart) eine Datenstruktur erstellt wird, die die Templates beim Rendern als Eingabe verwenden.
+
+#### Struktur des Kontext
+
+```
+├── Chart:
+│   ├── Name: mychart
+│   └── Version: 0.1.0
+├── Release:
+│   ├── Name: myrelease
+│   └── Namespace: default
+├── Values:
+│   ├── image:
+│   │   └── tag: 1.2.3
+│   └── global:
+│       └── commonLabels: {...}
+├── Capabilities:
+│   └── APIVersions: [...]
+├── Files:
+│   └── get: function to read files/
+└── Template:
+    └── Name: templates/deployment.yaml
+```
+
+### helm vs. kubectl vs. oc
+
+
+![kubectl vs. oc vs. helm](/images/helm-oc-kubectl-api-server-openshift.svg)
+
+## Helm - best practices
+
+### Wann quotes in yaml und in resources  (Kubernetes/OCP)
+
+
+In YAML sind Anführungszeichen *optional*, aber es gibt einige klare Regeln, **wann du sie brauchst** und **wann du sie besser weglässt**. Ich erkläre es dir allgemein und dann mit Blick auf Kubernetes-Ressourcen.
+
+---
+
+### ✅ **Wann du in YAML Anführungszeichen verwenden solltest**
+
+| Fall                                                                                                 | Beispiel                     | Erklärung                                                                       |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------- |
+| **Sonderzeichen** wie `:`, `#`, `@`, `{`, `}`                                                        | `"abc:123"`                  | Ohne Quotes würde `:` als Trennzeichen interpretiert.                           |
+| **Strings, die mit `~`, `null`, `yes`, `no`, `on`, `off`, `true`, `false` beginnen**                 | `"no"`                       | YAML interpretiert unquoted `no` als `false`.                                   |
+| **Strings mit Leerzeichen oder Zeilenumbrüchen**                                                     | `"Hello World"`              | Ohne Quotes wäre das ein Syntaxfehler.                                          |
+| **Zahlen, die nicht als Zahl interpretiert werden sollen** (z. B. Postleitzahlen mit führender Null) | `"01234"`                    | Ohne Quotes würde `01234` als Oktalzahl gelesen.                                |
+| **Strings mit Unicode oder Escape-Sequenzen**                                                        | `"Line\nBreak"`              | Nur mit doppelten Quotes wird `\n` als Linebreak erkannt.                       |
+| **Variablen oder Helm-Templates** in Helm Charts                                                     | `value: "{{ .Values.foo }}"` | Hier brauchst du doppelte Quotes, damit die Klammern als String erkannt werden. |
+
+---
+
+### ❌ **Wann du in YAML keine Anführungszeichen brauchst**
+
+| Fall                                            | Beispiel           | Erklärung                                 |
+| ----------------------------------------------- | ------------------ | ----------------------------------------- |
+| **Einfache Strings ohne Sonderzeichen**         | `name: nginx`      | Klarer, einfacher Name – kein Risiko.     |
+| **Zahlen, die wirklich Zahlen sind**            | `replicas: 3`      | Wird korrekt als Zahl erkannt.            |
+| **Booleans, die wirklich booleans sein sollen** | `enabled: true`    | Wird korrekt als boolescher Wert erkannt. |
+| **Listen und Dictionaries**                     | `ports: [80, 443]` | Quotes wären unnötig.                     |
+
+---
+
+### 📦 Bei Kubernetes-Ressourcen (manifeste YAMLs)
+
+In Kubernetes-YAML-Dateien wie `Deployment`, `Service`, `ConfigMap`, usw. gelten die gleichen YAML-Regeln, aber einige typische Beispiele:
+
+| Feld                 | Beispiel                              | Mit/ohne Quotes                                                    |
+| -------------------- | ------------------------------------- | ------------------------------------------------------------------ |
+| `kind`, `apiVersion` | `kind: Deployment`                    | Ohne Quotes                                                        |
+| Container-Befehle    | `command: ["sh", "-c", "echo Hello"]` | Strings in Arrays **mit** Quotes                                   |
+| `env`-Variablen      | `value: "123"`                        | Quotes empfehlenswert, da es sonst als Zahl gedeutet werden könnte |
+| `args` mit Template  | `args: ["--url={{ .Values.url }}"]`   | Quotes zwingend wegen Helm-Template                                |
+
+---
+
+### 💡 Faustregel
+
+* 🔹 **Immer Quotes**, wenn es Zweifel geben könnte.
+* 🔹 **Keine Quotes nötig**, wenn es ein klarer einfacher Wert ist (String ohne Sonderzeichen, Zahl, Bool).
+* 🔹 **Bei Helm immer vorsichtig sein** – lieber doppelte Quotes `"{{ }}"` statt einfache `'{{ }}'` oder ganz ohne.
+
+---
+
+Wenn du willst, zeige ich dir gerne ein konkretes Kubernetes-Beispiel mit und ohne Quotes.
+
+### Gute Struktur für Values und Charts
+
+
+  * e.g. in git repo
+
+```
+helm-exercises/
+├── helm-values
+│   ├── iftest
+│   │   └── values.yaml
+│   └── my-dep
+│       └── values.yaml
+└── iftest
+    ├── Chart.yaml
+    ├── charts
+    ├── templates
+    │   ├── _helpers.tpl
+    │   └── cm.yaml
+    └── values.yaml
+
+```
+
+## Helm - Advanced
+
+### Helm Dependencies Exercise
+
+
+### Exercise 1: Create chart with Dependency 
+
+```
+cd 
+mkdir -p helm-exercises 
+cd helm-exercises 
+helm create my-dep
+cd my-dep
+nano Chart.yaml 
+```
+
+```
+## Add dependencies 
+dependencies:
+  - name: redis
+    version: "18.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+```
+
+```
+## Das 1. Mal - dann wird Chart.lock angelegt 
+helm dependency update
+ls -la Chart.lock 
+```
+
+```
+rm -fR charts
+helm dependency build
+```
+
+```
+helm dependency --help 
+### what is the difference 
+```
+
+### Exercise 2: Create chart with condition 
+
+```
+nano Chart.yaml
+```
+
+```
+## change dependency block
+## adding condition 
+dependencies:
+  - name: redis
+    version: "18.3.2"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled
+```
+
+```
+nano values.yaml
+```
+
+```
+## unten anfügen 
+redis:
+  enabled:
+    false
+```
+
+```
+helm template .
+```
+
+```
+## values-file anlegen
+cd
+cd helm-exercises
+mkdir -p helm-values
+cd helm-values
+mkdir my-dep
+cd my-dep
+```
+
+```
+nano values.yaml
+```
+
+```
+redis:
+  enabled: true
+```
+
+```
+cd
+cd helm-exercises
+helm template my-dep -f helm-values/my-dep/values.yaml
+helm template my-dep -f helm-values/my-dep/values.yaml | grep kind -A 2
+```
+
 ## Helm Grundlagen
 
 ### TopLevel Objekte
@@ -368,7 +606,7 @@ kubectl -n app-<namenskuerzel> get all
 ### Exercise: Upgrade to new version 
 
 ```
-## Recherche wie die Werte gesetzt werden (artifacthub.io) oder
+## Recherchiere wie die Werte gesetzt werden (artifacthub.io) oder verwende die folgenden Befehle:
 helm show values bitnami/nginx
 helm show values bitnami/nginx | less
 ```
@@ -409,6 +647,17 @@ helm -n app-<namenskuerzel> list
 ## alle helm charts anzeigen, die im gesamten Cluster installierst wurden 
 helm -n app-<namenskuerzel> list -A
 helm -n app-<namenskuerzel> history my-nginx 
+```
+
+#### Umschauen get 
+
+```
+helm -n app-tln1 get values my-nginx
+helm -n app-tln1 get manifest my-nginx
+helm -n app-tln1 get manifest my-nginx | grep "150Mi" -A4 -B4 
+## Can I see all values use -> YES
+## Look for COMPUTED VALUES in get all ->
+helm -n app-tln1 get all my-nginx 
 ```
 
 #### Uninstall 
@@ -1112,6 +1361,10 @@ kubectl top nodes
 ### Helm Documentation
 
   * https://helm.sh/docs/
+
+### Built in TopLevel - Objects like .Release
+
+  * https://helm.sh/docs/chart_template_guide/builtin_objects/
 
 ## Grundlagen
 

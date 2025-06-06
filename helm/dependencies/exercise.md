@@ -89,4 +89,5 @@ redis:
 cd
 cd helm-exercises
 helm template my-dep -f helm-values/my-dep/values.yaml
+helm template my-dep -f helm-values/my-dep/values.yaml | grep kind -A 2
 ```

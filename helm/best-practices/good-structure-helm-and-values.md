@@ -5,15 +5,16 @@
 ```
 helm-exercises/
 ├── helm-values
-│ ├── iftest
-│ │ └── values.yaml
-│ └── my-dep
-│ └── values.yaml
+│   ├── iftest
+│   │   └── values.yaml
+│   └── my-dep
+│       └── values.yaml
 └── iftest
-├── Chart.yaml
-├── charts
-├── templates
-│ ├── _helpers.tpl
-│ └── cm.yaml
-└── values.yaml
+    ├── Chart.yaml
+    ├── charts
+    ├── templates
+    │   ├── _helpers.tpl
+    │   └── cm.yaml
+    └── values.yaml
+
 ```

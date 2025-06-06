@@ -4,7 +4,8 @@
 
 ```
 cd 
-cd -p helm-exercises 
+mkdir -p helm-exercises 
+cd helm-exercises 
 helm create my-dep
 cd my-dep
 nano Chart.yaml 

@@ -23,6 +23,9 @@
      * [Helm template - Rendering Prozess](/helm/internals/helm-template-ablauf.md)
      * [helm vs. kubectl vs. oc](/helm/internals/helm-vs-oc-vs-kubectl.md)
 
+  1. Helm - best practices
+     * [Wann quotes in yaml und in resources  (Kubernetes/OCP)](helm/best-practices/quotes.md)
+
   1. Helm Grundlagen
      * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)
       

@@ -44,3 +44,12 @@ helm template bitnami/nginx
 helm -n app-jm get values my-nginx 
 helm -n app-jm get values my-nginx --revision 1
 ```
+
+## Helm - Hilfe 
+
+```
+# Hilfe ist auf jeder Ebene möglich 
+helm --help
+helm get --help
+helm get values --help
+```

@@ -62,6 +62,11 @@ helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app
 ### Umschauen 
 
 ```
+# Wo speichert er Information, die er später mit helm get abruft
+kubecl -n app-<namenskuerzel> get secrets
+```
+
+```
 kubectl -n app-<namenskuerzel> get pods
 helm -n app-<namenskuerzel> status my-nginx 
 helm -n app-<namenskuerzel> list

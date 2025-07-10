@@ -36,4 +36,11 @@ helm search hub
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm template my-nginx bitnami/nginx
 helm template bitnami/nginx
-```  
+```
+
+## Helm - values (von installierter Release aus secrets) 
+
+```
+helm -n app-jm get values my-nginx 
+helm -n app-jm get values my-nginx --revision 1
+```

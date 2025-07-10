@@ -23,12 +23,16 @@
   1. Helm - Spickzettel
      * [Wichtig: Helm Spickzettel](helm/spickzettel.md)
 
-  1. Arbeiten mit helm - charts
+  1. Arbeiten mit helm - charts (Basics)
      * [Installation, Upgrade, Uninstall helm-Chart exercise](helm/commands/install.md)
      * [Nur fertiges manifest ausgeben ohne Installation](helm/commands/template.md)
      * [Informationen aus nicht installierten Helm-Charts bekommen](helm/commands/show.md)
      * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
      * [Aufräumen von CRD's nach dem Deinstallieren](helm/exercises/08-exercise-crd-certmanager.md)
+
+  1. Arbeiten mit helm - charts (Debugging)
+     * [Nur fertiges manifest ausgeben ohne Installation](helm/commands/template.md)
+     * [Chart trocken testen gegen api-server ohne Installation --dry-run](helm/commands/install--dry-run.md)
 
   1. Helm Internals
      * [Helm template - Rendering Prozess](/helm/internals/helm-template-ablauf.md)

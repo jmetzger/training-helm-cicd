@@ -6,7 +6,7 @@
 
 ## Es enthält: 
 
-- **Templates**: Vorlagen in YAML-Format, die dynamisch Werte einsetzen
+- **/templates**: Vorlagen in YAML-Format, die dynamisch Werte einsetzen
 - **values.yaml**: Eine Datei mit Konfigurationswerten
 - **Chart.yaml**: Metainformationen zum Chart (Name, Version, etc.)
 - **Abhängigkeiten**: Optional können andere Charts mit eingebunden werden

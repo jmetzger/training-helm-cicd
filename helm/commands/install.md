@@ -56,14 +56,14 @@ resources:
 
 ```
 cd ..
-helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app-<nameskuerzel> -f prod/values.yaml  
+helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app-<nameskuerzel> --version 21.0.6 -f prod/values.yaml  
 ```
 
 ### Umschauen 
 
 
 
-```
+
 kubectl -n app-<namenskuerzel> get pods
 helm -n app-<namenskuerzel> status my-nginx 
 helm -n app-<namenskuerzel> list

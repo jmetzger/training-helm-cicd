@@ -89,6 +89,14 @@ helm -n app-tln1 get manifest my-nginx | grep "150Mi" -A4 -B4
 helm -n app-tln1 get all my-nginx 
 ```
 
+```
+# Hack COMPUTED VALUES anzeigen lassen
+# Welche Werte (values) hat er zur Installation verwendet
+helm -n app-<namenskuerzel> get all my-nginx | grep -i computed -A 200
+
+```
+
+
 ### Uninstall 
 
 ```

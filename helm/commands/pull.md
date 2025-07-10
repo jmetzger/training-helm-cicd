@@ -11,7 +11,7 @@ cd charts
 # Vorher müssen wir den Repo-Eintrag anlegen 
 helm repo add bitnami https://charts.bitnami.com/bitnami 
 
-# Lädt die letzte herunter
+# Lädt die letzte version herunter
 helm pull bitnami/mariadb
 
 # Lädt bestimmte chart-version runter 

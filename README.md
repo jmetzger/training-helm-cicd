@@ -20,6 +20,16 @@
      * [Installation von helm unter Linux](helm/installation/linux.md)
      * [Installation bash completion](helm/installation/bash-completion.md)
 
+  1. Helm - Spickzettel
+     * [Wichtig: Helm Spickzettel](helm/spickzettel.md)
+
+  1. Arbeiten mit helm - charts
+     * [Installation, Upgrade, Uninstall helm-Chart exercise](helm/commands/install.md)
+     * [Nur fertiges manifest ausgeben ohne Installation](helm/commands/template.md)
+     * [Informationen aus nicht installierten Helm-Charts bekommen](helm/commands/show.md)
+     * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
+     * [Aufräumen von CRD's nach dem Deinstallieren](helm/exercises/08-exercise-crd-certmanager.md)
+
   1. Helm Internals
      * [Helm template - Rendering Prozess](/helm/internals/helm-template-ablauf.md)
      * [helm vs. kubectl vs. oc](/helm/internals/helm-vs-oc-vs-kubectl.md)
@@ -34,15 +44,7 @@
   1. Helm Grundlagen
      * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)
       
-  1. Helm - Spickzettel
-     * [Wichtig: Helm Spickzettel](helm/spickzettel.md)
-
-  1. Arbeiten mit helm - charts
-     * [Installation, Upgrade, Uninstall helm-Chart exercise](helm/commands/install.md)
-     * [Nur fertiges manifest ausgeben ohne Installation](helm/commands/template.md)
-     * [Informationen aus nicht installierten Helm-Charts bekommen](helm/commands/show.md)
-     * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)
-     * [Aufräumen von CRD's nach dem Deinstallieren](helm/exercises/08-exercise-crd-certmanager.md)
+ 
 
   1. Helm Charts entwickeln
      * [eigenes helm chart erstellen (Gruppe)](/helm/exercises/04a-create-chart-my-app-gruppenarbeit.md)    

@@ -96,6 +96,12 @@ helm -n app-<namenskuerzel> get all my-nginx | grep -i computed -A 200
 
 ```
 
+## Tipp: values aus alter revision anzeigen 
+
+```
+# Beispiel: 
+helm -n app-jm get values  my-nginx --revision 1
+```
 
 ### Uninstall 
 

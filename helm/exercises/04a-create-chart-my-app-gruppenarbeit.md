@@ -91,6 +91,10 @@ image:
 ```
 
 ```
+# Auch wichtig version in Chart.yaml um 1 erhöhen z.B. 0.1.0 -> 0.1.1
+```
+
+```
 helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace 
 ```
 
@@ -98,3 +102,56 @@ helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-
 kubectl -n my-app-<namenskuerzel> get all
 kubectl -n my-app-<namenskuerzel> get pods 
 ```
+
+```
+# Schlägt fehl, weil readiness auf 80 abfragt, aber dort nichts läuft
+```
+
+## Readiness-Probe port anpassen und version (Chart-Version) hochziehen 
+
+```
+cd my-app
+nano Chart.yaml
+```
+
+```
+version: 0.1.2
+```
+
+```
+nano values.yaml
+```
+
+
+```
+#### von --_>
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+### auf --_>
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8080
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8080
+```
+
+```
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace 
+```
+
+```
+kubectl -n my-app-<namenskuerzel> get all
+kubectl -n my-app-<namenskuerzel> get pods 
+```
+

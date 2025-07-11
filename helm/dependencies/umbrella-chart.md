@@ -24,7 +24,7 @@ dependencies:
     version: "18.0.0"
     repository: "https://charts.bitnami.com/bitnami"
   - name: nginx
-    version: "1.29.x"
+    version: "21.x.x"
     repository: "https://charts.bitnami.com/bitnami"
 ```
 

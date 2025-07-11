@@ -19,6 +19,7 @@ cd helm-exercises
 helm create testenv
 cd testenv/templates
 rm -fR *.yaml
+rm -fR tests
 ```
 
 ```

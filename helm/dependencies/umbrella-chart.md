@@ -1,4 +1,4 @@
-# Using Dependencies 
+# Create umbrella-chart 
 
 ## Exercise 1: Create chart & cleanup with Dependency 
 
@@ -21,7 +21,7 @@ dependencies:
     version: "18.0.0"
     repository: "https://charts.bitnami.com/bitnami"
   - name: nginx
-    version: "21.x.x"
+    version: "1.29.x"
     repository: "https://charts.bitnami.com/bitnami"
 ```
 

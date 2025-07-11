@@ -8,10 +8,13 @@ mkdir -p helm-exercises
 cd helm-exercises 
 helm create my-umbrella-chart
 cd my-umbrella-chart 
-nano Chart.yaml
 rm -fR templates
 rm values.yaml
 touch values.yaml 
+```
+
+```
+nano Chart.yaml
 ```
 
 ```

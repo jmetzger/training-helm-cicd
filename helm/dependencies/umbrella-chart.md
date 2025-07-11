@@ -1,14 +1,17 @@
 # Using Dependencies 
 
-## Exercise 1: Create chart with Dependency 
+## Exercise 1: Create chart & cleanup with Dependency 
 
 ```
 cd 
 mkdir -p helm-exercises 
 cd helm-exercises 
-helm create my-dep
-cd my-dep
-nano Chart.yaml 
+helm create my-umbrella-chart
+cd my-umbrella-chart 
+nano Chart.yaml
+rm -fR templates
+rm values.yaml
+touch values.yaml 
 ```
 
 ```
@@ -16,6 +19,9 @@ nano Chart.yaml
 dependencies:
   - name: redis
     version: "18.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+  - name: nginx
+    version: "21.x.x"
     repository: "https://charts.bitnami.com/bitnami"
 ```
 

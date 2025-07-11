@@ -48,10 +48,9 @@
   1. Helm Grundlagen
      * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)
       
- 
-
   1. Helm Charts entwickeln
-     * [eigenes helm chart erstellen (Gruppe)](/helm/exercises/04a-create-chart-my-app-gruppenarbeit.md)    
+     * [eigenes helm chart erstellen (Gruppe)](/helm/exercises/04a-create-chart-my-app-gruppenarbeit.md)
+     * [Wie starte ich am besten ganz einfach - Übung](/helm/exercises/09-create-helm-chart-from-scratch-deployment.md)
 
   1. Spezial: Umgang mit Einrückungen
      * [Whitespaces meistern mit "-"](basics/whitespace-management.md)

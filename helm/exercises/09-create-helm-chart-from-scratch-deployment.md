@@ -20,13 +20,14 @@ rm -fR tests
 rm -fR *.yaml
 rm NOTES.txt
 echo "meine app ist ausgerollt" > NOTES.txt
+cd ..
 rm values.yaml
 ```
 
 # Step 3: Create Deployment manifest 
 
 ```
-nano deployment.yaml
+nano templates/deployment.yaml
 ```
 
 ```

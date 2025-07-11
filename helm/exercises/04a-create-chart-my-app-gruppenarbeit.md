@@ -38,3 +38,11 @@ helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-names
 kubectl -n my-app-<namenskuerzel> get all
 kubectl -n my-app-<namenskuerzel> get pods 
 ```
+
+## Fehler bei ocp debuggen 
+
+```
+kubectl -n my-app-<namenskuerzel> get pods
+```
+<img width="1716" height="117" alt="image" src="https://github.com/user-attachments/assets/ebbfe072-1015-4563-94b9-4aa2b4bd6609" />
+

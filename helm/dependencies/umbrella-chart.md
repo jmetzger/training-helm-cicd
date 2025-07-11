@@ -63,6 +63,7 @@ redis:
 
 ```
 helm template .
+helm template . | grep -i '^Kind' -A 4
 ```
 
 ## Exercise 3: Create chart with condition 

@@ -12,6 +12,15 @@ cd my-charts
 helm create my-app
 ``` 
 
+## Chart testen 
+
+```
+# nur template rendern 
+helm template my-app-release my-app 
+# chart trockenlauf (--dry-run) rendern und an den Server (kube-api-server) zur Überprüfung schickt 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --dry-run 
+```
+
 ## Install helm - chart 
 
 ```

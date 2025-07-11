@@ -3,6 +3,7 @@
 
 ## Agenda
   1. Kubernetes
+     * [Architektur Kubernetes](#architektur-kubernetes)
      * [Aufbau von Browser zu Applikation - Schaubild](#aufbau-von-browser-zu-applikation---schaubild)
 
   1. Helm Einfuehrung 
@@ -19,6 +20,20 @@
      * [Installation von helm unter Linux](#installation-von-helm-unter-linux)
      * [Installation bash completion](#installation-bash-completion)
 
+  1. Helm - Spickzettel
+     * [Wichtig: Helm Spickzettel](#wichtig-helm-spickzettel)
+
+  1. Arbeiten mit helm - charts (Basics)
+     * [Installation, Upgrade, Uninstall helm-Chart exercise](#installation-upgrade-uninstall-helm-chart-exercise)
+     * [Nur fertiges manifest ausgeben ohne Installation](#nur-fertiges-manifest-ausgeben-ohne-installation)
+     * [Informationen aus nicht installierten Helm-Charts bekommen](#informationen-aus-nicht-installierten-helm-charts-bekommen)
+     * [Chart runterladen und evtl. entpacken und bestimmte Version](#chart-runterladen-und-evtl-entpacken-und-bestimmte-version)
+     * [Aufräumen von CRD's nach dem Deinstallieren](#aufräumen-von-crd's-nach-dem-deinstallieren)
+
+  1. Arbeiten mit helm - charts (Debugging)
+     * [Nur fertiges manifest ausgeben ohne Installation](#nur-fertiges-manifest-ausgeben-ohne-installation)
+     * [Chart trocken testen gegen api-server ohne Installation --dry-run](#chart-trocken-testen-gegen-api-server-ohne-installation---dry-run)
+
   1. Helm Internals
      * [Helm template - Rendering Prozess](#helm-template---rendering-prozess)
      * [helm vs. kubectl vs. oc](#helm-vs-kubectl-vs-oc)
@@ -26,6 +41,7 @@
   1. Helm - best practices
      * [Wann quotes in yaml und in resources  (Kubernetes/OCP)](#wann-quotes-in-yaml-und-in-resources--kubernetesocp)
      * [Gute Struktur für Values und Charts](#gute-struktur-für-values-und-charts)
+     * [Best Practices for Chart Templating](https://helm.sh/docs/chart_best_practices/)
 
   1. Helm - Advanced
      * [Helm Dependencies Exercise](#helm-dependencies-exercise)
@@ -33,18 +49,9 @@
   1. Helm Grundlagen
      * [TopLevel Objekte](#toplevel-objekte)
       
-  1. Helm - Spickzettel
-     * [Wichtig: Helm Spickzettel](#wichtig-helm-spickzettel)
-
-  1. Arbeiten mit helm - charts
-     * [Installation, Upgrade, Uninstall helm-Chart exercise](#installation-upgrade-uninstall-helm-chart-exercise)
-     * [Nur fertiges manifest ausgeben ohne Installation](#nur-fertiges-manifest-ausgeben-ohne-installation)
-     * [Informationen aus nicht installierten Helm-Charts bekommen](#informationen-aus-nicht-installierten-helm-charts-bekommen)
-     * [Chart runterladen und evtl. entpacken und bestimmte Version](#chart-runterladen-und-evtl-entpacken-und-bestimmte-version)
-     * [Aufräumen von CRD's nach dem Deinstallieren](#aufräumen-von-crd's-nach-dem-deinstallieren)
-
   1. Helm Charts entwickeln
      * [eigenes helm chart erstellen (Gruppe)](#eigenes-helm-chart-erstellen-gruppe)
+     * [Wie starte ich am besten ganz einfach - Übung](#wie-starte-ich-am-besten-ganz-einfach---übung)
 
   1. Spezial: Umgang mit Einrückungen
      * [Whitespaces meistern mit "-"](#whitespaces-meistern-mit-"-")
@@ -131,6 +138,89 @@
 
 ## Kubernetes
 
+### Architektur Kubernetes
+
+
+### Schaubild 
+
+![image](https://github.com/user-attachments/assets/f4de7c54-33a8-46e5-916c-1119575b1aed)
+
+### Komponenten / Grundbegriffe
+
+#### Master (Control Plane)
+
+##### Aufgaben 
+
+  * Der Master koordiniert den Cluster
+  * Der Master koordiniert alle Aktivitäten in Ihrem Cluster
+    * Planen von Anwendungen
+    * Verwalten des gewünschten Status der Anwendungen
+    * Skalieren von Anwendungen
+    * Rollout neuer Updates.
+
+##### Komponenten des Masters 
+
+###### etcd
+
+  * Verwalten der Konfiguration des Clusters (key/value - pairs) 
+  
+###### kube-controller-manager  
+  
+  * Zuständig für die Überwachung der Stati im Cluster mit Hilfe von endlos loops. 
+  * kommuniziert mit dem Cluster über die kubernetes-api (bereitgestellt vom kube-api-server)
+
+###### kube-api-server 
+
+  * provides api-frontend for administration (no gui)
+  * Exposes an HTTP API (users, parts of the cluster and external components communicate with it)
+  * REST API
+ 
+###### kube-scheduler 
+
+  * assigns Pods to Nodes. 
+  * scheduler determines which Nodes are valid placements for each Pod in the scheduling queue 
+    ( according to constraints and available resources )
+  * The scheduler then ranks each valid Node and binds the Pod to a suitable Node. 
+  * Reference implementation (other schedulers can be used)
+ 
+#### Nodes  
+
+  * Nodes (Knoten) sind die Arbeiter (Maschinen), die Anwendungen ausführen
+  * Ref: https://kubernetes.io/de/docs/concepts/architecture/nodes/
+
+#### Pod/Pods 
+
+  * Pods sind die kleinsten einsetzbaren Einheiten, die in Kubernetes erstellt und verwaltet werden können.
+  * Ein Pod (übersetzt Gruppe) ist eine Gruppe von einem oder mehreren Containern
+    * gemeinsam genutzter Speicher- und Netzwerkressourcen   
+    * Befinden sich immer auf dem gleich virtuellen Server 
+    
+### Control Plane Node (former: master) - components 
+
+### Node (Minion) - components 
+
+#### General 
+
+  * On the nodes we will rollout the applications
+
+#### kubelet
+
+```
+Node Agent that runs on every node (worker) 
+Er stellt sicher, dass Container in einem Pod ausgeführt werden.
+```
+
+#### Kube-proxy 
+
+  * Läuft auf jedem Node 
+  * = Netzwerk-Proxy für die Kubernetes-Netzwerk-Services.
+  * Kube-proxy verwaltet die Netzwerkkommunikation innerhalb oder außerhalb Ihres Clusters.
+  
+### Referenzen 
+
+  * https://www.redhat.com/de/topics/containers/kubernetes-architecture
+
+
 ### Aufbau von Browser zu Applikation - Schaubild
 
 
@@ -142,7 +232,7 @@
 
 
   * Paketmanager für Kubernetes
-  * Ermöglicht Anwendungen in einem Kubernetes-Cluster zu definieren, zu installieren und zu verwalten
+  * Ermöglicht es Anwendungen in einem Kubernetes-Cluster zu definieren, zu installieren und zu verwalten
     *  ähnlich wie `apt` bei Debian oder `yum` bei CentOS, aber speziell für Kubernetes.
 
 ### Was kann helm ?
@@ -163,7 +253,7 @@
 
 ### Es enthält: 
 
-- **Templates**: Vorlagen in YAML-Format, die dynamisch Werte einsetzen
+- **/templates**: Vorlagen in YAML-Format, die dynamisch Werte einsetzen
 - **values.yaml**: Eine Datei mit Konfigurationswerten
 - **Chart.yaml**: Metainformationen zum Chart (Name, Version, etc.)
 - **Abhängigkeiten**: Optional können andere Charts mit eingebunden werden
@@ -297,6 +387,402 @@ exit
 su - tln11
 ```
 
+## Helm - Spickzettel
+
+### Wichtig: Helm Spickzettel
+
+
+### Alle helm-releases anzeigen 
+
+```
+## im eigenen Namespace 
+helm list
+## in allen Namespaces
+helm list -A
+## für einen speziellen
+helm -n kube-system list 
+```
+
+### Helm - Chart installieren 
+
+```
+## Empfehlung mit namespace
+## Repo hinzufügen für Client 
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install my-nginx bitnami/nginx --version 19.0.1 --create-namespace --namespace=app-<namenskuerzel>
+```
+
+### Helm - Suche  
+
+```
+## welche Repos sind konfiguriert
+helm repo list
+helm search repo bitnami
+helm search hub
+```
+
+### Helm - template 
+
+```
+## Rendern des Templates
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm template my-nginx bitnami/nginx
+helm template bitnami/nginx
+```
+
+### Helm - values (von installierter Release aus secrets) 
+
+```
+helm -n app-jm get values my-nginx 
+helm -n app-jm get values my-nginx --revision 1
+```
+
+### Helm - Hilfe 
+
+```
+## Hilfe ist auf jeder Ebene möglich 
+helm --help
+helm get --help
+helm get values --help
+```
+
+## Arbeiten mit helm - charts (Basics)
+
+### Installation, Upgrade, Uninstall helm-Chart exercise
+
+
+### Install 
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+
+```
+## Installiert 
+helm install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
+## Zeigt an, was er ausrollen würde 
+helm install my-nginx bitnami/nginx --version 19.0.4 --dry-run # auch für uninstall, upgrade 
+```
+
+```
+## noch besser
+## Installiert 
+helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
+```
+
+```
+## überprüfen // laufen die pods 
+kubectl -n app-<namenskuerzel> get all 
+```
+
+### Exercise: Upgrade to new version 
+
+```
+## Recherchiere wie die Werte gesetzt werden (artifacthub.io) oder verwende die folgenden Befehle:
+helm show values bitnami/nginx
+helm show values bitnami/nginx | less
+```
+
+```
+cd 
+mkdir -p nginx-values 
+cd nginx-values
+mkdir prod
+cd prod
+```
+
+```
+nano values.yaml
+```
+
+```
+resources:
+   requests:
+     cpu: 0.1
+     memory: 150Mi
+   limits:
+     cpu: 0.1
+     memory: 150Mi
+```
+
+```
+cd ..
+helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app-<nameskuerzel> --version 21.0.6 -f prod/values.yaml  
+```
+
+#### Umschauen 
+
+
+
+
+kubectl -n app-<namenskuerzel> get pods
+helm -n app-<namenskuerzel> status my-nginx 
+helm -n app-<namenskuerzel> list
+## alle helm charts anzeigen, die im gesamten Cluster installierst wurden 
+helm -n app-<namenskuerzel> list -A
+helm -n app-<namenskuerzel> history my-nginx 
+```
+
+#### Umschauen get 
+
+```
+## Wo speichert er Information, die er später mit helm get abruft
+kubectl -n app-<namenskuerzel> get secrets
+```
+
+
+```
+helm -n app-tln1 get values my-nginx
+helm -n app-tln1 get manifest my-nginx
+helm -n app-tln1 get manifest my-nginx | grep "150Mi" -A4 -B4 
+## Can I see all values use -> YES
+## Look for COMPUTED VALUES in get all ->
+helm -n app-tln1 get all my-nginx 
+```
+
+```
+## Hack COMPUTED VALUES anzeigen lassen
+## Welche Werte (values) hat er zur Installation verwendet
+helm -n app-<namenskuerzel> get all my-nginx | grep -i computed -A 200
+
+```
+
+### Tipp: values aus alter revision anzeigen 
+
+```
+## Beispiel: 
+helm -n app-jm get values  my-nginx --revision 1
+```
+
+#### Uninstall 
+
+```
+helm -n app-<namenskuerzel> uninstall my-nginx 
+## namespace wird nicht gelöscht
+## händisch löschen
+kubectl delete ns app-<namenskuerzel>
+## crd's werden auch nicht gelöscht 
+```
+
+### Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
+
+  * if memory of container is bigger than limit an OOM-Killer will be triggered
+  * How to fix. Use memory limit in the application too !
+    * https://techcommunity.microsoft.com/blog/appsonazureblog/unleashing-javascript-applications-a-guide-to-boosting-memory-limits-in-node-js/4080857
+
+### Nur fertiges manifest ausgeben ohne Installation
+
+
+### template 
+
+#### Warum ?
+
+  * Ich will vorher sehen, wie mein Manifest ausschaut, bevor ich es zum Kube-API-Server schicke.
+
+#### Was macht das ? 
+
+  * Rendered das Template.
+
+#### Was macht es nicht ? 
+
+
+  * Da er erst nicht an den schickt,
+  * Überpüft er nicht, ob der Syntax korrekt ist, nur ob das yaml-format eingehalten wird  
+   
+#### Beispiel: 
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+## Kann sehr lang sein 
+helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | less
+helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
+
+```
+
+### template --debug 
+
+#### Warum ? 
+
+  * Zeigt mein template auch an, wenn ein yaml-Einrückungsfehler oder Syntax - fehler da ist. 
+
+#### Beispiel 
+
+```
+helm -n app-jm template my-nginx bitnami/nginx --version 19.0.4 --debug
+```
+    
+
+### Informationen aus nicht installierten Helm-Charts bekommen
+
+
+```
+helm show values bitnami/mariadb
+helm show values bitnami/mariadb | grep -B 20 -i "image:"
+## recommendation -> redirect to file
+helm show values bitnami/mariadb > default-values.yaml 
+```
+
+```
+## Zeigt Chart-Definition, Readme usw. (=alles) an 
+helm show all bitnami/mariadb 
+```
+
+```
+helm show readme bitnami/mariadb
+helm show chart bitnami/mariadb
+```
+
+```
+helm show crds bitnami/mariadb
+```
+
+
+### Chart runterladen und evtl. entpacken und bestimmte Version
+
+
+```
+cd 
+mkdir -p charts
+cd charts
+```
+
+
+```
+## Vorher müssen wir den Repo-Eintrag anlegen 
+helm repo add bitnami https://charts.bitnami.com/bitnami 
+
+## Lädt die letzte version herunter
+helm pull bitnami/mariadb
+
+## Lädt bestimmte chart-version runter 
+helm pull bitnami/mariadb --version 12.1.6
+## evtl. entpacken wenn gewünscht
+## tar xvf mariadb-12.1.6.tgz
+
+## Schnelle Variante
+helm pull bitnami/mariadb --version 12.1.6 --untar
+```
+
+### Aufräumen von CRD's nach dem Deinstallieren
+
+
+### Schritt 1: repo hinzufügen 
+```
+helm repo add jetstack https://charts.jetstack.io
+```
+
+### Schritt 2: chart runterladen und entpacken (zum Gucken) 
+
+```
+helm pull jetstack/cert-manager
+ls -la
+helm pull jetstack/cert-manager --untar
+ls -la
+cd cert-manager
+ls -la
+cd templates
+ls -la crds.yaml 
+```
+
+### Schritt 3: Installieren 
+
+```
+cd 
+mkdir cm-values
+cd cm-values
+nano values.yaml
+```
+
+```
+crds:
+  enabled: true
+```
+
+```
+helm install cert-manager jetstack/cert-manager --namespace cert-manager-<namenskuerzel> --create-namespace -f values.yaml
+kubectl -n cert-manager-<namenskuerzel> get all
+```
+
+### CRD's da ? 
+
+```
+kubectl get crds | grep cert
+```
+
+
+### Deinstallieren 
+
+```
+helm -n cert-manager-<namenskuerzel> uninstall cert-manager
+```
+
+### CRD's noch da ? 
+
+```
+kubectl get crds | grep cert 
+```
+
+
+### CRD's händisch löschen 
+
+```
+## Variante 1
+kubectl delete crd certificaterequests.cert-manager.io certificates.cert-manager.io  challenges.acme.cert-manager.io  clusterissuers.cert-manager.io  issuers.cert-manager.io orders.acme.cert-manager.io
+```
+
+## Arbeiten mit helm - charts (Debugging)
+
+### Nur fertiges manifest ausgeben ohne Installation
+
+
+### template 
+
+#### Warum ?
+
+  * Ich will vorher sehen, wie mein Manifest ausschaut, bevor ich es zum Kube-API-Server schicke.
+
+#### Was macht das ? 
+
+  * Rendered das Template.
+
+#### Was macht es nicht ? 
+
+
+  * Da er erst nicht an den schickt,
+  * Überpüft er nicht, ob der Syntax korrekt ist, nur ob das yaml-format eingehalten wird  
+   
+#### Beispiel: 
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+## Kann sehr lang sein 
+helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | less
+helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
+
+```
+
+### template --debug 
+
+#### Warum ? 
+
+  * Zeigt mein template auch an, wenn ein yaml-Einrückungsfehler oder Syntax - fehler da ist. 
+
+#### Beispiel 
+
+```
+helm -n app-jm template my-nginx bitnami/nginx --version 19.0.4 --debug
+```
+    
+
+### Chart trocken testen gegen api-server ohne Installation --dry-run
+
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+## auch die gerenderten Manifeste werden angezeit auch ohne "--debug" 
+helm -n app-jm install my-nginx bitnami/nginx --version 19.0.4 --dry-run
+```
+
 ## Helm Internals
 
 ### Helm template - Rendering Prozess
@@ -399,6 +885,8 @@ Wenn du willst, zeige ich dir gerne ein konkretes Kubernetes-Beispiel mit und oh
 
   * e.g. in git repo
 
+###  Beispiel 1 
+
 ```
 helm-exercises/
 ├── helm-values
@@ -415,6 +903,29 @@ helm-exercises/
     └── values.yaml
 
 ```
+### Beispiel 2: Struktur für gitlab ci/cd 
+
+```
+helm-repo-app1/
+├── charts
+│   └── app
+│       ├── Chart.yaml
+│       ├── templates
+│       └── values.yaml
+└── helm-values
+    ├── prod
+    │   └── values.yaml
+    ├── staging
+    │   └── values.yaml
+    └── testing
+        └── values.yaml
+```
+
+
+
+### Best Practices for Chart Templating
+
+  * https://helm.sh/docs/chart_best_practices/
 
 ## Helm - Advanced
 
@@ -531,311 +1042,6 @@ helm template my-dep -f helm-values/my-dep/values.yaml | grep kind -A 2
 
  * Ansprechen aller Eigenschaften aus der Release z.B. Release.Name 
 
-## Helm - Spickzettel
-
-### Wichtig: Helm Spickzettel
-
-
-### Alle helm-releases anzeigen 
-
-```
-## im eigenen Namespace 
-helm list
-## in allen Namespaces
-helm list -A
-## für einen speziellen
-helm -n kube-system list 
-```
-
-### Helm - Chart installieren 
-
-```
-## Empfehlung mit namespace
-## Repo hinzufügen für Client 
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install my-nginx bitnami/nginx --version 19.0.1 --create-namespace --namespace=app-<namenskuerzel>
-```
-
-### Helm - Suche  
-
-```
-## welche Repos sind konfiguriert
-helm repo list
-helm search repo bitnami
-helm search hub
-```
-
-### Helm - template 
-
-```
-## Rendern des Templates
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm template my-nginx bitnami/nginx
-helm template bitnami/nginx
-```  
-
-## Arbeiten mit helm - charts
-
-### Installation, Upgrade, Uninstall helm-Chart exercise
-
-
-### Install 
-
-```
-helm repo add bitnami https://charts.bitnami.com/bitnami
-```
-
-```
-## Installiert 
-helm install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
-## Zeigt an, was er ausrollen würde 
-helm install my-nginx bitnami/nginx --version 19.0.4 --dry-run # auch für uninstall, upgrade 
-```
-
-```
-## noch besser
-## Installiert 
-helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
-```
-
-```
-## überprüfen // laufen die pods 
-kubectl -n app-<namenskuerzel> get all 
-```
-
-### Exercise: Upgrade to new version 
-
-```
-## Recherchiere wie die Werte gesetzt werden (artifacthub.io) oder verwende die folgenden Befehle:
-helm show values bitnami/nginx
-helm show values bitnami/nginx | less
-```
-
-```
-cd 
-mkdir -p nginx-values 
-cd nginx-values
-mkdir prod
-cd prod
-```
-
-```
-nano values.yaml
-```
-
-```
-resources:
-   requests:
-     cpu: 0.1
-     memory: 150Mi
-   limits:
-     cpu: 0.1
-     memory: 150Mi
-```
-
-```
-cd ..
-helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app-<nameskuerzel> -f prod/values.yaml  
-```
-
-#### Umschauen 
-
-```
-kubectl -n app-<namenskuerzel> get pods
-helm -n app-<namenskuerzel> status my-nginx 
-helm -n app-<namenskuerzel> list
-## alle helm charts anzeigen, die im gesamten Cluster installierst wurden 
-helm -n app-<namenskuerzel> list -A
-helm -n app-<namenskuerzel> history my-nginx 
-```
-
-#### Umschauen get 
-
-```
-helm -n app-tln1 get values my-nginx
-helm -n app-tln1 get manifest my-nginx
-helm -n app-tln1 get manifest my-nginx | grep "150Mi" -A4 -B4 
-## Can I see all values use -> YES
-## Look for COMPUTED VALUES in get all ->
-helm -n app-tln1 get all my-nginx 
-```
-
-#### Uninstall 
-
-```
-helm -n app-<namenskuerzel> uninstall my-nginx 
-## namespace wird nicht gelöscht
-## händisch löschen
-kubectl delete ns app-<namenskuerzel>
-## crd's werden auch nicht gelöscht 
-```
-
-### Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
-
-  * if memory of container is bigger than limit an OOM-Killer will be triggered
-  * How to fix. Use memory limit in the application too !
-    * https://techcommunity.microsoft.com/blog/appsonazureblog/unleashing-javascript-applications-a-guide-to-boosting-memory-limits-in-node-js/4080857
-
-### Nur fertiges manifest ausgeben ohne Installation
-
-
-### template 
-
-#### Warum ?
-
-  * Ich will vorher sehen, wie mein Manifest ausschaut, bevor ich es zum Kube-API-Server schicke.
-
-#### Was macht das ? 
-
-  * Rendered das Template.
-
-#### Was macht es nicht ? 
-
-
-  * Da er erst nicht an den schickt,
-  * Überpüft er nicht, ob der Syntax korrekt ist, nur ob das yaml-format eingehalten wird  
-   
-#### Beispiel: 
-
-```
-helm repo add bitnami https://charts.bitnami.com/bitnami
-## Kann sehr lang sein 
-helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | less
-helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
-
-```
-
-### template --debug 
-
-#### Warum ? 
-
-  * Zeigt mein template auch an, wenn ein yaml-Einrückungsfehler oder Syntax - fehler da ist. 
-
-#### Beispiel 
-
-```
-helm -n app-jm template my-nginx bitnami/nginx --version 19.0.4 --debug
-```
-    
-
-### Informationen aus nicht installierten Helm-Charts bekommen
-
-
-```
-helm show values bitnami/mariadb
-helm show values bitnami/mariadb | grep -B 20 -i "image:"
-## recommendation -> redirect to file
-helm show values bitnami/mariadb > default-values.yaml 
-```
-
-```
-## Zeigt Chart-Definition, Readme usw. (=alles) an 
-helm show all bitnami/mariadb 
-```
-
-```
-helm show readme bitnami/mariadb
-helm show chart bitnami/mariadb
-```
-
-```
-helm show crds bitnami/mariadb
-```
-
-
-### Chart runterladen und evtl. entpacken und bestimmte Version
-
-
-```
-cd 
-mkdir -p charts
-cd charts
-```
-
-
-```
-## Vorher müssen wir den Repo-Eintrag anlegen 
-helm repo add bitnami https://charts.bitnami.com/bitnami 
-
-## Lädt die letzte herunter
-helm pull bitnami/mariadb
-
-## Lädt bestimmte chart-version runter 
-helm pull bitnami/mariadb --version 12.1.6
-## evtl. entpacken wenn gewünscht
-## tar xvf mariadb-12.1.6.tgz
-
-## Schnelle Variante
-helm pull bitnami/mariadb --version 12.1.6 --untar
-```
-
-### Aufräumen von CRD's nach dem Deinstallieren
-
-
-### Schritt 1: repo hinzufügen 
-```
-helm repo add jetstack https://charts.jetstack.io
-```
-
-### Schritt 2: chart runterladen und entpacken (zum Gucken) 
-
-```
-helm pull jetstack/cert-manager
-ls -la
-helm pull jetstack/cert-manager --untar
-ls -la
-cd cert-manager
-ls -la
-cd templates
-ls -la crds.yaml 
-```
-
-### Schritt 3: Installieren 
-
-```
-cd 
-mkdir cm-values
-cd cm-values
-nano values.yaml
-```
-
-```
-crds:
-  enabled: true
-```
-
-```
-helm install cert-manager jetstack/cert-manager --namespace cert-manager-<namenskuerzel> --create-namespace -f values.yaml
-kubectl -n cert-manager-<namenskuerzel> get all
-```
-
-### CRD's da ? 
-
-```
-kubectl get crds | grep cert
-```
-
-
-### Deinstallieren 
-
-```
-helm -n cert-manager-<namenskuerzel> uninstall cert-manager
-```
-
-### CRD's noch da ? 
-
-```
-kubectl get crds | grep cert 
-```
-
-
-### CRD's händisch löschen 
-
-```
-## Variante 1
-kubectl delete crd certificaterequests.cert-manager.io certificates.cert-manager.io  challenges.acme.cert-manager.io  clusterissuers.cert-manager.io  issuers.cert-manager.io orders.acme.cert-manager.io
-```
-
 ## Helm Charts entwickeln
 
 ### eigenes helm chart erstellen (Gruppe)
@@ -853,23 +1059,219 @@ cd my-charts
 helm create my-app
 ``` 
 
+### Chart testen 
+
+```
+## nur template rendern 
+helm template my-app-release my-app 
+## chart trockenlauf (--dry-run) rendern und an den Server (kube-api-server) zur Überprüfung schickt 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --dry-run 
+```
+
 ### Install helm - chart 
 
 ```
 ## Variante 1:
-helm -n my-app-<namenskuerzel> install my-app-release my-app --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace 
 ```
 
 ```
 ## Variante 2:
 cd my-app
-helm -n my-app-<namenskuerzel> install my-app-release . --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace 
 ```
 
 ```
 kubectl -n my-app-<namenskuerzel> get all
 kubectl -n my-app-<namenskuerzel> get pods 
 ```
+
+### Fehler bei ocp debuggen 
+
+```
+kubectl -n my-app-<namenskuerzel> get pods
+```
+<img width="1716" height="117" alt="image" src="https://github.com/user-attachments/assets/ebbfe072-1015-4563-94b9-4aa2b4bd6609" />
+
+```
+## Wie debuggen -> Schritt 1:
+kubectl -n my-app-<namenskuerzel> describe po my-app-release-7d9bd79cb7-9gbbd
+```
+<img width="1897" height="138" alt="image" src="https://github.com/user-attachments/assets/25fcf6e6-34ae-455d-a225-fc1cbf7baaf4" />
+
+```
+## Wenn Schritt 1 kein gesichertes Ergebnis liefert.
+## Wie debuggen -> Schritt 2: Logs
+kubectl -n my-app-jm2 logs my-app-release-7d9bd79cb7-9gbbd
+```
+
+<img width="1893" height="120" alt="image" src="https://github.com/user-attachments/assets/ec4477a6-703e-43fb-83d8-a49ad8187498" />
+
+
+```
+## Schritt 3: yaml von pod anschauen, warum tritt der Fehler auf 
+kubectl -n my-app-<namenskuerzel> get pods -o yaml
+```
+
+```
+## Dieser Block ist dafür verantwortlich, dass keine Pods als root ausgeführt werden, können. nginx will aber unter root laufen (bzw. muss)
+```
+<img width="929" height="419" alt="image" src="https://github.com/user-attachments/assets/2fa1974e-29e8-43d0-a071-5daf54a7292d" />
+
+### Image verwenden was auch als nicht-root läuft 
+
+```
+cd
+cd my-charts
+nano my-app/values.yaml
+```
+
+```
+## image Zeile ändern
+## von ->
+image:
+  repository: nginx
+
+## in ->
+image:
+  repository: bitnami/nginx
+```
+
+```
+## Auch wichtig version in Chart.yaml um 1 erhöhen z.B. 0.1.0 -> 0.1.1
+```
+
+```
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace 
+```
+
+```
+kubectl -n my-app-<namenskuerzel> get all
+kubectl -n my-app-<namenskuerzel> get pods 
+```
+
+```
+## Schlägt fehl, weil readiness auf 80 abfragt, aber dort nichts läuft
+```
+
+### Readiness-Probe port anpassen und version (Chart-Version) hochziehen 
+
+```
+cd my-app
+nano Chart.yaml
+```
+
+```
+version: 0.1.2
+```
+
+```
+nano values.yaml
+```
+
+
+```
+##### von --_>
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+#### auf --_>
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8080
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8080
+```
+
+```
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace 
+```
+
+```
+kubectl -n my-app-<namenskuerzel> get all
+kubectl -n my-app-<namenskuerzel> get pods 
+```
+
+
+### Wie starte ich am besten ganz einfach - Übung
+
+
+  * Really simple version to start 
+
+## Step 1: Create sample chart 
+
+```
+cd
+mkdir -p my-charts
+cd my-charts
+helm create app 
+cd app
+```
+
+## Step 2: Cleanup 
+
+```
+cd templates
+rm -fR tests
+rm -fR *.yaml
+rm NOTES.txt
+echo "meine app ist ausgerollt" > NOTES.txt
+cd ..
+rm values.yaml
+## leere datei wird erzeugt 
+touch values.yaml 
+```
+
+## Step 3: Create Deployment manifest 
+
+```
+nano templates/deployment.yaml
+```
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 8 # tells deployment to run 8 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: bitnami/nginx:1.22
+        ports:
+        - containerPort: 80
+```        
+
+### Step 4: Testen des Charts 
+
+```
+helm template .
+helm lint .
+## Akzeptiert der API das so, wie ich es ihm schicke 
+helm -n app-<namenskuerzel> install app . --dry-run  
+helm -n app-<namenskuerzel> upgrade --install app . --create-namespace
+kubectl -n app-<namenskuerzel> get all 
+```
+
+
 
 ## Spezial: Umgang mit Einrückungen
 
@@ -915,6 +1317,7 @@ cd helm-exercises
 helm create testenv
 cd testenv/templates
 rm -fR *.yaml
+rm -fR tests
 ```
 
 ```
@@ -1607,6 +2010,7 @@ cd helm-exercises
 helm create testenv
 cd testenv/templates
 rm -fR *.yaml
+rm -fR tests
 ```
 
 ```

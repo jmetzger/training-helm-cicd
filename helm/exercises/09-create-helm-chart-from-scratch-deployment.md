@@ -49,7 +49,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:1.22
+        image: bitnami/nginx:1.22
         ports:
         - containerPort: 80
 ```        

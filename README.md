@@ -41,6 +41,7 @@
   1. Helm - best practices
      * [Wann quotes in yaml und in resources  (Kubernetes/OCP)](helm/best-practices/quotes.md)
      * [Gute Struktur für Values und Charts](helm/best-practices/good-structure-helm-and-values.md)
+     * [Best Practices for Chart Templating](https://helm.sh/docs/chart_best_practices/)
 
   1. Helm - Advanced
      * [Helm Dependencies Exercise](helm/dependencies/exercise.md)

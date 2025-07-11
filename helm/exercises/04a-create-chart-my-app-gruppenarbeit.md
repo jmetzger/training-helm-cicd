@@ -69,3 +69,32 @@ kubectl -n my-app-<namenskuerzel> get pods -o yaml
 ```
 # Dieser Block ist dafür verantwortlich, dass keine Pods als root ausgeführt werden, können. nginx will aber unter root laufen (bzw. muss)
 ```
+<img width="929" height="419" alt="image" src="https://github.com/user-attachments/assets/2fa1974e-29e8-43d0-a071-5daf54a7292d" />
+
+## Image verwenden was auch als nicht-root läuft 
+
+```
+cd
+cd my-charts
+nano my-app/values.yaml
+```
+
+```
+# image Zeile ändern
+# von ->
+image:
+  repository: nginx
+
+# in ->
+image:
+  repository: bitnami/nginx
+```
+
+```
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace 
+```
+
+```
+kubectl -n my-app-<namenskuerzel> get all
+kubectl -n my-app-<namenskuerzel> get pods 
+```

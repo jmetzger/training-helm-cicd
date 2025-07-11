@@ -48,7 +48,24 @@ helm dependency --help
 helm template .
 ```
 
-## Exercise 2: Create chart with condition 
+## Exercise 2: Werte in den Untercharts setzen (nginx und redis) 
+
+```
+nano values.yaml
+```
+
+```
+nginx:
+  fullnameOverride: nginx
+redis:
+  fullnameOverride: redis
+```
+
+```
+helm template .
+```
+
+## Exercise 3: Create chart with condition 
 
 ```
 nano Chart.yaml

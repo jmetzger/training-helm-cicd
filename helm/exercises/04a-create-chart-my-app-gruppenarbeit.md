@@ -46,3 +46,26 @@ kubectl -n my-app-<namenskuerzel> get pods
 ```
 <img width="1716" height="117" alt="image" src="https://github.com/user-attachments/assets/ebbfe072-1015-4563-94b9-4aa2b4bd6609" />
 
+```
+# Wie debuggen -> Schritt 1:
+kubectl -n my-app-<namenskuerzel> describe po my-app-release-7d9bd79cb7-9gbbd
+```
+<img width="1897" height="138" alt="image" src="https://github.com/user-attachments/assets/25fcf6e6-34ae-455d-a225-fc1cbf7baaf4" />
+
+```
+# Wenn Schritt 1 kein gesichertes Ergebnis liefert.
+# Wie debuggen -> Schritt 2: Logs
+kubectl -n my-app-jm2 logs my-app-release-7d9bd79cb7-9gbbd
+```
+
+<img width="1893" height="120" alt="image" src="https://github.com/user-attachments/assets/ec4477a6-703e-43fb-83d8-a49ad8187498" />
+
+
+```
+# Schritt 3: yaml von pod anschauen, warum tritt der Fehler auf 
+kubectl -n my-app-<namenskuerzel> get pods -o yaml
+```
+
+```
+# Dieser Block ist dafür verantwortlich, dass keine Pods als root ausgeführt werden, können. nginx will aber unter root laufen (bzw. muss)
+```

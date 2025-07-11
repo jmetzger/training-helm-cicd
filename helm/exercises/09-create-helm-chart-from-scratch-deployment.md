@@ -57,7 +57,6 @@ spec:
 ## Step 4: Testen des Charts 
 
 ```
-cd ..
 helm template .
 helm lint .
 # Akzeptiert der API das so, wie ich es ihm schicke 

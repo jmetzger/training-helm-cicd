@@ -22,6 +22,8 @@ rm NOTES.txt
 echo "meine app ist ausgerollt" > NOTES.txt
 cd ..
 rm values.yaml
+# leere datei wird erzeugt 
+touch values.yaml 
 ```
 
 # Step 3: Create Deployment manifest 

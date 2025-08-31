@@ -21,6 +21,7 @@ system:admin
 oc get scc
 # nur die namen 
 oc get scc --no-headers -o custom-columns=NAME:.metadata.name
+oc get scc --no-headers -o custom-columns=NAME:.metadata.name,PRIORITY:.priority
 ```
 
 ```
@@ -37,8 +38,15 @@ node-exporter - Für Node Exporter
 privileged - Vollzugriff
 ```
 
+## Who can use privileged 
+
 ```
-# Who can use privileged
 oc policy who-can use scc privileged
+# Whats within kube-system 
+oc -n kube-system policy who-can use scc privileged
 ```
+
+
+
+
 

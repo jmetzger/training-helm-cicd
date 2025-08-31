@@ -1,5 +1,15 @@
 # scc in OpenShift (ocp) 
 
+## restricted-v2 (Deployment) 
+
+  * By default all pods in a deployment not being in the namespace default,
+    * are running under the scc restricted-v2
+    * You can identify a pod and its used scc as follows
+   
+```
+oc get pods -n default -o custom-columns=NAME:.metadata.name,SCC:.metadata.annotations.openshift\.io/scc
+```
+
 ## Whoami (which user) 
 
 ```

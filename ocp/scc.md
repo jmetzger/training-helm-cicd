@@ -1,5 +1,20 @@
 # scc in OpenShift (ocp) 
 
+## Whoami (which user) 
+
+```
+oc whoami
+```
+
+<img width="422" height="57" alt="image" src="https://github.com/user-attachments/assets/0ee087b7-0621-4bab-8427-a5b1ad3192fd" />
+```
+
+```
+system:admin
+```
+
+
+
 ## Show available scc's 
 
 ```

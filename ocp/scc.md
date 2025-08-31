@@ -46,7 +46,11 @@ oc policy who-can use scc privileged
 oc -n kube-system policy who-can use scc privileged
 ```
 
+## Which scc is used by a pod ?
 
+```
+oc get pods -n default -o custom-columns=NAME:.metadata.name,SCC:.metadata.annotations.openshift\.io/scc
+```
 
 
 

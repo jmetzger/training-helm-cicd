@@ -61,9 +61,7 @@ helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app
 
 ### Umschauen 
 
-
-
-
+```
 kubectl -n app-<namenskuerzel> get pods
 helm -n app-<namenskuerzel> status my-nginx 
 helm -n app-<namenskuerzel> list

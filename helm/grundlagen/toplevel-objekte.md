@@ -11,4 +11,4 @@
 
 ## .Release 
 
- * Ansprechen aller Eigenschaften aus der Release z.B. Release.Name 
+ * Ansprechen aller Eigenschaften aus der Release z.B. .Release.Name 

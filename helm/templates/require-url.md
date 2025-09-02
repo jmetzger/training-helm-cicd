@@ -68,7 +68,7 @@ helm template urlexample -f ../helm-values/prod/values.yaml
 ```
 
 ```
-helm template urlexample -f ../helm-values/prod/values.yaml
+helm template urlexample -f ../helm-values/dev/values.yaml
 ```
 
 

@@ -32,6 +32,8 @@ autoscaling:
 ```
     
 ```
+cd
+cd helm-exercises 
 helm template app2 -f ../helm-values/prod/values.yaml
 ```
 

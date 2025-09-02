@@ -22,6 +22,9 @@
 
   1. Helm - Spickzettel
      * [Wichtig: Helm Spickzettel](helm/spickzettel.md)
+    
+  1. Helm - Tipps & Tricks
+     * [Helm values.yaml autogenerieren](helm/autogenerate-values-yaml.md)
 
   1. Arbeiten mit helm - charts (Basics)
      * [Installation, Upgrade, Uninstall helm-Chart exercise](helm/commands/install.md)

@@ -43,6 +43,11 @@ data:
   {{- end }}
 ```
 
+```
+helm template ..
+```
+
+
 ### Step 2a: Does not work because scope does not fit 
 
 ```

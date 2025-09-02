@@ -22,6 +22,9 @@
 
   1. Helm - Spickzettel
      * [Wichtig: Helm Spickzettel](#wichtig-helm-spickzettel)
+    
+  1. Helm - Tipps & Tricks
+     * [Helm values.yaml autogenerieren](#helm-valuesyaml-autogenerieren)
 
   1. Arbeiten mit helm - charts (Basics)
      * [Installation, Upgrade, Uninstall helm-Chart exercise](#installation-upgrade-uninstall-helm-chart-exercise)
@@ -62,12 +65,16 @@
     
   1. Flow Control
      * [if](#if)
+     * [if - render only on condition (HPA)](#if---render-only-on-condition-hpa)
      * [with](#with)
      * [range](#range)
 
   1. Named Templates
      *  [named template](helm/exercises/10-named-template.md)
      *  [named template with dict](/helm/exercises/11-named-template-with-dict.md)
+    
+  1. Helm - Fehlerhandling 
+     * [Fehlerbehandlung mit require - url muss gesetzt werden](#fehlerbehandlung-mit-require---url-muss-gesetzt-werden)
     
   1. Helm mit gitlab ci/cd
      * [Helm mit gitlab ci/cd ausrollen](#helm-mit-gitlab-cicd-ausrollen)
@@ -334,7 +341,7 @@ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 cd
 mkdir .kube
 cd .kube
-cp -a /tmp/config config
+cp /tmp/config config
 ls -la
 ## Alternative: nano config befüllen 
 ## das bekommt ihr aus Eurem Cluster Management Tool 
@@ -446,6 +453,37 @@ helm get --help
 helm get values --help
 ```
 
+## Helm - Tipps & Tricks
+
+### Helm values.yaml autogenerieren
+
+
+```
+grep -Rho '{{[^}]*\.Values[^}]*}}' charts/mychart/templates/ \
+  | sed -E 's/.*\.Values\.([a-zA-Z0-9_.-]+).*/\1/' \
+  | sort -u \
+  | awk -F. '{
+      indent=""
+      for (i=1; i<NF; i++) {
+        indent=indent"  "
+        printf "%s%s:\n", indent, $i
+      }
+      indent=indent"  "
+      printf "%s%s: <TODO>\n", indent, $NF
+    }' > values.generated.yaml
+```
+
+```
+image:
+  repository: <TODO>
+  tag: <TODO>
+service:
+  port: <TODO>
+  type: <TODO>
+
+```
+
+
 ## Arbeiten mit helm - charts (Basics)
 
 ### Installation, Upgrade, Uninstall helm-Chart exercise
@@ -512,9 +550,7 @@ helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app
 
 #### Umschauen 
 
-
-
-
+```
 kubectl -n app-<namenskuerzel> get pods
 helm -n app-<namenskuerzel> status my-nginx 
 helm -n app-<namenskuerzel> list
@@ -967,6 +1003,10 @@ helm dependency --help
 ### what is the difference 
 ```
 
+```
+helm template .
+```
+
 ### Exercise 2: Create chart with condition 
 
 ```
@@ -990,8 +1030,7 @@ nano values.yaml
 ```
 ## unten anfügen 
 redis:
-  enabled:
-    false
+  enabled: false
 ```
 
 ```
@@ -1001,7 +1040,6 @@ helm template .
 ```
 ## values-file anlegen
 cd
-cd helm-exercises
 mkdir -p helm-values
 cd helm-values
 mkdir my-dep
@@ -1020,8 +1058,8 @@ redis:
 ```
 cd
 cd helm-exercises
-helm template my-dep -f helm-values/my-dep/values.yaml
-helm template my-dep -f helm-values/my-dep/values.yaml | grep kind -A 2
+helm template my-dep -f ../helm-values/my-dep/values.yaml
+helm template my-dep -f ../helm-values/my-dep/values.yaml | grep kind -A 2
 ```
 
 ## Helm Grundlagen
@@ -1040,7 +1078,7 @@ helm template my-dep -f helm-values/my-dep/values.yaml | grep kind -A 2
 
 ### .Release 
 
- * Ansprechen aller Eigenschaften aus der Release z.B. Release.Name 
+ * Ansprechen aller Eigenschaften aus der Release z.B. .Release.Name 
 
 ## Helm Charts entwickeln
 
@@ -1257,7 +1295,7 @@ spec:
       - name: nginx
         image: bitnami/nginx:1.22
         ports:
-        - containerPort: 80
+        - containerPort: 8080
 ```        
 
 ### Step 4: Testen des Charts 
@@ -1490,6 +1528,47 @@ helm template ..
 
   * https://helm.sh/docs/chart_template_guide/control_structures/
 
+### if - render only on condition (HPA)
+
+
+```
+cd
+mkdir -p helm-exercises
+
+cd helm-exercises
+helm create app2 
+cd app2/templates 
+less hpa.yaml
+```
+
+```
+## find out the correct value to enable hpa 
+cd ..
+less values.yaml
+```
+
+```
+## Seperate values from from helm-charts 
+cd 
+mkdir -p helm-values 
+cd helm-values
+mkdir prod
+cd prod 
+nano values.yaml
+```
+
+```
+autoscaling:
+    enabled: true
+```
+    
+```
+cd
+cd helm-exercises 
+helm template app2 -f ../helm-values/prod/values.yaml
+```
+
+
 ### with
 
 
@@ -1675,6 +1754,84 @@ data:
 ```
 
 ## Named Templates
+
+## Helm - Fehlerhandling 
+
+### Fehlerbehandlung mit require - url muss gesetzt werden
+
+
+### Walkthrough 
+
+```
+cd
+mkdir -p helm-exercises
+cd helm-exercises
+helm create urlexample
+cd urlexample
+nano values.yaml
+```
+
+```
+## ganz am Ende anhängen 
+deployment:
+  url: ''
+```
+
+```
+cd templates
+nano deployment.yaml
+```
+
+```
+## labels ergänzen (4 spaces eingerueckt)
+   url: {{ required "Please set url" .Values.deployment.url | quote }}
+```
+
+```
+cd
+mkdir -p helm-values
+cd helm-values
+mkdir -p prod
+mkdir -p dev
+nano prod/values.yaml
+```
+
+```
+deployment:
+  url: 'https://someprod.com'
+```
+
+```
+nano dev/values.yaml
+```
+
+```
+deployment:
+  url: 'https://somedev.com'
+```
+
+### Testing 
+
+```
+cd
+cd helm-exercises
+```
+
+```
+## ohne values 
+helm template urlexample
+```
+
+```
+## mit prod  values
+helm template urlexample -f ../helm-values/prod/values.yaml
+```
+
+```
+helm template urlexample -f ../helm-values/dev/values.yaml
+```
+
+
 
 ## Helm mit gitlab ci/cd
 

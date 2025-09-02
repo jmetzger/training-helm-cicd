@@ -73,6 +73,9 @@
      *  [named template](helm/exercises/10-named-template.md)
      *  [named template with dict](/helm/exercises/11-named-template-with-dict.md)
     
+  1. Helm - Fehlerhandling 
+     * [Fehlerbehandlung mit require - url muss gesetzt werden](helm/templates/require-url.md)  
+    
   1. Helm mit gitlab ci/cd
      * [Helm mit gitlab ci/cd ausrollen](helm/gitlab-ci-cd/example-helm-kubernetes.md)
 

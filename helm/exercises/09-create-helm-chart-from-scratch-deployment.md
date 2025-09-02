@@ -51,7 +51,7 @@ spec:
       - name: nginx
         image: bitnami/nginx:1.22
         ports:
-        - containerPort: 80
+        - containerPort: 8080
 ```        
 
 ## Step 4: Testen des Charts 

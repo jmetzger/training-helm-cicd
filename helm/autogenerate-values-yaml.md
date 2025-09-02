@@ -15,3 +15,13 @@ grep -Rho '{{[^}]*\.Values[^}]*}}' charts/mychart/templates/ \
     }' > values.generated.yaml
 ```
 
+```
+image:
+  repository: <TODO>
+  tag: <TODO>
+service:
+  port: <TODO>
+  type: <TODO>
+
+```
+

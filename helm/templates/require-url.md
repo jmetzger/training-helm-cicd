@@ -38,7 +38,7 @@ nano prod/values.yaml
 
 ```
 deployment:
-  url: 'https://someprod.com"
+  url: 'https://someprod.com'
 ```
 
 ```

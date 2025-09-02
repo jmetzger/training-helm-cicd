@@ -65,6 +65,7 @@
     
   1. Flow Control
      * [if](/helm/templates/flow-control/02-only-if.md)
+     * [if - render only on condition (HPA)](/helm/templates/flow-control/04-if-render-hpa.md)
      * [with](/helm/templates/flow-control/02-with.md)
      * [range](/helm/templates/flow-control/03-range.md)
 

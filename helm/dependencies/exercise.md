@@ -72,7 +72,6 @@ helm template .
 ```
 # values-file anlegen
 cd
-cd helm-exercises
 mkdir -p helm-values
 cd helm-values
 mkdir my-dep
@@ -91,6 +90,6 @@ redis:
 ```
 cd
 cd helm-exercises
-helm template my-dep -f helm-values/my-dep/values.yaml
-helm template my-dep -f helm-values/my-dep/values.yaml | grep kind -A 2
+helm template my-dep -f ../helm-values/my-dep/values.yaml
+helm template my-dep -f ../helm-values/my-dep/values.yaml | grep kind -A 2
 ```

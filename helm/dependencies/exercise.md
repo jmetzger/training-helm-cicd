@@ -35,6 +35,10 @@ helm dependency --help
 ## what is the difference 
 ```
 
+```
+helm template .
+```
+
 ## Exercise 2: Create chart with condition 
 
 ```

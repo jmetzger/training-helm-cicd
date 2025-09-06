@@ -1,6 +1,6 @@
 # Helm Paketmanagement
 
-## Agenda 
+## Agenda
 
   1. Kubernetes
      * [Architektur Kubernetes](/kubernetes/architecture.md)

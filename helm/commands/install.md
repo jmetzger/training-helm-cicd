@@ -20,17 +20,82 @@ kubectl -n app-<namenskuerzel> get all
 
 ## Schritt 2: Alternative CloudPirates / relativ frisch 
 
-  * Dokumentation ist noch nicht perfekt 
+  * Dokumentation ist noch nicht perfekt in diesem Projekt
+
+## Schrit 2.1: cloudPirates, der 1. Fehler 
 
 ```
-# Schritt 1: Testen 
-helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace --dry-run 
+# Mini-Step 1: Testen 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace --version 0.1.14 --dry-run -
 ```
 
 ```
-# Schritt 2: Installieren 
-helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace 
+# Mini-Step 2: Installieren 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace --version 0.1.14 
 ```
+
+```
+# Geht das denn auch ?
+kubectl -n app-jm get pods
+```
+
+<img width="1051" height="78" alt="image" src="https://github.com/user-attachments/assets/7c9144d0-57e5-4380-8260-86df731b29c5" />
+
+```
+# Problem CrashLoopBackoff
+# Step 1: Sehen wir was im Describe ? Nope -> nicht mehr als vorher 
+kubectl -n app-<namesnkuerzel> describe pods
+```
+
+```
+# Was sagen die Logs
+kubectl -n app-<namesnkuerzel> logs my-<tab><tab>
+```
+
+<img width="1222" height="68" alt="image" src="https://github.com/user-attachments/assets/ab07dde1-f96b-4349-a9bd-a7e52a25cdbc" />
+
+```
+# Der port 80 kann nicht geöffnet werden, wenn man unprivileged läuft
+```
+
+## Schritt 2: CloudPirates ... Er läuft aber nicht ready 
+
+
+   * Wir nehmen das Beispiel aus der Doku (Spoiler-Alert, leider nicht komplett richtig)
+   * https://artifacthub.io/packages/helm/cloudpirates-nginx/nginx
+
+```
+cd
+mkdir -p helm-values/nginx
+cd helm-values/nginx
+nano values.yaml
+```
+
+```
+# my-values.yaml
+serverConfig: |
+  server {
+    listen 0.0.0.0:8080;
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+    
+    location / {
+      try_files $uri $uri/ /index.html;
+    }
+  }
+livenessProbe:
+  type: httpGet
+  path: /
+readinessProbe:
+  type: httpGet
+  path: /
+```
+
+```
+# Mini-Step 2: Installieren 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace -f values.yaml --version 0.1.14 
+```
+
 
 
 ## Exercise: Upgrade to new version 

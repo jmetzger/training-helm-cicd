@@ -1,6 +1,6 @@
 #  Install and upgrade of release 
 
-## Install (wir rennen in Fehler wg. bitnami)
+## Schritt 1: Install (wir rennen in Fehler wg. bitnami)
 
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -18,7 +18,9 @@ helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespac
 kubectl -n app-<namenskuerzel> get all 
 ```
 
-## Alternative CloudPirates / relativ frisch 
+## Schritt 2: Alternative CloudPirates / relativ frisch 
+
+  * Dokumentation ist noch nicht perfekt 
 
 ```
 # Schritt 1: Testen 

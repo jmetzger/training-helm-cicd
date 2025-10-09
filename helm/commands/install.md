@@ -103,6 +103,10 @@ readinessProbe:
 helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace -f values.yaml --version 0.1.14 
 ```
 
+```
+kubectl -n app-<namenskuerzel> get pods
+```
+
 ## Schritt 2.2: CloudPirates ... Readiness und LivenessCheck 
 
 

@@ -1,22 +1,16 @@
 #  Install and upgrade of release 
 
-## Install 
+## Install (wir rennen in Fehler wg. bitnami)
 
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
 
 ```
-# Installiert 
-helm install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
-# Zeigt an, was er ausrollen würde 
-helm install my-nginx bitnami/nginx --version 19.0.4 --dry-run # auch für uninstall, upgrade 
-```
-
-```
-# noch besser
-# Installiert 
-helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
+# Schritt 1: Testen  
+helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --dry-run --reset-values # auch für uninstall, upgrade 
+# Schritt 2: Installieren 
+helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --reset-values --namespace app-<namenskuerzel>
 ```
 
 ```

@@ -22,7 +22,7 @@ kubectl -n app-<namenskuerzel> get pods
 
 ```
 # Bei fehler für pod
-kubectl -n app-<namenskuerzel> describe <tab><tab>
+kubectl -n app-<namenskuerzel> describe pods <tab><tab>
 ```
 
 ## Schritt 2: Alternative CloudPirates / relativ frisch 

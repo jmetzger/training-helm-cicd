@@ -8,7 +8,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 
 ```
 # Schritt 1: Testen  
-helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --dry-run --reset-values # auch für uninstall, upgrade 
+helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --reset-values --namespace app-<namenskuerzel> --dry-run 
 # Schritt 2: Installieren 
 helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --reset-values --namespace app-<namenskuerzel>
 ```

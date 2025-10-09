@@ -17,7 +17,7 @@ helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespac
 
 ```
 # überprüfen // laufen die pods 
-kubectl -n app-<namenskuerzel> get all 
+kubectl -n app-<namenskuerzel> get pods 
 ```
 
 ## Schritt 2: Alternative CloudPirates / relativ frisch 

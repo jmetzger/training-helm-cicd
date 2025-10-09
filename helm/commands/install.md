@@ -20,6 +20,11 @@ helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespac
 kubectl -n app-<namenskuerzel> get pods 
 ```
 
+```
+# Bei fehler für pod
+kubectl -n app-<namenskuerzel> describe <tab><tab>
+```
+
 ## Schritt 2: Alternative CloudPirates / relativ frisch 
 
   * Dokumentation ist noch nicht perfekt in diesem Projekt

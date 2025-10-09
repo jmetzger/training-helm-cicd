@@ -58,7 +58,7 @@ kubectl -n app-<namesnkuerzel> logs my-<tab><tab>
 # Der port 80 kann nicht geöffnet werden, wenn man unprivileged läuft
 ```
 
-## Schritt 2: CloudPirates ... Er läuft aber nicht ready 
+## Schritt 2.1: CloudPirates ... Er läuft aber nicht ready 
 
 
    * Wir nehmen das Beispiel aus der Doku (Spoiler-Alert, leider nicht komplett richtig)
@@ -95,6 +95,8 @@ readinessProbe:
 # Mini-Step 2: Installieren 
 helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace -f values.yaml --version 0.1.14 
 ```
+
+## Schritt 2.2: CloudPirates ... Readiness und LivenessCheck 
 
 
 

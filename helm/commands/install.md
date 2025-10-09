@@ -25,6 +25,9 @@ kubectl -n app-<namenskuerzel> get all
 ```
 # Schritt 1: Testen 
 helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace --dry-run 
+```
+
+```
 # Schritt 2: Installieren 
 helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace 
 ```

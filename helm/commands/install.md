@@ -65,7 +65,7 @@ kubectl -n app-<namesnkuerzel> logs my-<tab><tab>
 # Der port 80 kann nicht geöffnet werden, wenn man unprivileged läuft
 ```
 
-## Schritt 2.1: CloudPirates ... Er läuft aber nicht ready 
+## Schritt 2.2: CloudPirates ... Er läuft aber nicht ready 
 
 
    * Wir nehmen das Beispiel aus der Doku (Spoiler-Alert, leider nicht komplett richtig)

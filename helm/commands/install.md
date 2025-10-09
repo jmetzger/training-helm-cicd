@@ -33,7 +33,7 @@ kubectl -n app-<namenskuerzel> describe pods <tab><tab>
 
 ```
 # Mini-Step 1: Testen 
-helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace --version 0.1.14 --dry-run -
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace --version 0.1.14 --dry-run
 ```
 
 ```

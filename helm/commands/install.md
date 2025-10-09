@@ -43,7 +43,7 @@ helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --
 
 ```
 # Geht das denn auch ?
-kubectl -n app-jm get pods
+kubectl -n app-<namenskuerzel> get pods
 ```
 
 <img width="1051" height="78" alt="image" src="https://github.com/user-attachments/assets/7c9144d0-57e5-4380-8260-86df731b29c5" />

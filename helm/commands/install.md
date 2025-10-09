@@ -107,9 +107,50 @@ helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --
 kubectl -n app-<namenskuerzel> get pods
 ```
 
-## Schritt 2.2: CloudPirates ... Readiness und LivenessCheck 
+## Schritt 2.3: CloudPirates ... Readiness und LivenessCheck 
 
+  * Readiness und Livenesscheck
 
+```
+cd
+mkdir -p helm-values/nginx
+cd helm-values/nginx
+nano values.yaml
+```
+
+```
+# my-values.yaml
+containerPorts:
+- name: http
+  containerPort: 8080
+  protocol: TCP
+
+serverConfig: |
+  server {
+    listen 0.0.0.0:8080;
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+    
+    location / {
+      try_files $uri $uri/ /index.html;
+    }
+  }
+livenessProbe:
+  type: httpGet
+  path: /
+readinessProbe:
+  type: httpGet
+  path: /
+```
+
+```
+# Mini-Step 2: Installieren 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace -f values.yaml --version 0.1.14 
+```
+
+```
+kubectl -n app-<namenskuerzel> get pods
+```
 
 ## Exercise: Upgrade to new version 
 

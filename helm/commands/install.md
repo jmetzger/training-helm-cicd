@@ -18,6 +18,16 @@ helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespac
 kubectl -n app-<namenskuerzel> get all 
 ```
 
+## Alternative CloudPirates / relativ frisch 
+
+```
+# Schritt 1: Testen 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace --dry-run 
+# Schritt 2: Installieren 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace 
+```
+
+
 ## Exercise: Upgrade to new version 
 
 ```

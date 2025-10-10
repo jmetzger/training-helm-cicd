@@ -180,6 +180,12 @@ helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --
 kubectl -n app-<namenskuerzel> get all
 ```
 
+```
+# Entweder über Browser
+http://<external-ip>
+# Auf dem Client
+curl http://<external-ip>
+```
 
 ## Exercise: Upgrade to new version 
 

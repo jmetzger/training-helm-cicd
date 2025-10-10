@@ -27,7 +27,7 @@
      * [Helm values.yaml autogenerieren](helm/autogenerate-values-yaml.md)
 
   1. Arbeiten mit helm - charts (Basics)
-     * [Installation, Upgrade, Uninstall helm-Chart exercise](helm/commands/install.md)
+     * [Installation, Upgrade, Uninstall helm-Chart exercise (nginx-cloudpirates)](helm/commands/install.md)
      * [Nur fertiges manifest ausgeben ohne Installation](helm/commands/template.md)
      * [Informationen aus nicht installierten Helm-Charts bekommen](helm/commands/show.md)
      * [Chart runterladen und evtl. entpacken und bestimmte Version](/helm/commands/pull.md)

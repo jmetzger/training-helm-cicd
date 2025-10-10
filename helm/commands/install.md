@@ -152,6 +152,35 @@ helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --
 kubectl -n app-<namenskuerzel> get pods
 ```
 
+## Schritt 2.4: CloudPirates .. Erreichbarkeit mit LoadBalancer
+
+```
+cd
+mkdir -p helm-values/nginx
+cd helm-values/nginx
+```
+
+```
+nano values.yaml
+```
+
+```
+## Values ergänzen, Z.B. am Ende
+service:
+  type: LoadBalancer 
+```
+
+```
+# Mini-Step 1: Installieren 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace -f values.yaml --version 0.1.14 
+```
+
+```
+# Jetzt nachschauen, externe ip erst pending, dann iP 
+kubectl -n app-<namenskuerzel> get all
+```
+
+
 ## Exercise: Upgrade to new version 
 
 ```

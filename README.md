@@ -85,6 +85,9 @@
   1. helm - Dokumentation
      * [Helm Documentation](https://helm.sh/docs/)
      * [Built in TopLevel - Objects like .Release](https://helm.sh/docs/chart_template_guide/builtin_objects/)
+    
+  1. Tools
+     * [k9s cheatsheet](/training-helm-cicd/blob/main/tools/k9s/k9s-cheatsheet.pdf)
 
 ## Backlog 
 

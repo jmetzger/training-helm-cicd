@@ -9,7 +9,17 @@ https://gitlab.com/jmetzger/training-helm-chart-kubernetes-gitlab-ci-cd.git
 
 ```
 
-## Step 2: Add your KUBECONFIG as Variable (type: File) to Variables 
+## Step 2: in .gitlab-ci.yaml
+
+```
+von ---_>
+APP_NAME: my-first-app
+
+in ----->
+APP_NAME: my-first-app<namenskuerzel>
+```
+
+## Step 3: Add your KUBECONFIG as Variable (type: File) to Variables 
 
   * https://gitlab.com/jmetzger/training-helm-chart-kubernetes-gitlab-ci-cd/-/settings/ci_cd#js-cicd-variables-settings
 

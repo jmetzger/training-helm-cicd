@@ -17,7 +17,10 @@ helm -n kube-system list
 # Empfehlung mit namespace
 # Repo hinzufügen für Client 
 helm repo add bitnami https://charts.bitnami.com/bitnami
+# install 
 helm install my-nginx bitnami/nginx --version 19.0.1 --create-namespace --namespace=app-<namenskuerzel>
+# besser upgrade --install (geht immer) - bevorzugt
+helm upgrade --install my-nginx bitnami/nginx --version 19.0.1 --create-namespace --namespace=app-<namenskuerzel>
 ```
 
 ## Helm - Suche  
@@ -43,6 +46,24 @@ helm template bitnami/nginx
 ```
 helm -n app-jm get values my-nginx 
 helm -n app-jm get values my-nginx --revision 1
+```
+
+## Helm - show 
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm show all bitnami/nginx
+helm show values bitnami/nginx
+```
+
+## Helm - pull 
+
+  * Charts runterladen
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm pull bitnami/nginx
+helm pull bitnami/nginx --untar
 ```
 
 ## Helm - Hilfe 

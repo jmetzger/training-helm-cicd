@@ -1,6 +1,6 @@
 # Example gitlab ci-cd pipeline Kubernetes 
 
-## Step 1: Create gitlab - repo and pipeline 
+## Step 1: Import gitlab - repo and pipeline 
 
 ```
 1. Create new repo on gitlab 

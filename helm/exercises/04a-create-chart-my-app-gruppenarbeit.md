@@ -95,7 +95,7 @@ image:
 ```
 
 ```
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values 
 ```
 
 ```

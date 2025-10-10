@@ -25,13 +25,13 @@ helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-
 
 ```
 # Variante 1:
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values  
 ```
 
 ```
 # Variante 2:
 cd my-app
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace --reset-values 
 ```
 
 ```
@@ -87,7 +87,7 @@ image:
 
 # in ->
 image:
-  repository: bitnami/nginx
+  repository: nginxinc/nginx-unprivileged
 ```
 
 ```
@@ -107,7 +107,14 @@ kubectl -n my-app-<namenskuerzel> get pods
 # Schlägt fehl, weil readiness auf 80 abfragt, aber dort nichts läuft
 ```
 
-## Readiness-Probe port anpassen und version (Chart-Version) hochziehen 
+## Port anpassen und version (Chart-Version) hochziehen (damit auch readinessCheck geht) 
+
+service:
+ 54   # This sets the service type more information can be found h    ere: https://kubernetes.io/docs/concepts/services-networking/s    ervice/#publishing-services-service-types
+ 55   type: ClusterIP
+ 56   # This sets the ports more information can be found here: ht    tps://kubernetes.io/docs/concepts/services-networking/service/    #field-spec-ports
+ 57   port: 80
+
 
 ```
 cd my-app
@@ -125,25 +132,12 @@ nano values.yaml
 
 ```
 #### von --_>
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
+service:
+  port: 80
 
 ### auf --_>
-
-livenessProbe:
-  httpGet:
-    path: /
-    port: 8080
-readinessProbe:
-  httpGet:
-    path: /
-    port: 8080
+service:
+  port: 8080
 ```
 
 ```

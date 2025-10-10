@@ -3,19 +3,13 @@
 ## Step 1: Import gitlab - repo and pipeline 
 
 ```
-1. Create new repo on gitlab 
-2. Click on pipeline Editor and creat .gitlab-ci.yml with Button 
+1. Create new repo on gitlab -> do import
+https://gitlab.com/jmetzger/training-helm-chart-kubernetes-gitlab-ci-cd.git
+ 
 
 ```
 
-## Step 2: Push your helm chart files to repo 
-
-
-   * Now looks like this
-
-![image](https://github.com/user-attachments/assets/5e88593b-5b31-4adf-a2bb-e5e9a5129be5)
-
-## Step 3: Add your KUBECONFIG as Variable (type: File) to Variables 
+## Step 2: Add your KUBECONFIG as Variable (type: File) to Variables 
 
   * https://gitlab.com/jmetzger/training-helm-chart-kubernetes-gitlab-ci-cd/-/settings/ci_cd#js-cicd-variables-settings
 

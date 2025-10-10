@@ -27,7 +27,7 @@
      * [Helm values.yaml autogenerieren](#helm-valuesyaml-autogenerieren)
 
   1. Arbeiten mit helm - charts (Basics)
-     * [Installation, Upgrade, Uninstall helm-Chart exercise](#installation-upgrade-uninstall-helm-chart-exercise)
+     * [Installation, Upgrade, Uninstall helm-Chart exercise (nginx-cloudpirates)](#installation-upgrade-uninstall-helm-chart-exercise-nginx-cloudpirates)
      * [Nur fertiges manifest ausgeben ohne Installation](#nur-fertiges-manifest-ausgeben-ohne-installation)
      * [Informationen aus nicht installierten Helm-Charts bekommen](#informationen-aus-nicht-installierten-helm-charts-bekommen)
      * [Chart runterladen und evtl. entpacken und bestimmte Version](#chart-runterladen-und-evtl-entpacken-und-bestimmte-version)
@@ -85,6 +85,9 @@
   1. helm - Dokumentation
      * [Helm Documentation](https://helm.sh/docs/)
      * [Built in TopLevel - Objects like .Release](https://helm.sh/docs/chart_template_guide/builtin_objects/)
+    
+  1. Tools
+     * [k9s cheatsheet](#k9s-cheatsheet)
 
 ## Backlog 
 
@@ -416,7 +419,10 @@ helm -n kube-system list
 ## Empfehlung mit namespace
 ## Repo hinzufügen für Client 
 helm repo add bitnami https://charts.bitnami.com/bitnami
+## install 
 helm install my-nginx bitnami/nginx --version 19.0.1 --create-namespace --namespace=app-<namenskuerzel>
+## besser upgrade --install (geht immer) - bevorzugt
+helm upgrade --install my-nginx bitnami/nginx --version 19.0.1 --create-namespace --namespace=app-<namenskuerzel>
 ```
 
 ### Helm - Suche  
@@ -442,6 +448,24 @@ helm template bitnami/nginx
 ```
 helm -n app-jm get values my-nginx 
 helm -n app-jm get values my-nginx --revision 1
+```
+
+### Helm - show 
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm show all bitnami/nginx
+helm show values bitnami/nginx
+```
+
+### Helm - pull 
+
+  * Charts runterladen
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm pull bitnami/nginx
+helm pull bitnami/nginx --untar
 ```
 
 ### Helm - Hilfe 
@@ -486,31 +510,194 @@ service:
 
 ## Arbeiten mit helm - charts (Basics)
 
-### Installation, Upgrade, Uninstall helm-Chart exercise
+### Installation, Upgrade, Uninstall helm-Chart exercise (nginx-cloudpirates)
 
 
-### Install 
+### Schritt 1: Install (wir rennen in Fehler wg. bitnami)
 
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
 
 ```
-## Installiert 
-helm install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
-## Zeigt an, was er ausrollen würde 
-helm install my-nginx bitnami/nginx --version 19.0.4 --dry-run # auch für uninstall, upgrade 
+## Schritt 1: Testen  
+helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --reset-values --namespace app-<namenskuerzel> --dry-run
 ```
-
 ```
-## noch besser
-## Installiert 
-helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --namespace app-<namenskuerzel>
+## Schritt 2: Installieren 
+helm upgrade --install my-nginx bitnami/nginx --version 19.0.4 --create-namespace --reset-values --namespace app-<namenskuerzel>
 ```
 
 ```
 ## überprüfen // laufen die pods 
-kubectl -n app-<namenskuerzel> get all 
+kubectl -n app-<namenskuerzel> get pods 
+```
+
+```
+## Bei fehler für pod
+kubectl -n app-<namenskuerzel> describe pods <tab><tab>
+```
+
+### Schritt 2: Alternative CloudPirates / relativ frisch 
+
+  * Dokumentation ist noch nicht perfekt in diesem Projekt
+
+### Schrit 2.1: cloudPirates, der 1. Fehler 
+
+```
+## Mini-Step 1: Testen 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace --version 0.1.14 --dry-run
+```
+
+```
+## Mini-Step 2: Installieren 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace --version 0.1.14 
+```
+
+```
+## Geht das denn auch ?
+kubectl -n app-<namenskuerzel> get pods
+```
+
+<img width="1051" height="78" alt="image" src="https://github.com/user-attachments/assets/7c9144d0-57e5-4380-8260-86df731b29c5" />
+
+```
+## Problem CrashLoopBackoff
+## Step 1: Sehen wir was im Describe ? Nope -> nicht mehr als vorher 
+kubectl -n app-<namesnkuerzel> describe pods
+```
+
+```
+## Was sagen die Logs
+kubectl -n app-<namesnkuerzel> logs my-<tab><tab>
+```
+
+<img width="1222" height="68" alt="image" src="https://github.com/user-attachments/assets/ab07dde1-f96b-4349-a9bd-a7e52a25cdbc" />
+
+```
+## Der port 80 kann nicht geöffnet werden, wenn man unprivileged läuft
+```
+
+### Schritt 2.2: CloudPirates ... Er läuft aber nicht ready 
+
+
+   * Wir nehmen das Beispiel aus der Doku (Spoiler-Alert, leider nicht komplett richtig)
+   * https://artifacthub.io/packages/helm/cloudpirates-nginx/nginx
+
+```
+cd
+mkdir -p helm-values/nginx
+cd helm-values/nginx
+nano values.yaml
+```
+
+```
+## my-values.yaml
+serverConfig: |
+  server {
+    listen 0.0.0.0:8080;
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+    
+    location / {
+      try_files $uri $uri/ /index.html;
+    }
+  }
+livenessProbe:
+  type: httpGet
+  path: /
+readinessProbe:
+  type: httpGet
+  path: /
+```
+
+```
+## Mini-Step 2: Installieren 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace -f values.yaml --version 0.1.14 
+```
+
+```
+kubectl -n app-<namenskuerzel> get pods
+```
+
+### Schritt 2.3: CloudPirates ... Readiness und LivenessCheck 
+
+  * Readiness und Livenesscheck
+
+```
+cd
+mkdir -p helm-values/nginx
+cd helm-values/nginx
+nano values.yaml
+```
+
+```
+## my-values.yaml
+containerPorts:
+- name: http
+  containerPort: 8080
+  protocol: TCP
+
+serverConfig: |
+  server {
+    listen 0.0.0.0:8080;
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+    
+    location / {
+      try_files $uri $uri/ /index.html;
+    }
+  }
+livenessProbe:
+  type: httpGet
+  path: /
+readinessProbe:
+  type: httpGet
+  path: /
+```
+
+```
+## Mini-Step 2: Installieren 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace -f values.yaml --version 0.1.14 
+```
+
+```
+kubectl -n app-<namenskuerzel> get pods
+```
+
+### Schritt 2.4: CloudPirates .. Erreichbarkeit mit LoadBalancer
+
+```
+cd
+mkdir -p helm-values/nginx
+cd helm-values/nginx
+```
+
+```
+nano values.yaml
+```
+
+```
+### Values ergänzen, Z.B. am Ende
+service:
+  type: LoadBalancer 
+```
+
+```
+## Mini-Step 1: Installieren 
+helm upgrade --install my-nginx oci://registry-1.docker.io/cloudpirates/nginx --reset-values --namespace app-<namenskuerzel> --create-namespace -f values.yaml --version 0.1.14 
+```
+
+```
+## Jetzt nachschauen, externe ip erst pending, dann iP 
+kubectl -n app-<namenskuerzel> get all
+```
+
+```
+## Entweder über Browser
+http://<external-ip>
+## Auf dem Client
+curl http://<external-ip>
 ```
 
 ### Exercise: Upgrade to new version 
@@ -1103,20 +1290,20 @@ helm create my-app
 ## nur template rendern 
 helm template my-app-release my-app 
 ## chart trockenlauf (--dry-run) rendern und an den Server (kube-api-server) zur Überprüfung schickt 
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --dry-run 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values --dry-run 
 ```
 
 ### Install helm - chart 
 
 ```
 ## Variante 1:
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values  
 ```
 
 ```
 ## Variante 2:
 cd my-app
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace --reset-values 
 ```
 
 ```
@@ -1172,7 +1359,7 @@ image:
 
 ## in ->
 image:
-  repository: bitnami/nginx
+  repository: nginxinc/nginx-unprivileged
 ```
 
 ```
@@ -1180,7 +1367,7 @@ image:
 ```
 
 ```
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-<namenskuerzel> my-app --create-namespace --reset-values 
 ```
 
 ```
@@ -1192,7 +1379,7 @@ kubectl -n my-app-<namenskuerzel> get pods
 ## Schlägt fehl, weil readiness auf 80 abfragt, aber dort nichts läuft
 ```
 
-### Readiness-Probe port anpassen und version (Chart-Version) hochziehen 
+### Port anpassen und version (Chart-Version) hochziehen (damit auch readinessCheck geht) 
 
 ```
 cd my-app
@@ -1210,29 +1397,16 @@ nano values.yaml
 
 ```
 ##### von --_>
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
+service:
+  port: 80
 
 #### auf --_>
-
-livenessProbe:
-  httpGet:
-    path: /
-    port: 8080
-readinessProbe:
-  httpGet:
-    path: /
-    port: 8080
+service:
+  port: 8080
 ```
 
 ```
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-<namenskuerzel> . --create-namespace 
 ```
 
 ```
@@ -1843,20 +2017,24 @@ helm template urlexample -f ../helm-values/dev/values.yaml
 ### Helm mit gitlab ci/cd ausrollen
 
 
-### Step 1: Create gitlab - repo and pipeline 
+### Step 1: Import gitlab - repo and pipeline 
 
 ```
-1. Create new repo on gitlab 
-2. Click on pipeline Editor and creat .gitlab-ci.yml with Button 
+1. Create new repo on gitlab -> do import
+https://gitlab.com/jmetzger/training-helm-chart-kubernetes-gitlab-ci-cd.git
+ 
 
 ```
 
-### Step 2: Push your helm chart files to repo 
+### Step 2: in .gitlab-ci.yaml
 
+```
+von ---_>
+APP_NAME: my-first-app
 
-   * Now looks like this
-
-![image](https://github.com/user-attachments/assets/5e88593b-5b31-4adf-a2bb-e5e9a5129be5)
+in ----->
+APP_NAME: my-first-app<namenskuerzel>
+```
 
 ### Step 3: Add your KUBECONFIG as Variable (type: File) to Variables 
 
@@ -1930,6 +2108,106 @@ kubectl top nodes
 ### Built in TopLevel - Objects like .Release
 
   * https://helm.sh/docs/chart_template_guide/builtin_objects/
+
+## Tools
+
+### k9s cheatsheet
+
+%���� ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /ZapfDingbats /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+5 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://k9scli.io)
+>> /Border [ 0 0 0 ] /Rect [ 218.2623 279.0898 277.2843 289.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+6 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://www.youtube.com/watch?v=h82ZmJNUt-c)
+>> /Border [ 0 0 0 ] /Rect [ 345.6483 279.0898 435.0363 289.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+7 0 obj
+<<
+/Annots [ 5 0 R 6 0 R ] /Contents 11 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 10 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+8 0 obj
+<<
+/PageMode /UseNone /Pages 10 0 R /Type /Catalog
+>>
+endobj
+9 0 obj
+<<
+/Author (\(anonymous\)) /CreationDate (D:20251009151611+00'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20251009151611+00'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
+  /Subject (\(unspecified\)) /Title (\(anonymous\)) /Trapped /False
+>>
+endobj
+10 0 obj
+<<
+/Count 1 /Kids [ 7 0 R ] /Type /Pages
+>>
+endobj
+11 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1911
+>>
+stream
+Gasaq=``=U&:XAWfY/ei,T[R/cZD33il&7b-F(uD<?E=iPS!@]!7J#5rUF0D!(f0ojO$MOQ@"!aI+SVdJqG.Hr@TmVdi")t>];in-/_Nf':<(CS(Z2u,?JZ8&VLgA'Ld"p(3m_o2u*4TD;E2P)J83U"#lCG4AS")4!t@Z]KKK8i$oKrpUgL/WWhKE/ZF7<jVc65$D0!1CdUcC2O'L\@.k=I04DBR!+C;ocTX23DkK8('u]W.e?4Oc)/rOZ'^VMLEe8NS_X&<JkDT`Ng4Fs1#Z8Hr;7L8^:!(t\UcFsnKPjZp<PF&&OeV6u%k%:;VN@a=1-+;$b"BbE/+`:5$'JjV2c&e=QmtaF756HV<<cpCa_@2QO;kL\i4kMXnINgsoG&n!iI:2j-6#\l!G/gc/gi2_q-&`9ru^>VLr(7rE8liY+7K)%2j#>'ik'XF,<tm,b`OE>R\PF5SRNLma8esYH$M6(""0$SnFUH(!iIr<KA$CiTm!AZks=*"$6nq4?%CLWS@cVZ[U_h`H+o<)4)OY^cH027fT.VtW3naaQuYsTU<;(.m4P.ZK5=X;On/.)V$R<g5>nqe2U#A)(CN4)nc`;B)2S@TI/';qnduVQLuQW!jbeQR"lV%/H_R9FhbfCu;'CgS09P?18Ol\u?>Xbr.or%i@r\uBQPJ>Q`Im7i[+RJ"FB]s>'l>t<TuE$:I4\i<^<sh-af*jSkCM/A$>fEt)cI,>D=O<%$+]=,6<_hAc..\.OmUU9J/>7q1Uph,M<1o_TMZ[V9!]V+;7rkfm'%ns_P_8Ao#$:#Rc'MmE^W05&=D#js)\g?euYJYWbb=>?0VSKNV#%[2fMJ,Z=G!ZUM\#g'Zb1dF2EhT(\l,SC>)rKSNP$%ZCmq&=]WtP#1*a#;KMP)`T<gtDNX-1MZlW)fiGI7HR"glJ6GNW:"AmI]ZJ:&#=3.Oe)a3m^kP9.*e14XS<Z3bF_63$ojtn$c%j]WmtVZ$://oQXIG_3Sl>-;M/Dr)Y9dVVJCRu"Qk-X8WE>H8b3Q"t(Oc)6W$^\MYnk[$B%/E'@aAQ?H<%(,ZiJpTB&r=`gH3Wai?V!4`M*fp"cHEl`7;X0ZKI67m2mk1)6ORGC9/fi0.k8B2&6-PH%5d_*,0OgYr=/D@BiS(_F>h:7d<G&)ep%oIBl2e\s@Y[<*B9hRPu`t(*)Xj4Tns?S&W:PS1e;Xp-r+8Z#^9sXk+ah)t1jb=eK^M;TeqYmPf,-da.?kVW)HT'YNeBkm+1>'ZR2&N*<?;=Q$@S$*8dL!kI9kHRUV'(BqQ$]P#VbBVAQN/1Fq3oOI2H]pFr';uDo*oU[7jl`mU9\!5dT^2>#X@!4a@Vdb:trJ"@7&o0e`2O8fj2,808:CMcsZ6C_2N*;\0`7#CA98fC#D_tI[r`0uoJ,6G:qisaqA_WIhRFcEOiU^i0:U>X;!%jP4hATbmog>#(iFo0^bLZ[bQ:pMt)IUh.[),>k_qU?=Q&ohuc\n(pQsXG!k9oh>(e^uXr%BE.J6P:^UiktQa^QJtT!-gnX/^e5kFL$k7Q8k]*ND4frJKL98#*'D`dnLnYFj\2/\#_Z9pn$Ia\`DS9'U)XZR>#&e9A[:P_U\>%9dNhB3e/Me4;=Q>)K(El3'S6,9uk*K2[dKBkX6_;'VX#BQDTnI1o>8)Q@MHacV^sZ&'etNANE<jJ\1F-CPo3dYWf-7uc"SdH%6g3__H/N>A!kE>pDbTu&_9e-)4`EnI1l';Z"E@`Y,hK?.giLL*qQjjcmdIXc2.U:B[BLDP]9'DpW*%ptJ\nj]2mqk.8re48*P"P^t"^4sHGWjYg8b`b@5KAuf:;jKLb4<AENYtWi,'t"nXKAY@>(;j:/I?frEkeAA<WntLL0Dt7;H&uh+hH>0o>HZhI]WKObo3uD%$1pk"3;O`j35#k~>endstream
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000073 00000 n 
+0000000124 00000 n 
+0000000231 00000 n 
+0000000343 00000 n 
+0000000426 00000 n 
+0000000595 00000 n 
+0000000790 00000 n 
+0000001019 00000 n 
+0000001088 00000 n 
+0000001371 00000 n 
+0000001431 00000 n 
+trailer
+<<
+/ID 
+[<029df49451343307f9111f8ade2d0cee><029df49451343307f9111f8ade2d0cee>]
+% ReportLab generated PDF document -- digest (http://www.reportlab.com)
+
+/Info 9 0 R
+/Root 8 0 R
+/Size 12
+>>
+startxref
+3434
+%%EOF
 
 ## Grundlagen
 

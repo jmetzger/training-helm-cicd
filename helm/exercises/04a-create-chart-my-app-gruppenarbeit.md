@@ -109,13 +109,6 @@ kubectl -n my-app-<namenskuerzel> get pods
 
 ## Port anpassen und version (Chart-Version) hochziehen (damit auch readinessCheck geht) 
 
-service:
- 54   # This sets the service type more information can be found h    ere: https://kubernetes.io/docs/concepts/services-networking/s    ervice/#publishing-services-service-types
- 55   type: ClusterIP
- 56   # This sets the ports more information can be found here: ht    tps://kubernetes.io/docs/concepts/services-networking/service/    #field-spec-ports
- 57   port: 80
-
-
 ```
 cd my-app
 nano Chart.yaml

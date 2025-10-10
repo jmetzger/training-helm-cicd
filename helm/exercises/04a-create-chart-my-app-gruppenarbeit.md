@@ -134,7 +134,7 @@ service:
 ```
 
 ```
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-<namenskuerzel> . --create-namespace 
 ```
 
 ```

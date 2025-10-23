@@ -101,7 +101,7 @@ helm get all my-mariadb
 ```
 # Hack COMPUTED VALUES anzeigen lassen
 # Welche Werte (values) hat er zur Installation verwendet
-helm get all my-nginx | grep -i computed -A 200
+helm get all my-mariadb | grep -i computed -A 200
 
 ```
 
@@ -109,13 +109,13 @@ helm get all my-nginx | grep -i computed -A 200
 
 ```
 # Beispiel: 
-helm get values  my-nginx --revision 1
+helm get values  my-mariadb --revision 1
 ```
 
 ### Uninstall 
 
 ```
-helm -n app-<namenskuerzel> uninstall my-nginx 
+helm uninstall my-mariadb 
 # namespace wird nicht gelöscht
 # händisch löschen
 kubectl delete ns app-<namenskuerzel>

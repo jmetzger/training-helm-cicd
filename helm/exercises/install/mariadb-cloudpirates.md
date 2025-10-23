@@ -18,13 +18,18 @@ kubectl get pods
 ```
 
 
-# Exercise: Upgrade to new version 
+## Schritt 2: Exercise: Upgrade to new version 
+
+### Schritt 2.1 Default values (auf terminal) ausfindig machen 
 
 ```
 # Recherchiere wie die Werte gesetzt werden (artifacthub.io) oder verwende die folgenden Befehle:
-helm show values bitnami/nginx
-helm show values bitnami/nginx | less
+helm show values oci://registry-1.docker.io/cloudpirates/mariadb
+helm show values oci://registry-1.docker.io/cloudpirates/mariadb | less
 ```
+
+## Schritt 2.2 
+
 
 ```
 cd 

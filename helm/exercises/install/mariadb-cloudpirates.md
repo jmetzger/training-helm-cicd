@@ -73,12 +73,12 @@ kubectl get pods
 ### Umschauen 
 
 ```
-kubectl -n app-<namenskuerzel> get pods
-helm -n app-<namenskuerzel> status my-nginx 
-helm -n app-<namenskuerzel> list
+kubectl get pods
+helm status my-nginx 
+helm list
 # alle helm charts anzeigen, die im gesamten Cluster installierst wurden 
-helm -n app-<namenskuerzel> list -A
-helm -n app-<namenskuerzel> history my-nginx 
+helm list -A
+helm history my-mariadb 
 ```
 
 ### Umschauen get 

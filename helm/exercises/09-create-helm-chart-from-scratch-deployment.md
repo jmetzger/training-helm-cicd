@@ -49,7 +49,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginxinc/nginx:1.22
+        image: nginxinc/nginx-unprivileged:1.22
         ports:
         - containerPort: 8080
 ```        

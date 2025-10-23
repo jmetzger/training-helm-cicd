@@ -95,7 +95,7 @@ helm get manifest my-mariadb
 helm get manifest my-mariadb | grep "300Mi" -A4 -B4 
 # Can I see all values use -> YES
 # Look for COMPUTED VALUES in get all ->
-helm get all my-nginx 
+helm get all my-mariadb 
 ```
 
 ```

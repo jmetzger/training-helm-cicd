@@ -28,13 +28,13 @@ helm show values oci://registry-1.docker.io/cloudpirates/mariadb
 helm show values oci://registry-1.docker.io/cloudpirates/mariadb | less
 ```
 
-## Schritt 2.2 
+## Schritt 2.2 Upgrade und resources ändern 
 
 
 ```
 cd 
-mkdir -p nginx-values 
-cd nginx-values
+mkdir -p mariadb-values 
+cd mariadb-values
 mkdir prod
 cd prod
 ```
@@ -44,12 +44,26 @@ nano values.yaml
 ```
 
 ```
-
+resources:
+  limits:
+     memory: 300Mi
+  requests:
+     memory: 300Mi
+     cpu: 100m
 ```
 
 ```
 cd ..
-helm upgrade --install my-nginx bitnami/nginx --create-namespace --namespace app-<nameskuerzel> --version 21.0.6 -f prod/values.yaml  
+```
+
+```
+# Testen 
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.5.1 --dry-run -f prod/values.yaml  
+```
+
+```
+# Real Upgrade
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.5.1 -f prod/values.yaml
 ```
 
 ### Umschauen 

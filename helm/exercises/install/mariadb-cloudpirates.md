@@ -85,17 +85,17 @@ helm history my-mariadb
 
 ```
 # Wo speichert er Information, die er später mit helm get abruft
-kubectl -n app-<namenskuerzel> get secrets
+kubectl get secrets
 ```
 
 
 ```
-helm -n app-tln1 get values my-nginx
-helm -n app-tln1 get manifest my-nginx
-helm -n app-tln1 get manifest my-nginx | grep "150Mi" -A4 -B4 
+helm get values my-mariadb
+helm get manifest my-mariadb
+helm get manifest my-mariadb | grep "300Mi" -A4 -B4 
 # Can I see all values use -> YES
 # Look for COMPUTED VALUES in get all ->
-helm -n app-tln1 get all my-nginx 
+helm get all my-nginx 
 ```
 
 ```

@@ -65,6 +65,7 @@
 
   1. Type - Conversions
      * [Exercise toYaml](helm/exercises/01-typeConversionsToYaml.md)
+/    * [Exercise toYaml - with app deployoment resources](/helm/exercises/01.01-TypeConversionToYaml-using-app-chart.md)
     
   1. Flow Control
      * [if](/helm/templates/flow-control/02-only-if.md)

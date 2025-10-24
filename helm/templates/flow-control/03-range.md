@@ -8,6 +8,7 @@ mkdir -p helm-exercises
 cd helm-exercises 
 helm create range
 cd range/templates
+rm -f NOTES.txt
 rm -f *.yaml
 rm -fR tests 
 cd ..

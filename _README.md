@@ -6,6 +6,9 @@
      * [Architektur Kubernetes](#architektur-kubernetes)
      * [Aufbau von Browser zu Applikation - Schaubild](#aufbau-von-browser-zu-applikation---schaubild)
 
+  1. Erste Schritte mit Helm / OCP - Anwendung Deployen
+     * [Exercise Deployment](#exercise-deployment)
+    
   1. Helm Einfuehrung 
      * [Was ist helm ?](#was-ist-helm-)
      * [Was kann helm ?](#was-kann-helm-)
@@ -27,6 +30,7 @@
      * [Helm values.yaml autogenerieren](#helm-valuesyaml-autogenerieren)
 
   1. Arbeiten mit helm - charts (Basics)
+     * [Installation, Upgrade, Uninstall helm-Chart exercise - simple (mariadb-cloudpirates)](#installation-upgrade-uninstall-helm-chart-exercise---simple-mariadb-cloudpirates)
      * [Installation, Upgrade, Uninstall helm-Chart exercise (nginx-cloudpirates)](#installation-upgrade-uninstall-helm-chart-exercise-nginx-cloudpirates)
      * [Nur fertiges manifest ausgeben ohne Installation](#nur-fertiges-manifest-ausgeben-ohne-installation)
      * [Informationen aus nicht installierten Helm-Charts bekommen](#informationen-aus-nicht-installierten-helm-charts-bekommen)
@@ -62,6 +66,7 @@
 
   1. Type - Conversions
      * [Exercise toYaml](#exercise-toyaml)
+     * [Exercise toYaml - with app deployoment resources](#exercise-toyaml---with-app-deployoment-resources)
     
   1. Flow Control
      * [if](#if)
@@ -235,6 +240,48 @@ Er stellt sicher, dass Container in einem Pod ausgeführt werden.
 
 
 ![image](https://github.com/user-attachments/assets/0f2086fd-2265-4a01-9bdc-09955c4b8e74)
+
+## Erste Schritte mit Helm / OCP - Anwendung Deployen
+
+### Exercise Deployment
+
+
+```
+cd
+cd manifests
+mkdir 03-deploy
+cd 03-deploy 
+nano deploy.yml 
+```
+
+```
+
+## vi deploy.yml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 8 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        
+```
+
+```
+kubectl apply -f deploy.yml 
+```
 
 ## Helm Einfuehrung 
 
@@ -509,6 +556,8 @@ service:
 
 
 ## Arbeiten mit helm - charts (Basics)
+
+### Installation, Upgrade, Uninstall helm-Chart exercise - simple (mariadb-cloudpirates)
 
 ### Installation, Upgrade, Uninstall helm-Chart exercise (nginx-cloudpirates)
 
@@ -1170,8 +1219,8 @@ nano Chart.yaml
 ## Add dependencies 
 dependencies:
   - name: redis
-    version: "18.0.0"
-    repository: "https://charts.bitnami.com/bitnami"
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates/"
 ```
 
 ```
@@ -1205,8 +1254,8 @@ nano Chart.yaml
 ## adding condition 
 dependencies:
   - name: redis
-    version: "18.3.2"
-    repository: "https://charts.bitnami.com/bitnami"
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates/"
     condition: redis.enabled
 ```
 
@@ -1290,7 +1339,7 @@ helm create my-app
 ## nur template rendern 
 helm template my-app-release my-app 
 ## chart trockenlauf (--dry-run) rendern und an den Server (kube-api-server) zur Überprüfung schickt 
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values --dry-run 
+helm upgrade --install my-app-release my-app --reset-values --dry-run 
 ```
 
 ### Install helm - chart 
@@ -1367,7 +1416,7 @@ image:
 ```
 
 ```
-helm -n my-app-<namenskuerzel> upgrade --install my-app-<namenskuerzel> my-app --create-namespace --reset-values 
+helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values 
 ```
 
 ```
@@ -1467,7 +1516,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: bitnami/nginx:1.22
+        image: nginxinc/nginx-unprivileged:1.22
         ports:
         - containerPort: 8080
 ```        
@@ -1624,6 +1673,110 @@ helm template .
 ### Ref: 
  
   * https://helm.sh/docs/chart_template_guide/function_list/#type-conversion-functions
+
+### Exercise toYaml - with app deployoment resources
+
+
+### Preparation 
+
+```
+cd
+mkdir -p my-charts
+cd my-charts
+helm create app
+cd app
+```
+
+### Exercise with Problem 
+
+```
+nano values.yaml
+```
+
+```
+## Container Resources - wird mit toYaml eingefügt
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+```
+
+```
+cd templates
+```
+
+```
+nano deployment.yaml
+```
+
+```
+## Testing 
+## im Bereich container, für einen container einfügen
+## genauso eingerückt wie images
+resources: {{ .Values.resources }}
+```
+
+```
+helm template ..
+```
+
+<img width="962" height="79" alt="image" src="https://github.com/user-attachments/assets/9b7e6452-8c26-4547-9aa7-a2d67180035b" />
+
+### Next step -> Fix 1
+
+```
+nano deployment.yaml
+```
+
+```
+## Zeile ändern
+## resources: {{ .Values.resources }}
+   resources:
+     {{ .Values.resources | toYaml }}
+```
+
+```
+helm template .. --debug
+```
+
+```
+<img width="665" height="204" alt="image" src="https://github.com/user-attachments/assets/c1d9ff77-2182-4541-a616-636815191b18" />
+```
+
+```
+## Jetzt richtig formatieren - Schritt 1 
+## Zeile ändern
+## resources: {{ .Values.resources }}
+   resources:
+     {{- .Values.resources | toYaml }}
+```
+
+```
+helm template .. --debug
+```
+
+<img width="498" height="175" alt="image" src="https://github.com/user-attachments/assets/363da324-f38f-4b1f-b78b-d96738691737" />
+
+```
+## Jetzt richtig formatieren - Schritt 2 
+## Zeile ändern
+## resources: {{ .Values.resources }}
+   resources:
+     {{- .Values.resources | toYaml | nindent 10 }}
+```
+
+```
+helm template .. --debug
+```
+
+```
+## now it is perfekt
+```
+<img width="476" height="209" alt="image" src="https://github.com/user-attachments/assets/96cd6162-60ad-4e6b-a5d7-2fbf4db9f76b" />
+
 
 ## Flow Control
 
@@ -1875,10 +2028,18 @@ mkdir -p helm-exercises
 cd helm-exercises 
 helm create range
 cd range/templates
+rm -f NOTES.txt
 rm -f *.yaml
+rm -fR tests 
+cd ..
+rm -f values.yaml
 ```
 
 ### Step 1: Values.yaml 
+
+```
+nano values.yaml
+```
 
 ```
 favorite:
@@ -1892,6 +2053,11 @@ pizzaToppings:
 ```
 
 ### Step 2 (Version 1):
+
+```
+cd templates
+nano cm.yaml
+```
 
 ```
 ## nano cm.yaml 
@@ -1909,6 +2075,10 @@ data:
     {{- range .Values.pizzaToppings }}
     - {{ . | title | quote }}
     {{- end }}    
+```
+
+```
+helm template ..
 ```
 
 ### Step 3 (Version 2 - works as well) 

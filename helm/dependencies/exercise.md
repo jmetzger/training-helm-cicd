@@ -50,8 +50,8 @@ nano Chart.yaml
 # adding condition 
 dependencies:
   - name: redis
-    version: "18.3.2"
-    repository: "https://charts.bitnami.com/bitnami"
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates/"
     condition: redis.enabled
 ```
 

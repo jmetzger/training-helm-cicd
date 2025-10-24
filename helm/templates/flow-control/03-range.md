@@ -9,9 +9,14 @@ cd helm-exercises
 helm create range
 cd range/templates
 rm -f *.yaml
+cd ..
 ```
 
 ## Step 1: Values.yaml 
+
+```
+nano values.yaml
+```
 
 ```
 favorite:

@@ -9,6 +9,7 @@ cd helm-exercises
 helm create range
 cd range/templates
 rm -f *.yaml
+rm -fR tests 
 cd ..
 rm -f values.yaml
 ```

@@ -10,6 +10,7 @@ helm create range
 cd range/templates
 rm -f *.yaml
 cd ..
+rm -f values.yaml
 ```
 
 ## Step 1: Values.yaml 

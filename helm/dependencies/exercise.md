@@ -15,8 +15,8 @@ nano Chart.yaml
 # Add dependencies 
 dependencies:
   - name: redis
-    version: "18.0.0"
-    repository: "https://charts.bitnami.com/bitnami"
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates/redis"
 ```
 
 ```

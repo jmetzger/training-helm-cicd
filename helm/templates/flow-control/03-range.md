@@ -55,6 +55,10 @@ data:
     {{- end }}    
 ```
 
+```
+helm template ..
+```
+
 ## Step 3 (Version 2 - works as well) 
 
   * Accessing the parent scope

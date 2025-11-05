@@ -2,7 +2,7 @@
 
   * How to persistently use mariadb with a storage class / driver nfs.csi.
 
-## Step 3: PVC, Configmap, Deployment 
+## Step 1: PVC, Configmap, Deployment 
 
 ```
 mkdir -p manifests

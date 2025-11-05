@@ -16,7 +16,7 @@ nano Chart.yaml
 dependencies:
   - name: redis
     version: "0.9.x"
-    repository: "oci://registry-1.docker.io/cloudpirates/"
+    repository: "oci://registry-1.docker.io/cloudpirates"
 ```
 
 ```

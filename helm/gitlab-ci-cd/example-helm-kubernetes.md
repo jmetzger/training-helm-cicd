@@ -37,7 +37,26 @@ variables:
 deploy:
   stage: deploy
   image: 
-    name: alpine/helm:3.2.1
+    name: alpine/stages:          # List of stages for jobs, and their order of execution
+  - deploy
+
+variables:
+  APP_NAME: my-first-app
+
+deploy:
+  stage: deploy
+  image: 
+    name: alpine/k8s:1.31.13
+# Important to unset entrypoint 
+    entrypoint: [""]
+  script:
+    - ls -la
+    - cd; mkdir .kube; cd .kube; cat $KUBECONFIG_SECRET > config; ls -la;
+    - cd $CI_PROJECT_DIR; helm upgrade ${APP_NAME} ./charts/my-app --install --namespace ${APP_NAME} --create-namespace -f ./config/values.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+      when: always
+
 # Important to unset entrypoint 
     entrypoint: [""]
   script:

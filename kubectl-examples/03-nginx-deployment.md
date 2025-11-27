@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:1.21
+        image: nginxinc/nginx-unprivileged:1.21
         ports:
         - containerPort: 80
         

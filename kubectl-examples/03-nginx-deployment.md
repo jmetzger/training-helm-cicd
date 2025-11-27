@@ -34,5 +34,6 @@ spec:
 ```
 
 ```
-kubectl apply -f deploy.yml 
+kubectl apply -f deploy.yml
+kubectl get all 
 ```

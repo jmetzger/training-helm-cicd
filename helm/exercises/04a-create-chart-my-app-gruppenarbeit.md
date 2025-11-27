@@ -35,8 +35,8 @@ helm upgrade --install meine-app . --create-namespace --reset-values
 ```
 
 ```
-kubectl -n my-app-<namenskuerzel> get all
-kubectl -n my-app-<namenskuerzel> get pods 
+kubectl get all
+kubectl get pods 
 ```
 
 ## Fehler bei ocp debuggen 

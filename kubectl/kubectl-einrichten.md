@@ -13,6 +13,7 @@ ls -la
 ```
 
 ```
+kubectl config view
 kubectl cluster-info
 ```
 

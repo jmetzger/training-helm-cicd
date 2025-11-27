@@ -16,22 +16,22 @@ helm create my-app
 
 ```
 # nur template rendern 
-helm template my-app-release my-app 
+helm template meine-app my-app 
 # chart trockenlauf (--dry-run) rendern und an den Server (kube-api-server) zur Überprüfung schickt 
-helm upgrade --install my-app-release my-app --reset-values --dry-run 
+helm upgrade --install meine-app my-app --reset-values --dry-run 
 ```
 
 ## Install helm - chart 
 
 ```
 # Variante 1:
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values  
+helm -n my-app-<namenskuerzel> upgrade --install meine-app my-app --create-namespace --reset-values  
 ```
 
 ```
 # Variante 2:
 cd my-app
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace --reset-values 
+helm -n my-app-<namenskuerzel> upgrade --install meine-app . --create-namespace --reset-values 
 ```
 
 ```

@@ -25,13 +25,13 @@ helm upgrade --install meine-app my-app --reset-values --dry-run
 
 ```
 # Variante 1:
-helm upgrade --install meine-app my-app --create-namespace --reset-values  
+helm upgrade --install meine-app my-app --reset-values  
 ```
 
 ```
 # Variante 2:
 cd my-app
-helm upgrade --install meine-app . --create-namespace --reset-values 
+helm upgrade --install meine-app . --reset-values 
 ```
 
 ```

@@ -2,8 +2,8 @@
 
 ```
 cd 
-mkdir -p charts
-cd charts
+mkdir -p charts-download
+cd charts-download
 ```
 
 

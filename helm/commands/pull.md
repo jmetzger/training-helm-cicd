@@ -15,7 +15,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm pull bitnami/mariadb
 
 # Lädt bestimmte chart-version runter 
-helm pull bitnami/mariadb --version 12.1.6
+# helm pull bitnami/mariadb --version 12.1.6
 # evtl. entpacken wenn gewünscht
 # tar xvf mariadb-12.1.6.tgz
 

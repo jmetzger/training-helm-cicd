@@ -31,7 +31,7 @@ helm upgrade --install meine-app my-app --create-namespace --reset-values
 ```
 # Variante 2:
 cd my-app
-helm -n my-app-<namenskuerzel> upgrade --install meine-app . --create-namespace --reset-values 
+helm upgrade --install meine-app . --create-namespace --reset-values 
 ```
 
 ```

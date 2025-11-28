@@ -1,4 +1,4 @@
-# Name Template Exercise 
+# Named Template Exercise 
 
 ## Prerequisites range-example 
 

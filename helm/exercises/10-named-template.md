@@ -4,8 +4,22 @@
 
   * helm-exercises/range chart exists 
 
+## Step 0: start in project 
+
+```
+cd
+cd helm-exercises/range
+```
+
 
 ## Step 1: Put in file starting _helpers.tpl 
+
+```
+cd templates
+nano _helpers.tpl
+```
+
+  * Das am Ende einfügen -> 
 
 ```
 {{/* Definiere ein named template namens "mychart.containerPort" */}}

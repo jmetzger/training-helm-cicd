@@ -50,7 +50,7 @@ data:
 helm template ..
 ```
 
-## Step 4: change favorite drin 
+## Step 4: change favorite drink 
 
 ```
 nano ../values.yaml

@@ -52,6 +52,9 @@
 
   1. Helm - Advanced
      * [Helm Dependencies Exercise](helm/dependencies/exercise.md)
+    
+  1- Helm - Good structure, using umbrella chart 
+     * [Exercise helm umbrella chart](helm/dependencies/umbrella-chart.md)
 
   1. Helm Grundlagen
      * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)

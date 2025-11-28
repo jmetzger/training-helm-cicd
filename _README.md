@@ -52,6 +52,9 @@
 
   1. Helm - Advanced
      * [Helm Dependencies Exercise](#helm-dependencies-exercise)
+    
+  1. Helm - Good structure, using umbrella chart 
+     * [Exercise helm umbrella chart](#exercise-helm-umbrella-chart)
 
   1. Helm Grundlagen
      * [TopLevel Objekte](#toplevel-objekte)
@@ -248,6 +251,7 @@ Er stellt sicher, dass Container in einem Pod ausgeführt werden.
 
 ```
 cd
+mkdir -p manifests
 cd manifests
 mkdir 03-deploy
 cd 03-deploy 
@@ -273,14 +277,15 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:1.21
+        image: nginxinc/nginx-unprivileged:1.21
         ports:
         - containerPort: 80
         
 ```
 
 ```
-kubectl apply -f deploy.yml 
+kubectl apply -f deploy.yml
+kubectl get all 
 ```
 
 ## Helm Einfuehrung 
@@ -398,6 +403,7 @@ ls -la
 ```
 
 ```
+kubectl config view
 kubectl cluster-info
 ```
 
@@ -558,6 +564,135 @@ service:
 ## Arbeiten mit helm - charts (Basics)
 
 ### Installation, Upgrade, Uninstall helm-Chart exercise - simple (mariadb-cloudpirates)
+
+
+### Schritt 1: install mariadb von cloudpirates  
+
+```
+## Mini-Step 1: Testen 
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.5.1 --dry-run
+```
+
+```
+## Mini-Step 2: Installieren 
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.5.1 
+```
+
+```
+## Geht das denn auch ?
+kubectl get pods
+```
+
+
+### Schritt 2: Exercise: Upgrade to new version 
+
+#### Schritt 2.1 Default values (auf terminal) ausfindig machen 
+
+```
+## Recherchiere wie die Werte gesetzt werden (artifacthub.io) oder verwende die folgenden Befehle:
+helm show values oci://registry-1.docker.io/cloudpirates/mariadb
+helm show values oci://registry-1.docker.io/cloudpirates/mariadb | less
+```
+
+#### Schritt 2.2 Upgrade und resources ändern 
+
+
+```
+cd 
+mkdir -p mariadb-values 
+cd mariadb-values
+mkdir prod
+cd prod
+```
+
+```
+nano values.yaml
+```
+
+```
+resources:
+  limits:
+     memory: 300Mi
+  requests:
+     memory: 300Mi
+     cpu: 100m
+```
+
+```
+cd ..
+```
+
+```
+## Testen 
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.5.3 --dry-run -f prod/values.yaml  
+```
+
+```
+## Real Upgrade
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.5.3 -f prod/values.yaml
+```
+
+```
+kubectl get pods
+```
+
+#### Umschauen 
+
+```
+kubectl get pods
+helm status my-mariadb 
+helm list
+## alle helm charts anzeigen, die im gesamten Cluster installierst wurden 
+helm list -A
+helm history my-mariadb 
+```
+
+#### Umschauen get 
+
+```
+## Wo speichert er Information, die er später mit helm get abruft
+kubectl get secrets
+```
+
+
+```
+helm get values my-mariadb
+helm get manifest my-mariadb
+helm get manifest my-mariadb | grep "300Mi" -A4 -B4 
+## Can I see all values use -> YES
+## Look for COMPUTED VALUES in get all ->
+helm get all my-mariadb 
+```
+
+```
+## Hack COMPUTED VALUES anzeigen lassen
+## Welche Werte (values) hat er zur Installation verwendet
+helm get all my-mariadb | grep -i computed -A 200
+
+```
+
+### Tipp: values aus alter revision anzeigen 
+
+```
+## Beispiel: 
+helm get values  my-mariadb --revision 1
+```
+
+#### Uninstall 
+
+```
+helm uninstall my-mariadb 
+## namespace wird nicht gelöscht
+## händisch löschen
+kubectl delete ns app-<namenskuerzel>
+## crd's werden auch nicht gelöscht 
+```
+
+### Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
+
+  * if memory of container is bigger than limit an OOM-Killer will be triggered
+  * How to fix. Use memory limit in the application too !
+    * https://techcommunity.microsoft.com/blog/appsonazureblog/unleashing-javascript-applications-a-guide-to-boosting-memory-limits-in-node-js/4080857
 
 ### Installation, Upgrade, Uninstall helm-Chart exercise (nginx-cloudpirates)
 
@@ -866,8 +1001,8 @@ kubectl delete ns app-<namenskuerzel>
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 ## Kann sehr lang sein 
-helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | less
-helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
+helm template my-nginx bitnami/nginx --version 19.0.4 | less
+helm template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
 
 ```
 
@@ -914,8 +1049,8 @@ helm show crds bitnami/mariadb
 
 ```
 cd 
-mkdir -p charts
-cd charts
+mkdir -p charts-download
+cd charts-download
 ```
 
 
@@ -927,7 +1062,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm pull bitnami/mariadb
 
 ## Lädt bestimmte chart-version runter 
-helm pull bitnami/mariadb --version 12.1.6
+## helm pull bitnami/mariadb --version 12.1.6
 ## evtl. entpacken wenn gewünscht
 ## tar xvf mariadb-12.1.6.tgz
 
@@ -1028,8 +1163,8 @@ kubectl delete crd certificaterequests.cert-manager.io certificates.cert-manager
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 ## Kann sehr lang sein 
-helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | less
-helm -n app-<namenskuerzel> template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
+helm template my-nginx bitnami/nginx --version 19.0.4 | less
+helm template my-nginx bitnami/nginx --version 19.0.4 | grep -A 4 -i ^Kind
 
 ```
 
@@ -1220,7 +1355,7 @@ nano Chart.yaml
 dependencies:
   - name: redis
     version: "0.9.x"
-    repository: "oci://registry-1.docker.io/cloudpirates/"
+    repository: "oci://registry-1.docker.io/cloudpirates"
 ```
 
 ```
@@ -1298,6 +1433,134 @@ helm template my-dep -f ../helm-values/my-dep/values.yaml
 helm template my-dep -f ../helm-values/my-dep/values.yaml | grep kind -A 2
 ```
 
+## Helm - Good structure, using umbrella chart 
+
+### Exercise helm umbrella chart
+
+
+### Exercise 1: Create chart & cleanup with Dependency 
+
+```
+cd 
+mkdir -p helm-exercises 
+cd helm-exercises 
+helm create my-umbrella-chart
+cd my-umbrella-chart 
+rm -fR templates
+rm values.yaml
+touch values.yaml 
+```
+
+```
+nano Chart.yaml
+```
+
+```
+## Add dependencies 
+dependencies:
+  - name: redis
+    version: "18.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+  - name: nginx
+    version: "21.x.x"
+    repository: "https://charts.bitnami.com/bitnami"
+```
+
+```
+## Das 1. Mal - dann wird Chart.lock angelegt 
+helm dependency update
+ls -la Chart.lock 
+```
+
+```
+rm -fR charts
+helm dependency build
+```
+
+```
+helm dependency --help 
+### what is the difference 
+```
+
+```
+helm template .
+```
+
+### Exercise 2: Werte in den Untercharts setzen (nginx und redis) 
+
+```
+nano values.yaml
+```
+
+```
+nginx:
+  fullnameOverride: nginx
+redis:
+  fullnameOverride: redis
+```
+
+```
+helm template .
+helm template . | grep -i '^Kind' -A 4
+```
+
+### Exercise 3: Create chart with condition 
+
+```
+nano Chart.yaml
+```
+
+```
+## change dependency block
+## adding condition 
+dependencies:
+  - name: redis
+    version: "18.3.2"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled
+```
+
+```
+nano values.yaml
+```
+
+```
+## unten anfügen 
+redis:
+  enabled:
+    false
+```
+
+```
+helm template .
+```
+
+```
+## values-file anlegen
+cd
+cd helm-exercises
+mkdir -p helm-values
+cd helm-values
+mkdir my-dep
+cd my-dep
+```
+
+```
+nano values.yaml
+```
+
+```
+redis:
+  enabled: true
+```
+
+```
+cd
+cd helm-exercises
+helm template my-umbrella-chart -f helm-values/my-dep/values.yaml
+helm template my-umbrella-chart -f helm-values/my-dep/values.yaml | grep kind -A 2
+```
+
 ## Helm Grundlagen
 
 ### TopLevel Objekte
@@ -1337,27 +1600,27 @@ helm create my-app
 
 ```
 ## nur template rendern 
-helm template my-app-release my-app 
+helm template meine-app my-app 
 ## chart trockenlauf (--dry-run) rendern und an den Server (kube-api-server) zur Überprüfung schickt 
-helm upgrade --install my-app-release my-app --reset-values --dry-run 
+helm upgrade --install meine-app my-app --reset-values --dry-run 
 ```
 
 ### Install helm - chart 
 
 ```
 ## Variante 1:
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values  
+helm upgrade --install meine-app my-app --reset-values  
 ```
 
 ```
 ## Variante 2:
 cd my-app
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release . --create-namespace --reset-values 
+helm upgrade --install meine-app . --reset-values 
 ```
 
 ```
-kubectl -n my-app-<namenskuerzel> get all
-kubectl -n my-app-<namenskuerzel> get pods 
+kubectl get all
+kubectl get pods 
 ```
 
 ### Fehler bei ocp debuggen 
@@ -1833,7 +2096,7 @@ data:
 helm template ..
 ```
 
-### Step 4: change favorite drin 
+### Step 4: change favorite drink 
 
 ```
 nano ../values.yaml
@@ -2224,7 +2487,26 @@ variables:
 deploy:
   stage: deploy
   image: 
-    name: alpine/helm:3.2.1
+    name: alpine/stages:          # List of stages for jobs, and their order of execution
+  - deploy
+
+variables:
+  APP_NAME: my-first-app
+
+deploy:
+  stage: deploy
+  image: 
+    name: alpine/k8s:1.31.13
+## Important to unset entrypoint 
+    entrypoint: [""]
+  script:
+    - ls -la
+    - cd; mkdir .kube; cd .kube; cat $KUBECONFIG_SECRET > config; ls -la;
+    - cd $CI_PROJECT_DIR; helm upgrade ${APP_NAME} ./charts/my-app --install --namespace ${APP_NAME} --create-namespace -f ./config/values.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+      when: always
+
 ## Important to unset entrypoint 
     entrypoint: [""]
   script:

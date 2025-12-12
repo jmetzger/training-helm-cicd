@@ -8,17 +8,16 @@ cd charts-download
 
 
 ```
-# Vorher müssen wir den Repo-Eintrag anlegen 
-helm repo add bitnami https://charts.bitnami.com/bitnami 
+helm pull oci://registry-1.docker.io/cloudpirates/mariadb
 
 # Lädt die letzte version herunter
-helm pull bitnami/mariadb
+helm pull oci://registry-1.docker.io/cloudpirates/mariadb
 
 # Lädt bestimmte chart-version runter 
-# helm pull bitnami/mariadb --version 12.1.6
+# helm pull oci://registry-1.docker.io/cloudpirates/mariadb --version 0.9.0
 # evtl. entpacken wenn gewünscht
 # tar xvf mariadb-12.1.6.tgz
 
 # Schnelle Variante
-helm pull bitnami/mariadb --version 12.1.6 --untar
+helm pull oci://registry-1.docker.io/cloudpirates/mariadb --version 0.9.0 --untar
 ```

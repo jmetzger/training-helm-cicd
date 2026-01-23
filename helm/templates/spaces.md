@@ -2,7 +2,7 @@
 
 ## Explanation 
 
-  * {{- -> trim on left side
+  * {{- -> trim on left side / INCLUDING new lines 
   * -}} -> trim on right side / ALSO: new lines 
   * trim tabs, whitespaces a.s.o. (see ref)
 

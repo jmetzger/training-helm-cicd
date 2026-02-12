@@ -8,7 +8,7 @@
   Standardvariante. Lässt den Whitespace außerhalb der geschweiften Klammern unverändert.
 
 - `{{- ... }}`:  
-  Entfernt den Whitespace links (vor) dem Ausdruck.  
+  Entfernt den Whitespace links (vor) dem Ausdruck und AUCH die Zeilenmbrüche davor 
 
 - `{{ ... -}}`:  
   Entfernt den Whitespace rechts (nach) dem Ausdruck, aber AUCH Zeilenumbrüche 

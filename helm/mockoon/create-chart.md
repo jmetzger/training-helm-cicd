@@ -92,6 +92,11 @@ metadata:
   name: {{ .Release.Name }}
   labels:
     app: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version }}
 spec:
   replicas: 1
   selector:
@@ -101,25 +106,33 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}
+      {{- if not .Values.watch }}
       annotations:
-        # ConfigMap-Hash -> Auto-Rollout bei Mock-Änderung
+        # Pod-Restart bei Mock-Änderung erzwingen, wenn Hot-Reload aus ist
         checksum/config: {{ .Values.mockData | sha256sum }}
+      {{- end }}
     spec:
-      # Kein runAsUser/fsGroup -> SCC restricted-v2 vergibt Random-UID
       securityContext:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       containers:
       - name: mockoon
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         args:
           - "--data"
           - "/data/mock.json"
           - "--port"
-          - "{{ .Values.port }}"
+          - "{{ .Values.port | toString }}"
           - "--disable-log-to-file"
+          {{- if .Values.watch }}
+          - "--watch"
+          {{- end }}
+          {{- with .Values.publicBaseUrl }}
+          - "--public-base-url"
+          - {{ . | quote }}
+          {{- end }}
         env:
         - name: HOME
           value: /tmp

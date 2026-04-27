@@ -16,28 +16,36 @@ mockoon/
 ```
 
 ## `Chart.yaml`
-```yaml
+
+```
 apiVersion: v2
 name: mockoon
 description: Mockoon mock API server for OpenShift
 type: application
-version: 0.1.0
-appVersion: "9.3.0"
+version: 0.2.0
+appVersion: "9.6.0"
 ```
 
 ## `values.yaml`
 ```yaml
 image:
   repository: mockoon/cli
-  tag: latest
+  tag: "9.6.0"
   pullPolicy: IfNotPresent
 
 port: 3000
 
+# Hot-Reload bei ConfigMap-Änderungen (kein Pod-Restart nötig)
+watch: true
+
+# Öffentliche Basis-URL für baseUrl-Templating und Callbacks
+# Leer lassen = nicht setzen. Wird typisch auf die Route-URL gesetzt.
+publicBaseUrl: ""
+
 route:
   host: ""              # leer = OCP generiert <name>-<ns>.<wildcard-domain>
-  termination: edge     # edge | passthrough | reencrypt
-  insecureRedirect: Redirect   # Redirect | Allow | None
+  termination: edge
+  insecureRedirect: Redirect
   timeout: 30s
 
 mockData: |

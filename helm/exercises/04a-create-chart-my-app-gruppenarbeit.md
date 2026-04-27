@@ -134,11 +134,11 @@ service:
 ```
 
 ```
-helm -n my-app-<namenskuerzel> upgrade --install my-app-<namenskuerzel> . --create-namespace 
+helm upgrade --install meine-app my-app  
 ```
 
 ```
-kubectl -n my-app-<namenskuerzel> get all
-kubectl -n my-app-<namenskuerzel> get pods 
+kubectl get all
+kubectl get pods 
 ```
 

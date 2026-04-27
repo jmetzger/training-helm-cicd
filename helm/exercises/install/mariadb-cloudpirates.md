@@ -74,6 +74,7 @@ kubectl get pods
 
 ```
 kubectl get pods
+# Ab Version 4 (helm) sinnvoll
 helm status my-mariadb 
 helm list
 # alle helm charts anzeigen, die im gesamten Cluster installierst wurden 

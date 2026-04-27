@@ -115,6 +115,67 @@ helm get all my-mariadb | sed -n '/COMPUTED/, /HOOKS/p'
 helm get values  my-mariadb --revision 1
 ```
 
+## Schritt 3: Exercise: Upgrade to new version 
+
+
+### Schritt 3.1. Upgrade und resources beibehalten 
+
+  * Values wurden bereits im vorherigen Schritt angelegt 
+
+```
+# Testen 
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.10.1 --dry-run=server -f prod/values.yaml  
+```
+
+```
+# Real Upgrade
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.10.1 -f prod/values.yaml
+```
+
+```
+kubectl get pods
+# kein neuer pod
+```
+
+### Schritt 3.2 Fehlgeschlagene Installation, wie lösen ? 
+
+```
+# Schlägt fehle, weil mit dem upgrade bestimmte Felder nicht überschrieben dürfen, die geändert wurden im Template
+```
+
+### Lösung 
+
+  * Deinstallieren (pvc bleibt erhalten auch beim Deinstallieren -> so macht das helm)
+  * Und wieder installieren in der neuen Version 
+
+```
+# Frage, ist das pvc noch ?
+kubectl get pvc
+# Ja ! 
+```
+
+<img width="891" height="82" alt="image" src="https://github.com/user-attachments/assets/849b5859-a5f2-40df-8bc6-018eaedbd146" />
+
+```
+# alte revisions behalten 
+helm uninstall my-mariadb --keep-history
+kubectl get pvc 
+# auch nach der Deinstallation ist der pvc noch da
+# Super !! 
+```
+
+```
+# Real Upgrade
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.10.1 -f prod/values.yaml
+```
+
+```
+kubectl get pods
+helm get values my-mariadb 
+```
+
+
+
 ### Uninstall 
 
 ```

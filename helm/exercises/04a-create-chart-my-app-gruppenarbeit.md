@@ -95,12 +95,12 @@ image:
 ```
 
 ```
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values 
+helm upgrade --install meine-app my-app --create-namespace --reset-values 
 ```
 
 ```
-kubectl -n my-app-<namenskuerzel> get all
-kubectl -n my-app-<namenskuerzel> get pods 
+kubectl get all
+kubectl get pods 
 ```
 
 ```

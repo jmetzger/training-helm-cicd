@@ -95,8 +95,7 @@ helm get values my-mariadb
 helm get manifest my-mariadb
 # Zeile ausgeben und 4 Zeilen danach und 4 Zeilen davor
 helm get manifest my-mariadb | grep "300Mi" -A4 -B4 
-# Can I see all values use -> YES
-# Look for COMPUTED VALUES in get all ->
+# alles was ich ausgeben kann an Daten aus secrets .
 helm get all my-mariadb 
 ```
 

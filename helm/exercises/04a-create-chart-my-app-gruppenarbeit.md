@@ -134,7 +134,7 @@ service:
 ```
 
 ```
-helm upgrade --install meine-app my-app  
+helm upgrade --install meine-app . 
 ```
 
 ```

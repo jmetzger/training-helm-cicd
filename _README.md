@@ -93,6 +93,9 @@
   1. helm - Dokumentation
      * [Helm Documentation](https://helm.sh/docs/)
      * [Built in TopLevel - Objects like .Release](https://helm.sh/docs/chart_template_guide/builtin_objects/)
+
+  1. helm - mockoon (api-mocks)
+     * [Fertiges helm-chart für Mockoon](https://github.com/jmetzger/training-mockoon-example)
     
   1. Tools
      * [k9s cheatsheet](#k9s-cheatsheet)
@@ -640,6 +643,7 @@ kubectl get pods
 
 ```
 kubectl get pods
+## Ab Version 4 (helm) sinnvoll
 helm status my-mariadb 
 helm list
 ## alle helm charts anzeigen, die im gesamten Cluster installierst wurden 
@@ -658,9 +662,9 @@ kubectl get secrets
 ```
 helm get values my-mariadb
 helm get manifest my-mariadb
+## Zeile ausgeben und 4 Zeilen danach und 4 Zeilen davor
 helm get manifest my-mariadb | grep "300Mi" -A4 -B4 
-## Can I see all values use -> YES
-## Look for COMPUTED VALUES in get all ->
+## alles was ich ausgeben kann an Daten aus secrets .
 helm get all my-mariadb 
 ```
 
@@ -668,6 +672,8 @@ helm get all my-mariadb
 ## Hack COMPUTED VALUES anzeigen lassen
 ## Welche Werte (values) hat er zur Installation verwendet
 helm get all my-mariadb | grep -i computed -A 200
+## besser Variante von David
+helm get all my-mariadb | sed -n '/COMPUTED/, /HOOKS/p'
 
 ```
 
@@ -677,6 +683,67 @@ helm get all my-mariadb | grep -i computed -A 200
 ## Beispiel: 
 helm get values  my-mariadb --revision 1
 ```
+
+### Schritt 3: Exercise: Upgrade to new version 
+
+
+#### Schritt 3.1. Upgrade und resources beibehalten 
+
+  * Values wurden bereits im vorherigen Schritt angelegt 
+
+```
+## Testen 
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.10.1 --dry-run=server -f prod/values.yaml  
+```
+
+```
+## Real Upgrade
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.10.1 -f prod/values.yaml
+```
+
+```
+kubectl get pods
+## kein neuer pod
+```
+
+#### Schritt 3.2 Fehlgeschlagene Installation, wie lösen ? 
+
+```
+## Schlägt fehle, weil mit dem upgrade bestimmte Felder nicht überschrieben dürfen, die geändert wurden im Template
+```
+
+#### Lösung 
+
+  * Deinstallieren (pvc bleibt erhalten auch beim Deinstallieren -> so macht das helm)
+  * Und wieder installieren in der neuen Version 
+
+```
+## Frage, ist das pvc noch ?
+kubectl get pvc
+## Ja ! 
+```
+
+<img width="891" height="82" alt="image" src="https://github.com/user-attachments/assets/849b5859-a5f2-40df-8bc6-018eaedbd146" />
+
+```
+## alte revisions behalten 
+helm uninstall my-mariadb --keep-history
+kubectl get pvc 
+## auch nach der Deinstallation ist der pvc noch da
+## Super !! 
+```
+
+```
+## Real Upgrade
+helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --reset-values --version 0.10.1 -f prod/values.yaml
+```
+
+```
+kubectl get pods
+helm get values my-mariadb 
+```
+
+
 
 #### Uninstall 
 
@@ -1055,19 +1122,18 @@ cd charts-download
 
 
 ```
-## Vorher müssen wir den Repo-Eintrag anlegen 
-helm repo add bitnami https://charts.bitnami.com/bitnami 
+helm pull oci://registry-1.docker.io/cloudpirates/mariadb
 
 ## Lädt die letzte version herunter
-helm pull bitnami/mariadb
+helm pull oci://registry-1.docker.io/cloudpirates/mariadb
 
 ## Lädt bestimmte chart-version runter 
-## helm pull bitnami/mariadb --version 12.1.6
+## helm pull oci://registry-1.docker.io/cloudpirates/mariadb --version 0.9.0
 ## evtl. entpacken wenn gewünscht
 ## tar xvf mariadb-12.1.6.tgz
 
 ## Schnelle Variante
-helm pull bitnami/mariadb --version 12.1.6 --untar
+helm pull oci://registry-1.docker.io/cloudpirates/mariadb --version 0.9.0 --untar
 ```
 
 ### Aufräumen von CRD's nach dem Deinstallieren
@@ -1626,20 +1692,20 @@ kubectl get pods
 ### Fehler bei ocp debuggen 
 
 ```
-kubectl -n my-app-<namenskuerzel> get pods
+kubectl get pods
 ```
 <img width="1716" height="117" alt="image" src="https://github.com/user-attachments/assets/ebbfe072-1015-4563-94b9-4aa2b4bd6609" />
 
 ```
 ## Wie debuggen -> Schritt 1:
-kubectl -n my-app-<namenskuerzel> describe po my-app-release-7d9bd79cb7-9gbbd
+kubectl describe po meine-app-my-app-6bc8546b8b-dmmqg
 ```
 <img width="1897" height="138" alt="image" src="https://github.com/user-attachments/assets/25fcf6e6-34ae-455d-a225-fc1cbf7baaf4" />
 
 ```
 ## Wenn Schritt 1 kein gesichertes Ergebnis liefert.
 ## Wie debuggen -> Schritt 2: Logs
-kubectl -n my-app-jm2 logs my-app-release-7d9bd79cb7-9gbbd
+kubectl -n logs meine-app-my-app-6bc8546b8b-dmmqg
 ```
 
 <img width="1893" height="120" alt="image" src="https://github.com/user-attachments/assets/ec4477a6-703e-43fb-83d8-a49ad8187498" />
@@ -1647,7 +1713,7 @@ kubectl -n my-app-jm2 logs my-app-release-7d9bd79cb7-9gbbd
 
 ```
 ## Schritt 3: yaml von pod anschauen, warum tritt der Fehler auf 
-kubectl -n my-app-<namenskuerzel> get pods -o yaml
+kubectl get pods -o yaml
 ```
 
 ```
@@ -1679,12 +1745,12 @@ image:
 ```
 
 ```
-helm -n my-app-<namenskuerzel> upgrade --install my-app-release my-app --create-namespace --reset-values 
+helm upgrade --install meine-app my-app --create-namespace --reset-values 
 ```
 
 ```
-kubectl -n my-app-<namenskuerzel> get all
-kubectl -n my-app-<namenskuerzel> get pods 
+kubectl get all
+kubectl get pods 
 ```
 
 ```
@@ -1718,12 +1784,12 @@ service:
 ```
 
 ```
-helm -n my-app-<namenskuerzel> upgrade --install my-app-<namenskuerzel> . --create-namespace 
+helm upgrade --install meine-app . 
 ```
 
 ```
-kubectl -n my-app-<namenskuerzel> get all
-kubectl -n my-app-<namenskuerzel> get pods 
+kubectl get all
+kubectl get pods 
 ```
 
 
@@ -1790,9 +1856,9 @@ spec:
 helm template .
 helm lint .
 ## Akzeptiert der API das so, wie ich es ihm schicke 
-helm -n app-<namenskuerzel> install app . --dry-run  
-helm -n app-<namenskuerzel> upgrade --install app . --create-namespace
-kubectl -n app-<namenskuerzel> get all 
+helm install app . --dry-run  
+helm upgrade --install app . 
+kubectl get all 
 ```
 
 
@@ -1810,7 +1876,7 @@ kubectl -n app-<namenskuerzel> get all
   Standardvariante. Lässt den Whitespace außerhalb der geschweiften Klammern unverändert.
 
 - `{{- ... }}`:  
-  Entfernt den Whitespace links (vor) dem Ausdruck.  
+  Entfernt den Whitespace links (vor) dem Ausdruck und AUCH die Zeilenmbrüche davor 
 
 - `{{ ... -}}`:  
   Entfernt den Whitespace rechts (nach) dem Ausdruck, aber AUCH Zeilenumbrüche 
@@ -1824,7 +1890,7 @@ kubectl -n app-<namenskuerzel> get all
 
 ### Explanation 
 
-  * {{- -> trim on left side
+  * {{- -> trim on left side / INCLUDING new lines 
   * -}} -> trim on right side / ALSO: new lines 
   * trim tabs, whitespaces a.s.o. (see ref)
 
@@ -2561,6 +2627,12 @@ kubectl top nodes
 
   * https://helm.sh/docs/chart_template_guide/builtin_objects/
 
+## helm - mockoon (api-mocks)
+
+### Fertiges helm-chart für Mockoon
+
+  * https://github.com/jmetzger/training-mockoon-example
+
 ## Tools
 
 ### k9s cheatsheet
@@ -2885,7 +2957,7 @@ helm get -n my-application notes my-botti
 
 ### Explanation 
 
-  * {{- -> trim on left side
+  * {{- -> trim on left side / INCLUDING new lines 
   * -}} -> trim on right side / ALSO: new lines 
   * trim tabs, whitespaces a.s.o. (see ref)
 

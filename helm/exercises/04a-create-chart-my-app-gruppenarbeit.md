@@ -55,7 +55,7 @@ kubectl describe po meine-app-my-app-6bc8546b8b-dmmqg
 ```
 # Wenn Schritt 1 kein gesichertes Ergebnis liefert.
 # Wie debuggen -> Schritt 2: Logs
-kubectl -n logs meine-app-my-app-6bc8546b8b-dmmqg
+kubectl logs meine-app-my-app-6bc8546b8b-dmmqg
 ```
 
 <img width="1893" height="120" alt="image" src="https://github.com/user-attachments/assets/ec4477a6-703e-43fb-83d8-a49ad8187498" />

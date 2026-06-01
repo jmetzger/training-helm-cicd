@@ -2,7 +2,7 @@
 
 ## Definition 
 
-  * Ein **Helm Chart** ist ein Paket, das alle nötigen Kubernetes-Ressourcen beschreibt, um eine Anwendung oder einen Dienst bereitzustellen.
+  * In  **Helm** nennt man Pakete **Charts**, das alle nötigen Kubernetes-Ressourcen beschreibt, um eine Anwendung oder einen Dienst bereitzustellen.
 
 ## Es enthält: 
 

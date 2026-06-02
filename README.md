@@ -88,6 +88,9 @@
      *  [named template](helm/exercises/10-named-template.md)
      *  [named template with dict](/helm/exercises/11-named-template-with-dict.md)
      *  [Templates mit Subcharts teilen (include $mytemplate)](helm/exercises/12-sharing-templates-subcharts.md)
+
+  1. Strings / Zeilenumbrueche
+     * [Zeilenumbrueche in Go-Templates: println](helm/exercises/13-newline-println.md)
     
   1. Helm - Fehlerhandling 
      * [Fehlerbehandlung mit require - url muss gesetzt werden](helm/templates/require-url.md)  

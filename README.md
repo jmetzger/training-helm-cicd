@@ -47,6 +47,9 @@
      * [Helm template - Rendering Prozess](/helm/internals/helm-template-ablauf.md)
      * [helm vs. kubectl vs. oc](/helm/internals/helm-vs-oc-vs-kubectl.md)
 
+  1. Grundlagen: YAML vs. XML
+     * [YAML vs. XML – Wann was verwenden?](basics/yaml-vs-xml.md)
+
   1. Helm - best practices
      * [Wann quotes in yaml und in resources  (Kubernetes/OCP)](helm/best-practices/quotes.md)
      * [Gute Struktur für Values und Charts](helm/best-practices/good-structure-helm-and-values.md)

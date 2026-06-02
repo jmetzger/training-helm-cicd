@@ -42,6 +42,7 @@
   1. Arbeiten mit helm - charts (Debugging)
      * [Nur fertiges manifest ausgeben ohne Installation](helm/commands/template.md)
      * [Chart trocken testen gegen api-server ohne Installation --dry-run](helm/commands/install--dry-run.md)
+     * [helm install debuggen](helm/helm-install-debuggen.md)
 
   1. Helm Internals
      * [Helm template - Rendering Prozess](/helm/internals/helm-template-ablauf.md)
@@ -86,6 +87,7 @@
   1. Named Templates
      *  [named template](helm/exercises/10-named-template.md)
      *  [named template with dict](/helm/exercises/11-named-template-with-dict.md)
+     *  [Templates mit Subcharts teilen (include $mytemplate)](helm/exercises/12-sharing-templates-subcharts.md)
     
   1. Helm - Fehlerhandling 
      * [Fehlerbehandlung mit require - url muss gesetzt werden](helm/templates/require-url.md)  
@@ -162,3 +164,4 @@
 
   1. Troubleshooting und Debugging
      * [helm template --validate - gegen api-server testen](helm/test/helm-template-validate.md)
+     * [helm install debuggen](helm/helm-install-debuggen.md)

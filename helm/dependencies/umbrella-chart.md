@@ -20,12 +20,12 @@ nano Chart.yaml
 ```
 # Add dependencies 
 dependencies:
-  - name: redis
-    version: "18.0.0"
-    repository: "https://charts.bitnami.com/bitnami"
   - name: nginx
-    version: "21.x.x"
-    repository: "https://charts.bitnami.com/bitnami"
+    version: "0.12.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
+  - name: redis
+    version: "0.29.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
 ```
 
 ```
@@ -48,7 +48,7 @@ helm dependency --help
 helm template .
 ```
 
-## Exercise 2: Werte in den Untercharts setzen (nginx und redis) 
+## Exercise 2: Werte in den Subcharts setzen (nginx und redis) 
 
 ```
 nano values.yaml
@@ -63,7 +63,7 @@ redis:
 
 ```
 helm template .
-helm template . | grep -i '^Kind' -A 4
+helm template . | grep -i '^kind' -A 4
 ```
 
 ## Exercise 3: Create chart with condition 
@@ -76,9 +76,12 @@ nano Chart.yaml
 # change dependency block
 # adding condition 
 dependencies:
+  - name: nginx
+    version: "0.12.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
   - name: redis
-    version: "18.3.2"
-    repository: "https://charts.bitnami.com/bitnami"
+    version: "0.29.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
     condition: redis.enabled
 ```
 
@@ -87,24 +90,25 @@ nano values.yaml
 ```
 
 ```
-# unten anfügen 
+nginx:
+  fullnameOverride: nginx
 redis:
-  enabled:
-    false
+  enabled: false
+  fullnameOverride: redis
 ```
 
 ```
 helm template .
+# redis-Ressourcen (StatefulSet, Secret) sollten nicht mehr erscheinen
+helm template . | grep "^kind:" 
 ```
 
 ```
-# values-file anlegen
+# values-file anlegen um redis wieder einzuschalten
 cd
 cd helm-exercises
-mkdir -p helm-values
-cd helm-values
-mkdir my-dep
-cd my-dep
+mkdir -p helm-values/my-umbrella-chart
+cd helm-values/my-umbrella-chart
 ```
 
 ```
@@ -119,6 +123,52 @@ redis:
 ```
 cd
 cd helm-exercises
-helm template my-umbrella-chart -f helm-values/my-dep/values.yaml
-helm template my-umbrella-chart -f helm-values/my-dep/values.yaml | grep kind -A 2
+helm template my-umbrella-chart -f helm-values/my-umbrella-chart/values.yaml
+helm template my-umbrella-chart -f helm-values/my-umbrella-chart/values.yaml | grep "^kind:"
 ```
+
+## Exercise 4: Globale Werte (globals) verwenden
+
+Globals sind Werte, die im Parent-Chart unter `global:` gesetzt werden und **automatisch in allen Subcharts** als `.Values.global.*` verfügbar sind – ohne explizite Weitergabe.
+
+```
+cd
+cd helm-exercises/my-umbrella-chart
+mkdir -p templates
+```
+
+```
+nano templates/configmap-global.yaml
+```
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-config
+data:
+  environment: {{ .Values.global.environment | default "unknown" }}
+```
+
+```
+nano values.yaml
+```
+
+```
+global:
+  environment: "training"
+
+nginx:
+  fullnameOverride: nginx
+redis:
+  enabled: false
+  fullnameOverride: redis
+```
+
+```
+helm template .
+# Nur das ConfigMap anzeigen
+helm template . | grep -A 5 "global-config"
+```
+
+Das `global.environment` ist in **jedem Subchart** als `.Values.global.environment` verfügbar – ohne dass der Wert explizit weitergegeben werden muss. Subcharts können eigene `global`-Defaults in ihrer `values.yaml` definieren, der Parent-Wert hat aber immer Vorrang.

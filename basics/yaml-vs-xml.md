@@ -64,6 +64,26 @@ spec:
 
 ---
 
+## Warum YAML wegen der Toolchain?
+
+In der modernen Cloud- und DevOps-Welt hat sich YAML als gemeinsame Sprache durchgesetzt – nicht nur wegen der Lesbarkeit, sondern weil die gesamte **Toolchain darauf ausgelegt** ist:
+
+| Tool | YAML-Unterstützung |
+|---|---|
+| **kubectl** | liest/schreibt ausschließlich YAML |
+| **Helm** | Templates, Values, Chart.yaml – alles YAML |
+| **GitHub Actions / GitLab CI** | Pipelines sind YAML-Dateien |
+| **Ansible** | Playbooks und Inventories in YAML |
+| **Docker Compose** | `compose.yaml` |
+| **ArgoCD / Flux** | GitOps-Manifeste in YAML |
+| **yamllint / kubeconform** | Linting und Schema-Validierung für YAML |
+
+Das bedeutet: Wer in Kubernetes-Projekten arbeitet, schreibt YAML – täglich, überall. Die Tools erwarten es, Dokumentation ist darauf ausgerichtet, und Fehler lassen sich mit `yamllint` oder `helm lint` direkt im Editor oder in der CI-Pipeline erkennen.
+
+**Praktischer Vorteil:** Ein einheitliches Format über alle Tools hinweg reduziert Kontextwechsel und senkt die Einstiegshürde für neue Teammitglieder.
+
+---
+
 ## Fazit
 
 > **YAML** ist die erste Wahl in modernen Cloud- und DevOps-Umgebungen.  

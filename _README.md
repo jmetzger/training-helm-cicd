@@ -13,8 +13,9 @@
      * [Was ist helm ?](#was-ist-helm-)
      * [Was kann helm ?](#was-kann-helm-)
      * [Was ist in helm ein chart?](#was-ist-in-helm-ein-chart)
+     * [Chart.yaml - Alle Felder im Ueberblick](#chartyaml---alle-felder-im-ueberblick)
      * [Warum Helm in Kubernetes verwenden ?](#warum-helm-in-kubernetes-verwenden-)
-     * [Helm + OCI: Warum das sinnvoll ist](#helm--oci-warum-das-sinnvoll-ist)
+     * [Helm + OCI: Warum das sinnvoll ist](#helm-+-oci-warum-das-sinnvoll-ist)
      * [Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)](#überblick-über-den-ablauf-bei-der-nutzung-von-helm-kommando-install)
      * [Braucht helm das Programm kubectl ?](#braucht-helm-das-programm-kubectl-)
        
@@ -41,10 +42,14 @@
   1. Arbeiten mit helm - charts (Debugging)
      * [Nur fertiges manifest ausgeben ohne Installation](#nur-fertiges-manifest-ausgeben-ohne-installation)
      * [Chart trocken testen gegen api-server ohne Installation --dry-run](#chart-trocken-testen-gegen-api-server-ohne-installation---dry-run)
+     * [helm install debuggen](#helm-install-debuggen)
 
   1. Helm Internals
      * [Helm template - Rendering Prozess](#helm-template---rendering-prozess)
      * [helm vs. kubectl vs. oc](#helm-vs-kubectl-vs-oc)
+
+  1. Grundlagen: YAML vs. XML
+     * [YAML vs. XML – Wann was verwenden?](#yaml-vs-xml-–-wann-was-verwenden)
 
   1. Helm - best practices
      * [Wann quotes in yaml und in resources  (Kubernetes/OCP)](#wann-quotes-in-yaml-und-in-resources--kubernetesocp)
@@ -56,6 +61,7 @@
     
   1. Helm - Good structure, using umbrella chart 
      * [Exercise helm umbrella chart](#exercise-helm-umbrella-chart)
+     * [Exercise globals - Werte über alle Subcharts teilen](#exercise-globals---werte-über-alle-subcharts-teilen)
 
   1. Helm Grundlagen
      * [TopLevel Objekte](#toplevel-objekte)
@@ -81,6 +87,10 @@
   1. Named Templates
      *  [named template](helm/exercises/10-named-template.md)
      *  [named template with dict](/helm/exercises/11-named-template-with-dict.md)
+     *  [Templates mit Subcharts teilen (include $mytemplate)](helm/exercises/12-sharing-templates-subcharts.md)
+
+  1. Strings / Zeilenumbrueche
+     * [Zeilenumbrueche in Go-Templates: println](#zeilenumbrueche-in-go-templates-println)
     
   1. Helm - Fehlerhandling 
      * [Fehlerbehandlung mit require - url muss gesetzt werden](#fehlerbehandlung-mit-require---url-muss-gesetzt-werden)
@@ -98,8 +108,9 @@
   1. helm - mockoon (api-mocks)
      * [Fertiges helm-chart für Mockoon](https://github.com/jmetzger/training-mockoon-example)
     
-  1. Tools
+  1. GUI's und TUI für Kubernetes 
      * [k9s cheatsheet](#k9s-cheatsheet)
+     * [FreeLens - Fork von OpenLens](https://github.com/freelensapp/freelens/releases)
 
 ## Backlog 
 
@@ -156,6 +167,7 @@
 
   1. Troubleshooting und Debugging
      * [helm template --validate - gegen api-server testen](#helm-template---validate---gegen-api-server-testen)
+     * [helm install debuggen](#helm-install-debuggen)
 
 <div class="page-break"></div>
 
@@ -316,7 +328,7 @@ kubectl get all
 
 ### Definition 
 
-  * Ein **Helm Chart** ist ein Paket, das alle nötigen Kubernetes-Ressourcen beschreibt, um eine Anwendung oder einen Dienst bereitzustellen.
+  * In  **Helm** nennt man Pakete **Charts**, das alle nötigen Kubernetes-Ressourcen beschreibt, um eine Anwendung oder einen Dienst bereitzustellen.
 
 ### Es enthält: 
 
@@ -331,6 +343,97 @@ kubectl get all
   * tgz (Tape-Archive mit gnuzip komprimiert)
   * URL 
 
+### Chart.yaml - Alle Felder im Ueberblick
+
+
+Offizielle Doku: https://helm.sh/docs/topics/charts/ → Abschnitt "The Chart.yaml File"
+
+### Vollstaendiges Beispiel (Helm 3+, apiVersion: v2)
+
+```
+apiVersion: v2          # (required) immer "v2" fuer Helm 3+
+name: mychart           # (required)
+version: 1.0.0          # (required) SemVer 2
+kubeVersion: ">=1.26"   # (optional) kompatible K8s-Versionen
+description: "..."      # (optional)
+type: application       # (optional) application | library
+keywords:
+  - nginx
+home: https://...       # (optional) Projekt-URL
+sources:
+  - https://github.com/...
+dependencies:
+  - name: redis
+    version: "17.x.x"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled   # optional
+    tags: [cache]              # optional
+    import-values: []          # optional
+    alias: myredis             # optional
+maintainers:
+  - name: Jochen Metzger
+    email: j@example.com
+    url: https://...
+icon: https://.../icon.png
+appVersion: "7.2.1"     # (optional) App-Version, kein SemVer erzwungen
+deprecated: false       # (optional)
+annotations:
+  example.com/custom: "wert"   # custom metadata hierher
+```
+
+### Feldbeschreibungen
+
+| Feld | Pflicht | Beschreibung |
+|------|---------|--------------|
+| `apiVersion` | ja | Immer `v2` fuer Helm 3+ |
+| `name` | ja | Name des Charts |
+| `version` | ja | Chart-Version nach SemVer 2 |
+| `kubeVersion` | nein | Kompatible Kubernetes-Versionen als SemVer-Range |
+| `description` | nein | Kurzbeschreibung des Charts |
+| `type` | nein | `application` (Standard) oder `library` |
+| `keywords` | nein | Suchbegriffe fuer Chart-Repositories |
+| `home` | nein | URL zur Projektseite |
+| `sources` | nein | URLs zu den Quellcode-Repositories |
+| `dependencies` | nein | Abhaengige Charts (fruehher `requirements.yaml`) |
+| `maintainers` | nein | Liste der Maintainer mit name/email/url |
+| `icon` | nein | URL zu einem Icon (PNG/SVG) |
+| `appVersion` | nein | Version der enthaltenen Anwendung (kein SemVer erzwungen) |
+| `deprecated` | nein | Chart als veraltet markieren |
+| `annotations` | nein | Beliebige Key-Value-Metadaten |
+
+### Wichtiger Hinweis: annotations statt freier Felder
+
+Seit Helm v3.3.2 sind zusaetzliche (nicht-standardisierte) Felder nicht mehr erlaubt.
+Custom Metadata gehoert ausschliesslich in `annotations`:
+
+```
+## FALSCH (wird abgelehnt seit v3.3.2):
+myCustomField: "wert"
+
+## RICHTIG:
+annotations:
+  example.com/myCustomField: "wert"
+```
+
+### type: application vs. library
+
+| Typ | Verwendung |
+|-----|------------|
+| `application` | Normales Chart, das direkt installiert werden kann |
+| `library` | Enthaelt nur Templates/Helpers, kann nicht direkt installiert werden |
+
+Library-Charts werden als Dependency eingebunden und stellen gemeinsame Template-Logik bereit.
+
+### version vs. appVersion
+
+```
+version: 1.0.0       # Version des Helm Charts selbst
+appVersion: "7.2.1"  # Version der Anwendung im Chart (z.B. nginx 1.27.0)
+```
+
+Beide koennen unabhaengig voneinander erhoehen werden.
+Bei `appVersion` sind auch Strings wie `"latest"` oder `"main"` erlaubt.
+
 ### Warum Helm in Kubernetes verwenden ?
 
 
@@ -342,7 +445,8 @@ kubectl get all
 
 ### Helm + OCI: Warum das sinnvoll ist
 
-#### Das Problem vorher
+
+### Das Problem vorher
 
 Helm hatte ein eigenes Registry-Protokoll: ein Chart Repository war ein einfacher HTTP-Server mit einer `index.yaml`-Datei. Das bedeutete:
 
@@ -351,7 +455,7 @@ Helm hatte ein eigenes Registry-Protokoll: ein Chart Repository war ein einfache
 - Keine standardisierten Auth-Mechanismen
 - Zweite Registry-Infrastruktur neben der Container-Registry betreiben
 
-#### Die Loesung: OCI als generisches Artifact-Format
+### Die Loesung: OCI als generisches Artifact-Format
 
 OCI (Open Container Initiative) definiert nicht nur Container-Images, sondern ein generisches Artifact-Format.
 Ein Helm Chart ist letztlich nur ein `tar.gz` mit Metadaten - das passt perfekt ins OCI-Manifest-Modell:
@@ -363,7 +467,7 @@ OCI Manifest
     └── chart.tar.gz (mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip)
 ```
 
-#### Warum haben sie das gemacht?
+### Warum haben sie das gemacht?
 
 - **Eine Registry fuer alles** - Container-Images und Helm Charts in derselben Registry (ECR, GCR, GHCR, Harbor, etc.)
 - **Auth gratis** - `docker login` / OIDC-Flows funktionieren sofort
@@ -371,7 +475,7 @@ OCI Manifest
 - **Existing Tooling** - Cosign fuer Signing, ORAS fuer generische Artifacts, Vulnerability-Scanner
 - **Supply Chain** - SBOMs, Attestations und Signaturen direkt am Artifact referenzierbar
 
-#### Was bedeutet Content-Addressable?
+### Was bedeutet Content-Addressable?
 
 Content-Addressable bedeutet: **der Name eines Artifacts ist sein Inhalt** (als Hash).
 
@@ -379,47 +483,46 @@ Konkret: Statt "ich lade Datei `mychart-1.0.0.tgz` vom Server X" heisst es:
 "ich lade das Artifact mit SHA256-Digest `sha256:abc123...`" - egal von welchem Server.
 
 ```
-# Klassisch (URL-basiert) - mutabel, kann sich aendern:
+## Klassisch (URL-basiert) - mutabel, kann sich aendern:
 https://charts.example.com/mychart-1.0.0.tgz
   --> heute: Version A
   --> morgen: jemand pushed neu, gleicher Name, anderer Inhalt
 
-# Content-Addressable (Digest-basiert) - immutabel:
+## Content-Addressable (Digest-basiert) - immutabel:
 sha256:3f4a2b1c8d...
   --> immer: exakt dieser Inhalt, kein anderer
 ```
 
-Der SHA256-Hash wird aus dem Inhalt berechnet. Wenn sich auch nur ein Byte aendert, ist der Hash komplett anders. Das hat folgende Vorteile:
+Der SHA256-Hash wird aus dem Inhalt berechnet. Wenn sich auch nur ein Byte aendert, ist der Hash komplett anders.
 
 | Eigenschaft | Erklaerung |
 |-------------|------------|
 | **Immutabel** | Ein Digest referenziert immer exakt denselben Inhalt |
-| **Veriifizierbar** | Der Client kann den Hash selbst nachrechnen und pruefen |
+| **Verifizierbar** | Der Client kann den Hash selbst nachrechnen und pruefen |
 | **Kein Drift** | Kein "index.yaml veraltet" oder "falsches Chart geladen" |
 | **Caching** | Identischer Digest = bereits gecacht, kein Re-Download |
 
 In OCI-Registries gilt: **Tags sind mutabel** (`:latest`, `:1.0.0` koennen ueberschrieben werden), **Digests sind immutabel**. Fuer reproduzierbare Builds pinnt man deshalb auf Digests:
 
 ```
-# Tag - kann sich aendern:
+## Tag - kann sich aendern:
 helm install myapp oci://registry.example.com/charts/mychart --version 1.0.0
 
-# Digest-Pin - unveraenderlich:
+## Digest-Pin - unveraenderlich:
 helm install myapp oci://registry.example.com/charts/mychart@sha256:3f4a2b1c8d...
 ```
 
-#### Praktisch
+### Praktisch
 
 ```
-# Push
+## Push
 helm push mychart-1.0.0.tgz oci://registry.example.com/charts
 
-# Pull/Install
+## Pull/Install
 helm install myapp oci://registry.example.com/charts/mychart --version 1.0.0
 ```
 
 Kein `helm repo add` mehr noetig - direkte URL wie bei Container-Images.
-
 
 ### Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)
 
@@ -1339,6 +1442,51 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm -n app-jm install my-nginx bitnami/nginx --version 19.0.4 --dry-run
 ```
 
+### helm install debuggen
+
+
+```
+o Wir haben ein Chart installiert, hat geklappt (aber pods liefen nicht)
+o Wir haben es deinstalliert
+o Wir haben es nochmal installiert (hat nicht geklappt weil alte Objekte im Weg waren, die nicht gelöscht worden sind 
+
+o UND: kubectl delete ns <namespace-der-applikation> -> IST KEINE OPTIOM
+```
+
+### Was könnte nicht gelöscht worden sein
+
+  * PVC (Persistent Volume Claims)
+  * RBAC (Service Accounts)
+  * CRD's
+
+### Wie debuggen ? 
+
+#### Möglichkeit 1: helm chart runterladen und prüfen was wurde installiert 
+
+```
+## So oder klonen von gitlab  
+cd; helm pull oci://registry-1.docker.io/cloudpirates/mariadb --version 0.16.4 --untar
+## Was würde das installieren
+helm template mariadb | grep -i -A 4 kind
+
+## Dann überprüfen, ob alle diese Objekt auch gelöscht wurden, ansonsten händisch löschen
+```
+
+#### Möglichkeit 2: Informationen zur Installation sind noch in ocp/kubernetes vorhanden
+
+```
+## Testweise installiert, damit das machen  können
+helm install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --version 0.16.4
+```
+
+```
+helm get manifest my-mariadb | grep -i -A 4 kind
+
+## Dann überprüfen, ob alle diese Objekt auch gelöscht wurden, ansonsten händisch löschen
+```
+
+
+
 ## Helm Internals
 
 ### Helm template - Rendering Prozess
@@ -1379,6 +1527,100 @@ helm -n app-jm install my-nginx bitnami/nginx --version 19.0.4 --dry-run
 
 
 ![kubectl vs. oc vs. helm](/images/helm-oc-kubectl-api-server-openshift.svg)
+
+## Grundlagen: YAML vs. XML
+
+### YAML vs. XML – Wann was verwenden?
+
+
+### Auf einen Blick
+
+| Merkmal | YAML | XML |
+|---|---|---|
+| Lesbarkeit | Sehr hoch – minimale Syntax | Mittel – viel "Rauschen" durch Tags |
+| Schreibaufwand | Gering | Hoch (öffnende + schließende Tags) |
+| Kommentare | Ja (`#`) | Nein (nur `<!-- -->`) |
+| Schemas / Validierung | Eingeschränkt (JSON Schema) | Stark (XSD, DTD) |
+| Namespaces | Nicht vorhanden | Eingebaut |
+| Verbreitung DevOps / Cloud | De-facto-Standard | Selten |
+| Verbreitung Enterprise / Legacy | Selten | Weit verbreitet |
+
+---
+
+### YAML – Vorteile
+
+- **Lesbar wie Prosa** – Einrückung statt Tags
+- **Kompakt** – weniger Zeichen für dieselbe Information
+- **Kommentare** direkt im File möglich
+- Standard für **Kubernetes, Helm, GitHub Actions, Docker Compose, Ansible**
+
+```yaml
+## Beispiel: Kubernetes Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 2
+```
+
+---
+
+### XML – Vorteile
+
+- **Strenge Validierung** via XSD-Schema – ideal für vertragliche Datenformate
+- **Namespaces** ermöglichen Kombination verschiedener Standards in einem Dokument
+- **Reife Toolchain**: XSLT, XPath, XQuery für Transformationen und Abfragen
+- Weit verbreitet in **Enterprise-Systemen**, SOAP, Maven/Ant, Java-Ökosystem
+
+```xml
+<!-- Beispiel: Maven pom.xml -->
+<project>
+  <groupId>com.example</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1.0</version>
+</project>
+```
+
+---
+
+### Entscheidungshilfe
+
+| Situation | Empfehlung |
+|---|---|
+| Kubernetes / Helm / CI-CD | **YAML** |
+| Konfigurationsdateien für DevOps-Tools | **YAML** |
+| Enterprise-Integration (SOAP, ESB) | **XML** |
+| Datenaustausch mit strengem Vertragsformat | **XML** (oder JSON) |
+| Build-System (Maven, Ant) | **XML** (vorgegeben) |
+| Menschlich lesbare Config, schnell editierbar | **YAML** |
+
+---
+
+### Warum YAML wegen der Toolchain?
+
+In der modernen Cloud- und DevOps-Welt hat sich YAML als gemeinsame Sprache durchgesetzt – nicht nur wegen der Lesbarkeit, sondern weil die gesamte **Toolchain darauf ausgelegt** ist:
+
+| Tool | YAML-Unterstützung |
+|---|---|
+| **kubectl** | liest/schreibt ausschließlich YAML |
+| **Helm** | Templates, Values, Chart.yaml – alles YAML |
+| **GitHub Actions / GitLab CI** | Pipelines sind YAML-Dateien |
+| **Ansible** | Playbooks und Inventories in YAML |
+| **Docker Compose** | `compose.yaml` |
+| **ArgoCD / Flux** | GitOps-Manifeste in YAML |
+| **yamllint / kubeconform** | Linting und Schema-Validierung für YAML |
+
+Das bedeutet: Wer in Kubernetes-Projekten arbeitet, schreibt YAML – täglich, überall. Die Tools erwarten es, Dokumentation ist darauf ausgerichtet, und Fehler lassen sich mit `yamllint` oder `helm lint` direkt im Editor oder in der CI-Pipeline erkennen.
+
+**Praktischer Vorteil:** Ein einheitliches Format über alle Tools hinweg reduziert Kontextwechsel und senkt die Einstiegshürde für neue Teammitglieder.
+
+---
+
+### Fazit
+
+> **YAML** ist die erste Wahl in modernen Cloud- und DevOps-Umgebungen.  
+> **XML** bleibt relevant, wo strenge Validierung, Namespaces oder Legacy-Systeme gefordert sind.
 
 ## Helm - best practices
 
@@ -1510,7 +1752,8 @@ dependencies:
 ```
 ## Das 1. Mal - dann wird Chart.lock angelegt 
 helm dependency update
-ls -la Chart.lock 
+ls -la Chart.lock
+ls -la charts
 ```
 
 ```
@@ -1607,12 +1850,12 @@ nano Chart.yaml
 ```
 ## Add dependencies 
 dependencies:
-  - name: redis
-    version: "18.0.0"
-    repository: "https://charts.bitnami.com/bitnami"
   - name: nginx
-    version: "21.x.x"
-    repository: "https://charts.bitnami.com/bitnami"
+    version: "0.12.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
+  - name: redis
+    version: "0.29.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
 ```
 
 ```
@@ -1627,15 +1870,12 @@ helm dependency build
 ```
 
 ```
-helm dependency --help 
-### what is the difference 
-```
-
-```
 helm template .
 ```
 
-### Exercise 2: Werte in den Untercharts setzen (nginx und redis) 
+### Exercise 2: Werte in den Subcharts setzen
+
+Werte für Subcharts werden im Parent `values.yaml` unter dem jeweiligen Chart-Namen gesetzt.
 
 ```
 nano values.yaml
@@ -1644,71 +1884,50 @@ nano values.yaml
 ```
 nginx:
   fullnameOverride: nginx
+  replicaCount: 2
 redis:
   fullnameOverride: redis
+  replicaCount: 1
 ```
 
 ```
 helm template .
-helm template . | grep -i '^Kind' -A 4
+helm template . | grep "replicas:"
 ```
 
-### Exercise 3: Create chart with condition 
+### Exercise 3: Globale Werte (globals) verwenden
 
-```
-nano Chart.yaml
-```
-
-```
-## change dependency block
-## adding condition 
-dependencies:
-  - name: redis
-    version: "18.3.2"
-    repository: "https://charts.bitnami.com/bitnami"
-    condition: redis.enabled
-```
+Globals werden einmal im Parent gesetzt und fließen **automatisch in alle Subcharts** — ohne den Subchart-Namen als Prefix.
 
 ```
 nano values.yaml
 ```
 
 ```
-## unten anfügen 
+global:
+  imageRegistry: "my-private-registry.example.com"
+
+nginx:
+  fullnameOverride: nginx
+  replicaCount: 2
 redis:
-  enabled:
-    false
+  enabled: false
+  fullnameOverride: redis
+  replicaCount: 1
 ```
 
 ```
-helm template .
+helm template . | grep "image:"
 ```
 
-```
-## values-file anlegen
-cd
-cd helm-exercises
-mkdir -p helm-values
-cd helm-values
-mkdir my-dep
-cd my-dep
-```
+Beide Subcharts (nginx und redis) verwenden jetzt `my-private-registry.example.com` als Registry — obwohl der Wert nur einmal gesetzt wurde. Das ist der Unterschied zu normalen Subchart-Values:
 
-```
-nano values.yaml
-```
+| | Subchart-Value | Global |
+|---|---|---|
+| Syntax | `redis.someValue` | `global.someValue` |
+| Geltungsbereich | nur dieser Subchart | alle Subcharts |
 
-```
-redis:
-  enabled: true
-```
-
-```
-cd
-cd helm-exercises
-helm template my-umbrella-chart -f helm-values/my-dep/values.yaml
-helm template my-umbrella-chart -f helm-values/my-dep/values.yaml | grep kind -A 2
-```
+### Exercise globals - Werte über alle Subcharts teilen
 
 ## Helm Grundlagen
 
@@ -1788,7 +2007,7 @@ kubectl describe po meine-app-my-app-6bc8546b8b-dmmqg
 ```
 ## Wenn Schritt 1 kein gesichertes Ergebnis liefert.
 ## Wie debuggen -> Schritt 2: Logs
-kubectl -n logs meine-app-my-app-6bc8546b8b-dmmqg
+kubectl logs meine-app-my-app-6bc8546b8b-dmmqg
 ```
 
 <img width="1893" height="120" alt="image" src="https://github.com/user-attachments/assets/ec4477a6-703e-43fb-83d8-a49ad8187498" />
@@ -2516,6 +2735,119 @@ data:
 
 ## Named Templates
 
+## Strings / Zeilenumbrueche
+
+### Zeilenumbrueche in Go-Templates: println
+
+
+### Hintergrund
+
+In Helm Go-Templates gibt es mit `println` eine Funktion, die einen Zeilenumbruch (`\n`)
+an einen String anhaengt. Das ist nuetzlich um z.B. mehrzeilige ConfigMap-Werte zu erzeugen.
+
+### Schritt 1: Chart anlegen
+
+```
+cd
+mkdir -p helm-exercises
+cd helm-exercises
+helm create newlines
+cd newlines
+rm -fR templates/*
+```
+
+### Schritt 2: Beispiel ohne Zeilenumbruch (Problem)
+
+```
+## vi templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-env
+data:
+  app.env: |
+    {{ "APP_ENV=production" }}{{ "LOG_LEVEL=info" }}
+```
+
+```
+helm template .
+```
+
+**Was passiert:** Beide Werte kleben zusammen auf einer Zeile:
+
+```
+  app.env: |
+    APP_ENV=productionLOG_LEVEL=info
+```
+
+### Schritt 3: Loesung mit println
+
+`println` haengt ein `\n` an den String an:
+
+```
+## vi templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-env
+data:
+  app.env: |
+    {{ "APP_ENV=production" | println }}{{ "LOG_LEVEL=info" }}
+```
+
+```
+helm template .
+```
+
+**Ergebnis:**
+
+```
+  app.env: |
+    APP_ENV=production
+    LOG_LEVEL=info
+```
+
+### Schritt 4: Achtung — Whitespace-Stripping entfernt den Zeilenumbruch
+
+Das `-` in `{{-` oder `-}}` entfernt **allen** Whitespace inkl. Newlines.
+Kombiniert man `println` mit `-}}`, wird der gerade eingefuegte `\n` sofort wieder gestrichen:
+
+```
+## vi templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-env
+data:
+  app.env: |
+    {{ "APP_ENV=production" | println -}}{{ "LOG_LEVEL=info" }}
+```
+
+```
+helm template .
+```
+
+**Was passiert:** Das `-}}` strippt das `\n` von `println` — beide Zeilen kleben wieder:
+
+```
+  app.env: |
+    APP_ENV=productionLOG_LEVEL=info
+```
+
+**Merksatz:** `println` und `-}}` in einem Block ausschliessen — das Minus macht den Newline rueckgaengig.
+
+### Aufraeumen
+
+```
+cd
+rm -fR helm-exercises/newlines
+```
+
+### Referenz
+
+  * https://pkg.go.dev/text/template (println, print, printf)
+  * https://helm.sh/docs/chart_template_guide/control_structures/#controlling-whitespace
+
 ## Helm - Fehlerhandling 
 
 ### Fehlerbehandlung mit require - url muss gesetzt werden
@@ -2716,7 +3048,7 @@ kubectl top nodes
 
   * https://github.com/jmetzger/training-mockoon-example
 
-## Tools
+## GUI's und TUI für Kubernetes 
 
 ### k9s cheatsheet
 
@@ -2815,6 +3147,10 @@ trailer
 startxref
 3434
 %%EOF
+
+### FreeLens - Fork von OpenLens
+
+  * https://github.com/freelensapp/freelens/releases
 
 ## Grundlagen
 
@@ -3003,11 +3339,42 @@ helm repo update
 ### Überblick
 
 
+### Komponenten von Helm-Charts
+
+#### Chart.yml 
+
+#### Chart.lock (wird automatisch generiert) 
+
+#### templates/
+
+##### _helper.tpl 
+
+  * Enthält snippet die mit include oder templates inkludiert werden können
+  * Konvention der Snippets mit define ChartName.Eigenschaft z.B. botti.fullname 
+
+##### NOTES.txt 
+
+  * Wird ausgegeben, nachdem das Chart installiert wurde
+    * oder:
+   
+```
+## after installation
+## helm install my-botti -n my-application --create-namespace botti
+helm get -n my-application notes my-botti
+```
+
+#### charts/
+
+  * Hier werden die abhängigen charts runtergeladen und als .tgz
+
+
+
 ### Chart.yaml - Alle Felder im Ueberblick
+
 
 Offizielle Doku: https://helm.sh/docs/topics/charts/ → Abschnitt "The Chart.yaml File"
 
-#### Vollstaendiges Beispiel (Helm 3+, apiVersion: v2)
+### Vollstaendiges Beispiel (Helm 3+, apiVersion: v2)
 
 ```
 apiVersion: v2          # (required) immer "v2" fuer Helm 3+
@@ -3040,7 +3407,7 @@ annotations:
   example.com/custom: "wert"   # custom metadata hierher
 ```
 
-#### Feldbeschreibungen
+### Feldbeschreibungen
 
 | Feld | Pflicht | Beschreibung |
 |------|---------|--------------|
@@ -3060,21 +3427,30 @@ annotations:
 | `deprecated` | nein | Chart als veraltet markieren |
 | `annotations` | nein | Beliebige Key-Value-Metadaten |
 
-#### Wichtig: annotations statt freier Felder
+### Wichtiger Hinweis: annotations statt freier Felder
 
 Seit Helm v3.3.2 sind zusaetzliche (nicht-standardisierte) Felder nicht mehr erlaubt.
 Custom Metadata gehoert ausschliesslich in `annotations`:
 
 ```
-# FALSCH (wird abgelehnt seit v3.3.2):
+## FALSCH (wird abgelehnt seit v3.3.2):
 myCustomField: "wert"
 
-# RICHTIG:
+## RICHTIG:
 annotations:
   example.com/myCustomField: "wert"
 ```
 
-#### version vs. appVersion
+### type: application vs. library
+
+| Typ | Verwendung |
+|-----|------------|
+| `application` | Normales Chart, das direkt installiert werden kann |
+| `library` | Enthaelt nur Templates/Helpers, kann nicht direkt installiert werden |
+
+Library-Charts werden als Dependency eingebunden und stellen gemeinsame Template-Logik bereit.
+
+### version vs. appVersion
 
 ```
 version: 1.0.0       # Version des Helm Charts selbst
@@ -3083,47 +3459,6 @@ appVersion: "7.2.1"  # Version der Anwendung im Chart (z.B. nginx 1.27.0)
 
 Beide koennen unabhaengig voneinander erhoehen werden.
 Bei `appVersion` sind auch Strings wie `"latest"` oder `"main"` erlaubt.
-
-#### type: application vs. library
-
-| Typ | Verwendung |
-|-----|------------|
-| `application` | Normales Chart, das direkt installiert werden kann |
-| `library` | Enthaelt nur Templates/Helpers, kann nicht direkt installiert werden |
-
-
-### Komponenten von Helm-Charts
-
-#### Chart.yml 
-
-  * Metainformationen zum Chart (Name, Version, Abhaengigkeiten, etc.)
-  * Alle Felder: [Chart.yaml - Alle Felder im Ueberblick](/helm/structure/chart-yaml-felder.md)
-
-#### Chart.lock (wird automatisch generiert) 
-
-#### templates/
-
-##### _helper.tpl 
-
-  * Enthält snippet die mit include oder templates inkludiert werden können
-  * Konvention der Snippets mit define ChartName.Eigenschaft z.B. botti.fullname 
-
-##### NOTES.txt 
-
-  * Wird ausgegeben, nachdem das Chart installiert wurde
-    * oder:
-   
-```
-## after installation
-## helm install my-botti -n my-application --create-namespace botti
-helm get -n my-application notes my-botti
-```
-
-#### charts/
-
-  * Hier werden die abhängigen charts runtergeladen und als .tgz
-
-
 
 ## Grundlagen Helm-Charts
 
@@ -3851,3 +4186,48 @@ apt install -y yamllint
 ```
 helm template guestbook --validate
 ```
+
+### helm install debuggen
+
+
+```
+o Wir haben ein Chart installiert, hat geklappt (aber pods liefen nicht)
+o Wir haben es deinstalliert
+o Wir haben es nochmal installiert (hat nicht geklappt weil alte Objekte im Weg waren, die nicht gelöscht worden sind 
+
+o UND: kubectl delete ns <namespace-der-applikation> -> IST KEINE OPTIOM
+```
+
+### Was könnte nicht gelöscht worden sein
+
+  * PVC (Persistent Volume Claims)
+  * RBAC (Service Accounts)
+  * CRD's
+
+### Wie debuggen ? 
+
+#### Möglichkeit 1: helm chart runterladen und prüfen was wurde installiert 
+
+```
+## So oder klonen von gitlab  
+cd; helm pull oci://registry-1.docker.io/cloudpirates/mariadb --version 0.16.4 --untar
+## Was würde das installieren
+helm template mariadb | grep -i -A 4 kind
+
+## Dann überprüfen, ob alle diese Objekt auch gelöscht wurden, ansonsten händisch löschen
+```
+
+#### Möglichkeit 2: Informationen zur Installation sind noch in ocp/kubernetes vorhanden
+
+```
+## Testweise installiert, damit das machen  können
+helm install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --version 0.16.4
+```
+
+```
+helm get manifest my-mariadb | grep -i -A 4 kind
+
+## Dann überprüfen, ob alle diese Objekt auch gelöscht wurden, ansonsten händisch löschen
+```
+
+

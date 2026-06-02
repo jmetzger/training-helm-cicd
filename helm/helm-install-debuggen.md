@@ -36,6 +36,8 @@ helm install my-mariadb oci://registry-1.docker.io/cloudpirates/mariadb --versio
 
 ```
 helm get manifest my-mariadb | grep -i -A 4 kind
+
+# Dann überprüfen, ob alle diese Objekt auch gelöscht wurden, ansonsten händisch löschen
 ```
 
 

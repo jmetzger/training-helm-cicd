@@ -5,7 +5,7 @@
   * helm-exercises/range chart exists 
 
 
-## Step 1: Put in file starting _helpers.tpl 
+## Step 1: Put in file _helpers.tpl 
 
 ```
 {{/* Named template mit Parametern */}}

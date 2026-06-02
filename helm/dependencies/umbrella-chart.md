@@ -40,15 +40,12 @@ helm dependency build
 ```
 
 ```
-helm dependency --help 
-## what is the difference 
-```
-
-```
 helm template .
 ```
 
-## Exercise 2: Werte in den Subcharts setzen (nginx und redis) 
+## Exercise 2: Werte in den Subcharts setzen
+
+Werte für Subcharts werden im Parent `values.yaml` unter dem jeweiligen Chart-Namen gesetzt.
 
 ```
 nano values.yaml
@@ -57,98 +54,20 @@ nano values.yaml
 ```
 nginx:
   fullnameOverride: nginx
+  replicaCount: 2
 redis:
   fullnameOverride: redis
+  replicaCount: 1
 ```
 
 ```
 helm template .
-helm template . | grep -i '^kind' -A 4
+helm template . | grep "replicas:"
 ```
 
-## Exercise 3: Create chart with condition 
+## Exercise 3: Globale Werte (globals) verwenden
 
-```
-nano Chart.yaml
-```
-
-```
-# change dependency block
-# adding condition 
-dependencies:
-  - name: nginx
-    version: "0.12.x"
-    repository: "oci://registry-1.docker.io/cloudpirates"
-  - name: redis
-    version: "0.29.x"
-    repository: "oci://registry-1.docker.io/cloudpirates"
-    condition: redis.enabled
-```
-
-```
-nano values.yaml
-```
-
-```
-nginx:
-  fullnameOverride: nginx
-redis:
-  enabled: false
-  fullnameOverride: redis
-```
-
-```
-helm template .
-# redis-Ressourcen (StatefulSet, Secret) sollten nicht mehr erscheinen
-helm template . | grep "^kind:" 
-```
-
-```
-# values-file anlegen um redis wieder einzuschalten
-cd
-cd helm-exercises
-mkdir -p helm-values/my-umbrella-chart
-cd helm-values/my-umbrella-chart
-```
-
-```
-nano values.yaml
-```
-
-```
-redis:
-  enabled: true
-```
-
-```
-cd
-cd helm-exercises
-helm template my-umbrella-chart -f helm-values/my-umbrella-chart/values.yaml
-helm template my-umbrella-chart -f helm-values/my-umbrella-chart/values.yaml | grep "^kind:"
-```
-
-## Exercise 4: Globale Werte (globals) verwenden
-
-Globals sind Werte, die im Parent-Chart unter `global:` gesetzt werden und **automatisch in allen Subcharts** als `.Values.global.*` verfügbar sind – ohne explizite Weitergabe.
-
-```
-cd
-cd helm-exercises/my-umbrella-chart
-mkdir -p templates
-```
-
-```
-nano templates/configmap-global.yaml
-```
-
-```
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: global-config
-data:
-  environment: {{ .Values.global.environment | default "unknown" }}
-```
+Globals werden einmal im Parent gesetzt und fließen **automatisch in alle Subcharts** — ohne den Subchart-Namen als Prefix.
 
 ```
 nano values.yaml
@@ -156,19 +75,24 @@ nano values.yaml
 
 ```
 global:
-  environment: "training"
+  imageRegistry: "my-private-registry.example.com"
 
 nginx:
   fullnameOverride: nginx
+  replicaCount: 2
 redis:
   enabled: false
   fullnameOverride: redis
+  replicaCount: 1
 ```
 
 ```
-helm template .
-# Nur das ConfigMap anzeigen
-helm template . | grep -A 5 "global-config"
+helm template . | grep "image:"
 ```
 
-Das `global.environment` ist in **jedem Subchart** als `.Values.global.environment` verfügbar – ohne dass der Wert explizit weitergegeben werden muss. Subcharts können eigene `global`-Defaults in ihrer `values.yaml` definieren, der Parent-Wert hat aber immer Vorrang.
+Beide Subcharts (nginx und redis) verwenden jetzt `my-private-registry.example.com` als Registry — obwohl der Wert nur einmal gesetzt wurde. Das ist der Unterschied zu normalen Subchart-Values:
+
+| | Subchart-Value | Global |
+|---|---|---|
+| Syntax | `redis.someValue` | `global.someValue` |
+| Geltungsbereich | nur dieser Subchart | alle Subcharts |

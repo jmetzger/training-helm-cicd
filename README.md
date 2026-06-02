@@ -99,7 +99,7 @@
     
   1. GUI's und TUI für Kubernetes 
      * [k9s cheatsheet](/tools/k9s/k9s-cheatsheet.pdf)
-     * [OpenLens](https://github.com/MuhammedKalkan/OpenLens)
+     * [FreeLens - Fork von OpenLens](https://github.com/freelensapp/freelens/releases)
 
 ## Backlog 
 

@@ -19,6 +19,7 @@ o UND: kubectl delete ns <namespace-der-applikation> -> IST KEINE OPTIOM
 ### Möglichkeit 1: helm chart runterladen und prüfen was wurde installiert 
 
 ```
+# So oder klonen von gitlab  
 cd; helm pull oci://registry-1.docker.io/cloudpirates/mariadb --version 0.16.4 --untar
 # Was würde das installieren
 helm template mariadb | grep -i -A 4 kind

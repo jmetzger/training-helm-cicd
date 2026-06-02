@@ -22,7 +22,8 @@ dependencies:
 ```
 # Das 1. Mal - dann wird Chart.lock angelegt 
 helm dependency update
-ls -la Chart.lock 
+ls -la Chart.lock
+ls -la charts
 ```
 
 ```

@@ -1,7 +1,7 @@
 ## Situationsbeschreibung
 
 ```
-o Wir haben ein Chart installiert, hat geklappt
+o Wir haben ein Chart installiert, hat geklappt (aber pods liefen nicht)
 o Wir haben es deinstalliert
 o Wir haben es nochmal installiert (hat nicht geklappt weil alte Objekte im Weg waren, die nicht gelöscht worden sind 
 

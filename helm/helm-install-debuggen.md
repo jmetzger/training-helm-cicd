@@ -24,7 +24,7 @@ cd; helm pull oci://registry-1.docker.io/cloudpirates/mariadb --version 0.16.4 -
 # Was würde das installieren
 helm template mariadb | grep -i -A 4 kind
 
-# Dann überprüfen, ob alle diese Objekt auch gelöscht wurden, ansonsten händisch löschne
+# Dann überprüfen, ob alle diese Objekt auch gelöscht wurden, ansonsten händisch löschen
 ```
 
 ### Möglichkeit 2: Informationen zur Installation sind noch in ocp/kubernetes vorhanden

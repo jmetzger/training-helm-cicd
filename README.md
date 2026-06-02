@@ -97,8 +97,9 @@
   1. helm - mockoon (api-mocks)
      * [Fertiges helm-chart für Mockoon](https://github.com/jmetzger/training-mockoon-example)
     
-  1. Tools
+  1. GUI's und TUI für Kubernetes 
      * [k9s cheatsheet](/tools/k9s/k9s-cheatsheet.pdf)
+     * [OpenLens](https://github.com/MuhammedKalkan/OpenLens)
 
 ## Backlog 
 

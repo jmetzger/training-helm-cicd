@@ -57,6 +57,7 @@
     
   1. Helm - Good structure, using umbrella chart 
      * [Exercise helm umbrella chart](helm/dependencies/umbrella-chart.md)
+     * [Exercise globals - Werte über alle Subcharts teilen](helm/dependencies/umbrella-chart.md#exercise-4-globale-werte-globals-verwenden)
 
   1. Helm Grundlagen
      * [TopLevel Objekte](/helm/grundlagen/toplevel-objekte.md)

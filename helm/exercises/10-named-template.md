@@ -1,14 +1,15 @@
 # Named Template Exercise 
 
-## Prerequisites range-example 
+##  
 
-  * helm-exercises/range chart exists 
-
-## Step 0: start in project 
+## Step 0: create project 
 
 ```
 cd
-cd helm-exercises/range
+mkdir -p helm-exercises 
+cd helm-exercises
+helm create range 
+cd range
 ```
 
 

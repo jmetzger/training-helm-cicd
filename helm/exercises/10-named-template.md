@@ -17,6 +17,7 @@ cd range
 
 ```
 cd templates
+rm -fR *.yaml 
 nano _helpers.tpl
 ```
 

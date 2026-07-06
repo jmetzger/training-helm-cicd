@@ -143,6 +143,17 @@ kubectl get pods
 # Schlägt fehle, weil mit dem upgrade bestimmte Felder nicht überschrieben dürfen, die geändert wurden im Template
 ```
 
+
+## Schritt 3.3 Revisionen vergleichen 
+
+```
+helm get manifest  my-mariadb --revision 3 > new.yaml
+helm get manifest  my-mariadb --revision 2 > old.yaml
+diff old.yaml new.yaml
+rm old.yaml new.yaml 
+```
+
+
 ### Lösung 
 
   * Deinstallieren (pvc bleibt erhalten auch beim Deinstallieren -> so macht das helm)

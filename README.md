@@ -3,7 +3,7 @@
 ## Agenda
 
   1. Kubernetes
-     * [Architektur Kubernetes](/kubernetes/architecture.md)
+     * [Architektur Kubernetes/OCP](/kubernetes/architecture.md)
      * [Aufbau von Browser zu Applikation - Schaubild](kubernetes/konzepte/anatomie-einer-applikation.md)
 
   1. Erste Schritte mit Helm / OCP - Anwendung Deployen

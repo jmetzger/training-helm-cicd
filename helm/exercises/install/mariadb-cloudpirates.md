@@ -144,7 +144,7 @@ kubectl get pods
 ```
 
 
-## Schritt 3.3 Revisionen vergleichen 
+### Schritt 3.3 Revisionen vergleichen 
 
 ```
 helm get manifest  my-mariadb --revision 3 > new.yaml

@@ -43,6 +43,10 @@ nano test2.yaml
 ```
 # {{23 -}}
 newline here
+
+# ohne Umbruch
+# {{23 }}
+newline: here
 ```
 
 ```

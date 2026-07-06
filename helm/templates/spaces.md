@@ -32,7 +32,6 @@ nano test.yaml
 
 ```
 helm template .. 
-helm template --debug ..
 ```
 
 ```
@@ -51,7 +50,26 @@ newline: here
 
 ```
 helm template ..
-helm template --debug ..
+```
+
+## Beispiel wo --debug Sinn macht 
+
+```
+# now with new lines
+nano test3.yaml
+```
+
+```
+# ohne Umbruch
+# {{23 }}
+newline here
+```
+
+```
+# Fehler weil keine valides Yaml 
+helm template ..
+# yaml trotzdem anzeigen mit --debug
+helm template --debug .. 
 ```
 
 

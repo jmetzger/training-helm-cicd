@@ -18,7 +18,10 @@
      * [Helm + OCI: Warum das sinnvoll ist](helm/grundlagen/oci-registry.md)
      * [Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)](einfuehrung/ablauf-helm-install.md)
      * [Braucht helm das Programm kubectl ?](einfuehrung/braucht-helm-kubectl.md)
-       
+
+  1. Helm Basics
+     * [Datentypen in values.yaml](basics/datentypen-in-values-yaml.md)
+
   1. Helm Installation und Konfiguration (inkl. kubectl) 
      * [Installation von kubectl unter Linux](kubectl/installation/linux.md)
      * [Konfiguration von kubectl mit namespaces](kubectl/kubectl-einrichten.md)

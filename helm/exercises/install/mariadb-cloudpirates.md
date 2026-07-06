@@ -182,7 +182,6 @@ helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariad
 
 ```
 kubectl get pods
-helm get values my-mariadb 
 ```
 
 
@@ -193,9 +192,21 @@ helm get values my-mariadb
 helm uninstall my-mariadb 
 # namespace wird nicht gelöscht
 # händisch löschen
-kubectl delete ns app-<namenskuerzel>
+kubectl delete ns <namenskuerzel>
 # crd's werden auch nicht gelöscht 
 ```
+### Uninstall mit vorheriger Analyse 
+
+```
+# Sind alle object 
+helm get manifest my-mariadb | grep-i "kind:"
+# sind die namespace-fähig (True) ode nicht (false)
+# False ich muss es evtl. selber löschen
+kubectl api-resources | grep -i secret
+helm uninstall my-mariadb
+kubectl delete ns <namekuerzel>
+```
+
 
 ## Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
 

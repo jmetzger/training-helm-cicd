@@ -4,4 +4,5 @@
 - **Konfigurierbarkeit**: Anpassung an verschiedene Umgebungen wie Entwicklung, Test, Produktion.
 - **Automatisierbarkeit**: Ideal für den Einsatz in CI/CD-Pipelines.
 - **Große Community**: Viele fertige Charts für beliebte Software wie Prometheus, Grafana, nginx, etc.
+- **Versionierung**: Klare Kommunikation zwischen den Teams (Betrieb und Entwicklung möglich)
 

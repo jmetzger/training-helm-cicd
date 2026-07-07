@@ -122,3 +122,43 @@ helm upgrade --install app-with-redis my-dep -f ../helm-values/my-dep/values.yam
 helm list
 kubectl get svc
 ```
+
+## Exercise 4 
+
+```
+cd my-dep
+nano Chart.yaml
+```
+
+```
+# Weiteres chart mit - ergänzen
+```
+
+```
+dependencies:
+  - name: redis
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates/"
+    condition: redis.enabled
+  - name: redis
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates/"
+    alias: redis-intern
+```
+
+```
+nano values.yaml
+```
+
+```
+redis-intern:
+  service:
+    type: NodePort
+```
+
+```
+cd ..
+helm template my-dep -f ../helm-values/my-dep/values.yaml | grep type
+helm upgrade --install app-with-redis my-dep -f ../helm-values/my-dep/values.yaml
+```
+

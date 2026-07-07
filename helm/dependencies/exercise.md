@@ -94,3 +94,30 @@ cd helm-exercises
 helm template my-dep -f ../helm-values/my-dep/values.yaml
 helm template my-dep -f ../helm-values/my-dep/values.yaml | grep kind -A 2
 ```
+
+## Exercise 3: Redis nach draussen öffnen (Werte in subchart setzen) 
+
+```
+# Er soll immer nach draussen lauschen
+cd
+cd helm-exercises/my-dep
+nano values.yaml
+```
+
+```
+redis:
+  enabled: false
+  service: LoadBalancer 
+  
+```
+
+```
+cd ..
+helm template my-dep -f ../helm-values/my-dep/values.yaml | grep kind -A 2
+helm upgrade --install my-dep -f ../helm-values/my-dep/values.yaml
+```
+
+```
+helm list
+kubectl get svc
+```

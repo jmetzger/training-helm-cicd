@@ -107,7 +107,8 @@ nano values.yaml
 ```
 redis:
   enabled: false
-  service: LoadBalancer 
+  service:
+    type: LoadBalancer 
   
 ```
 

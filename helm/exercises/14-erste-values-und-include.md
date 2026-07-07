@@ -54,7 +54,7 @@ labels:
 cd ..
 helm upgrade --install app .
 helm list
-kubectl get deploy, pods
+kubectl get deploy,pods
 ```
 
 

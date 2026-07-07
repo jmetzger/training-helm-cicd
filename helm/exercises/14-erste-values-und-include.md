@@ -52,7 +52,7 @@ labels:
 
 ```
 cd ..
-helm upgrade --install .
+helm upgrade --install app .
 helm list
 kubectl get deploy, pods
 ```

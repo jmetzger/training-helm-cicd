@@ -17,7 +17,7 @@ cd app
 ```
 cd templates
 rm -fR *.yaml
-rm -fR test/*.yaml
+rm -fR tests/*.yaml
 rm NOTES.txt
 echo "meine app ist ausgerollt" > NOTES.txt
 cd ..

@@ -52,7 +52,7 @@ nano Chart.yaml
 dependencies:
   - name: redis
     version: "0.9.x"
-    repository: "oci://registry-1.docker.io/cloudpirates/"
+    repository: "oci://registry-1.docker.io/cloudpirates"
     condition: redis.enabled
 ```
 
@@ -138,11 +138,11 @@ nano Chart.yaml
 dependencies:
   - name: redis
     version: "0.9.x"
-    repository: "oci://registry-1.docker.io/cloudpirates/"
+    repository: "oci://registry-1.docker.io/cloudpirates"
     condition: redis.enabled
   - name: redis
     version: "0.9.x"
-    repository: "oci://registry-1.docker.io/cloudpirates/"
+    repository: "oci://registry-1.docker.io/cloudpirates"
     alias: redis-intern
 ```
 
@@ -196,11 +196,11 @@ nano Chart.yaml
 dependencies:
   - name: redis
     version: "0.9.x"
-    repository: "oci://registry-1.docker.io/cloudpirates/"
+    repository: "oci://registry-1.docker.io/cloudpirates"
     condition: redis.enabled
   - name: redis
     version: "0.9.x"
-    repository: "oci://registry-1.docker.io/cloudpirates/"
+    repository: "oci://registry-1.docker.io/cloudpirates"
     alias: redis-intern
   - name: my-app2
     repository: "file://../my-app2"

@@ -115,7 +115,7 @@ redis:
 ```
 cd ..
 helm template my-dep -f ../helm-values/my-dep/values.yaml | grep kind -A 2
-helm upgrade --install my-dep -f ../helm-values/my-dep/values.yaml
+helm upgrade --install app-with-redis my-dep -f ../helm-values/my-dep/values.yaml
 ```
 
 ```

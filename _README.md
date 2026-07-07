@@ -3,7 +3,7 @@
 
 ## Agenda
   1. Kubernetes
-     * [Architektur Kubernetes](#architektur-kubernetes)
+     * [Architektur Kubernetes/OCP](#architektur-kubernetesocp)
      * [Aufbau von Browser zu Applikation - Schaubild](#aufbau-von-browser-zu-applikation---schaubild)
 
   1. Erste Schritte mit Helm / OCP - Anwendung Deployen
@@ -18,7 +18,11 @@
      * [Helm + OCI: Warum das sinnvoll ist](#helm-+-oci-warum-das-sinnvoll-ist)
      * [Überblick über den Ablauf bei der Nutzung von helm (Kommando: install)](#überblick-über-den-ablauf-bei-der-nutzung-von-helm-kommando-install)
      * [Braucht helm das Programm kubectl ?](#braucht-helm-das-programm-kubectl-)
-       
+
+  1. Helm Basics
+     * [Datentypen in values.yaml](#datentypen-in-valuesyaml)
+     * [Definition wo von includes / values](#definition-wo-von-includes--values)
+
   1. Helm Installation und Konfiguration (inkl. kubectl) 
      * [Installation von kubectl unter Linux](#installation-von-kubectl-unter-linux)
      * [Konfiguration von kubectl mit namespaces](#konfiguration-von-kubectl-mit-namespaces)
@@ -173,7 +177,7 @@
 
 ## Kubernetes
 
-### Architektur Kubernetes
+### Architektur Kubernetes/OCP
 
 
 ### Schaubild 
@@ -286,7 +290,7 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  replicas: 8 # tells deployment to run 2 pods matching the template
+  replicas: 8 
   template:
     metadata:
       labels:
@@ -441,6 +445,7 @@ Bei `appVersion` sind auch Strings wie `"latest"` oder `"main"` erlaubt.
 - **Konfigurierbarkeit**: Anpassung an verschiedene Umgebungen wie Entwicklung, Test, Produktion.
 - **Automatisierbarkeit**: Ideal für den Einsatz in CI/CD-Pipelines.
 - **Große Community**: Viele fertige Charts für beliebte Software wie Prometheus, Grafana, nginx, etc.
+- **Versionierung**: Klare Kommunikation zwischen den Teams (Betrieb und Entwicklung möglich)
 
 
 ### Helm + OCI: Warum das sinnvoll ist
@@ -557,6 +562,37 @@ Wenn der Befehl `helm install` ausgeführt wird, passiert intern Folgendes:
 
 
   * helm braucht zwar kubectl nicht, es verwendet aber auch die .kube/config - Datei per Default  
+
+## Helm Basics
+
+### Datentypen in values.yaml
+
+
+
+In Helm-Charts (values.yaml) gibt es folgende YAML-Datentypen:
+
+| Typ | Beispiel |
+|-----|---------|
+| **String** | `name: "hello"` oder `name: hello` |
+| **Integer** | `replicas: 3` |
+| **Float** | `cpu: 0.5` |
+| **Boolean** | `enabled: true` / `false` |
+| **Null** | `value: null` oder `value: ~` |
+| **List/Array** | `tags: [a, b]` oder Block-Style |
+| **Map/Object** | `resources: { limits: {...} }` |
+| **Multiline String** | `\|` (literal) oder `>` (folded) |
+
+**Wichtig für Helm:** Typen können in Templates mit Funktionen konvertiert werden:
+- `{{ .Values.port | int }}`
+- `{{ .Values.enabled | toString }}`
+- `{{ .Values.name | quote }}` → erzwingt String-Quotes in YAML-Output
+
+**Typfalle:** `port: 8080` ist ein Integer — im Template ggf. `quote` verwenden wenn ein String erwartet wird.
+
+### Definition wo von includes / values
+
+
+<img width="1063" height="583" alt="image" src="https://github.com/user-attachments/assets/5ec4394d-c7d2-4be2-a810-1dba15198882" />
 
 ## Helm Installation und Konfiguration (inkl. kubectl) 
 
@@ -898,6 +934,17 @@ kubectl get pods
 ## Schlägt fehle, weil mit dem upgrade bestimmte Felder nicht überschrieben dürfen, die geändert wurden im Template
 ```
 
+
+#### Schritt 3.3 Revisionen vergleichen 
+
+```
+helm get manifest  my-mariadb --revision 3 > new.yaml
+helm get manifest  my-mariadb --revision 2 > old.yaml
+diff old.yaml new.yaml
+rm old.yaml new.yaml 
+```
+
+
 #### Lösung 
 
   * Deinstallieren (pvc bleibt erhalten auch beim Deinstallieren -> so macht das helm)
@@ -926,7 +973,6 @@ helm upgrade --install my-mariadb oci://registry-1.docker.io/cloudpirates/mariad
 
 ```
 kubectl get pods
-helm get values my-mariadb 
 ```
 
 
@@ -937,9 +983,21 @@ helm get values my-mariadb
 helm uninstall my-mariadb 
 ## namespace wird nicht gelöscht
 ## händisch löschen
-kubectl delete ns app-<namenskuerzel>
+kubectl delete ns <namenskuerzel>
 ## crd's werden auch nicht gelöscht 
 ```
+#### Uninstall mit vorheriger Analyse 
+
+```
+## Sind alle object 
+helm get manifest my-mariadb | grep-i "kind:"
+## sind die namespace-fähig (True) ode nicht (false)
+## False ich muss es evtl. selber löschen
+kubectl api-resources | grep -i secret
+helm uninstall my-mariadb
+kubectl delete ns <namekuerzel>
+```
+
 
 ### Problem: OutOfMemory (OOM-Killer) if container passes limit in memory 
 
@@ -1782,7 +1840,7 @@ nano Chart.yaml
 dependencies:
   - name: redis
     version: "0.9.x"
-    repository: "oci://registry-1.docker.io/cloudpirates/"
+    repository: "oci://registry-1.docker.io/cloudpirates"
     condition: redis.enabled
 ```
 
@@ -1824,6 +1882,133 @@ cd helm-exercises
 helm template my-dep -f ../helm-values/my-dep/values.yaml
 helm template my-dep -f ../helm-values/my-dep/values.yaml | grep kind -A 2
 ```
+
+### Exercise 3: Redis nach draussen öffnen (Werte in subchart setzen) 
+
+```
+## Er soll immer nach draussen lauschen
+cd
+cd helm-exercises/my-dep
+nano values.yaml
+```
+
+```
+redis:
+  enabled: false
+  service:
+    type: LoadBalancer 
+  
+```
+
+```
+cd ..
+helm template my-dep -f ../helm-values/my-dep/values.yaml | grep kind -A 2
+helm upgrade --install app-with-redis my-dep -f ../helm-values/my-dep/values.yaml
+```
+
+```
+helm list
+kubectl get svc
+```
+
+### Exercise 4 
+
+```
+cd my-dep
+nano Chart.yaml
+```
+
+```
+## Weiteres chart mit - ergänzen
+```
+
+```
+dependencies:
+  - name: redis
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
+    condition: redis.enabled
+  - name: redis
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
+    alias: redis-intern
+```
+
+```
+nano values.yaml
+```
+
+```
+## unten ergänzen 
+redis-intern:
+  service:
+    type: NodePort
+```
+
+```
+cd ..
+helm template my-dep -f ../helm-values/my-dep/values.yaml | grep type
+helm upgrade --install app-with-redis my-dep -f ../helm-values/my-dep/values.yaml
+```
+
+### Exercise 5 (Redesign to umbrella - chart) 
+
+```
+## alte release deinstallieren
+helm uninstall app-with-redis
+```
+
+```
+## Jetzt machen wir ein eigenes my-app2 project, anstelle von my-dep 
+cd
+cd helm-exercises
+helm create my-app2
+```
+
+```
+## umbrella chart
+cd
+cd helm-exercises 
+cd umbrella
+rm -fR templates
+```
+
+
+
+```
+nano Chart.yaml
+```
+
+```
+## dependencies hinzufügen
+dependencies:
+  - name: redis
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
+    condition: redis.enabled
+  - name: redis
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates"
+    alias: redis-intern
+  - name: my-app2
+    repository: "file://../my-app2"
+    version: 0.1.0
+```
+
+```
+## values.yaml kopieren
+cp -a ~/helm-exercises/my-dep/values.yaml values.yaml
+```
+
+```
+cd ..
+helm dependency build umbrella
+helm template umbrella 
+helm upgrade --install app-with-redis-umbrella umbrella
+```
+
+
+
 
 ## Helm - Good structure, using umbrella chart 
 
@@ -2100,7 +2285,7 @@ kubectl get pods
 
   * Really simple version to start 
 
-## Step 1: Create sample chart 
+### Step 1: Create sample chart 
 
 ```
 cd
@@ -2110,12 +2295,12 @@ helm create app
 cd app
 ```
 
-## Step 2: Cleanup 
+### Step 2: Cleanup 
 
 ```
 cd templates
-rm -fR tests
 rm -fR *.yaml
+rm -fR tests/*.yaml
 rm NOTES.txt
 echo "meine app ist ausgerollt" > NOTES.txt
 cd ..
@@ -2124,7 +2309,7 @@ rm values.yaml
 touch values.yaml 
 ```
 
-## Step 3: Create Deployment manifest 
+### Step 3: Create Deployment manifest 
 
 ```
 nano templates/deployment.yaml
@@ -2222,7 +2407,6 @@ nano test.yaml
 
 ```
 helm template .. 
-helm template --debug ..
 ```
 
 ```
@@ -2233,11 +2417,34 @@ nano test2.yaml
 ```
 ## {{23 -}}
 newline here
+
+## ohne Umbruch
+## {{23 }}
+newline: here
 ```
 
 ```
 helm template ..
-helm template --debug ..
+```
+
+### Beispiel wo --debug Sinn macht 
+
+```
+## now with new lines
+nano test3.yaml
+```
+
+```
+## ohne Umbruch
+## {{23 }}
+newline here
+```
+
+```
+## Fehler weil keine valides Yaml 
+helm template ..
+## yaml trotzdem anzeigen mit --debug
+helm template --debug .. 
 ```
 
 
@@ -3497,7 +3704,6 @@ nano test.yaml
 
 ```
 helm template .. 
-helm template --debug ..
 ```
 
 ```
@@ -3508,11 +3714,34 @@ nano test2.yaml
 ```
 ## {{23 -}}
 newline here
+
+## ohne Umbruch
+## {{23 }}
+newline: here
 ```
 
 ```
 helm template ..
-helm template --debug ..
+```
+
+### Beispiel wo --debug Sinn macht 
+
+```
+## now with new lines
+nano test3.yaml
+```
+
+```
+## ohne Umbruch
+## {{23 }}
+newline here
+```
+
+```
+## Fehler weil keine valides Yaml 
+helm template ..
+## yaml trotzdem anzeigen mit --debug
+helm template --debug .. 
 ```
 
 

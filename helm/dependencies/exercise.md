@@ -151,6 +151,7 @@ nano values.yaml
 ```
 
 ```
+# unten ergänzen 
 redis-intern:
   service:
     type: NodePort

@@ -204,6 +204,7 @@ dependencies:
     alias: redis-intern
   - name: my-app2
     repository: "file://../my-app2"
+    version: 0.1.0
 ```
 
 ```

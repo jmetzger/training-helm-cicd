@@ -214,6 +214,7 @@ cp -a ~/helm-exercises/my-dep/values.yaml values.yaml
 
 ```
 cd ..
+helm dependency build umbrella
 helm template umbrella 
 helm upgrade --install app-with-redis-umbrella umbrella
 ```

@@ -2,7 +2,7 @@
 
 ## Prerequisites 
 
-[Chart anlegt](helm/exercises/09-create-helm-chart-from-scratch-deployment.md)
+[Chart anlegt](/helm/exercises/09-create-helm-chart-from-scratch-deployment.md)
 
 ## Übung (Teil 1) 
 

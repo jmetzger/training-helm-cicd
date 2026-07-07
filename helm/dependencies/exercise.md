@@ -163,3 +163,59 @@ helm template my-dep -f ../helm-values/my-dep/values.yaml | grep type
 helm upgrade --install app-with-redis my-dep -f ../helm-values/my-dep/values.yaml
 ```
 
+## Exercise 5 (Redesign to umbrella - chart) 
+
+```
+# alte release deinstallieren
+helm uninstall app-with-redis
+```
+
+```
+# Jetzt machen wir ein eigenes my-app2 project, anstelle von my-dep 
+cd
+cd helm-exercises
+helm create my-app2
+```
+
+```
+# umbrella chart
+cd
+cd helm-exercises 
+cd umbrella
+rm -fR templates
+```
+
+
+
+```
+nano Chart.yaml
+```
+
+```
+# dependencies hinzufügen
+dependencies:
+  - name: redis
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates/"
+    condition: redis.enabled
+  - name: redis
+    version: "0.9.x"
+    repository: "oci://registry-1.docker.io/cloudpirates/"
+    alias: redis-intern
+  - name: my-app2
+    repository: "file://../my-app2"
+```
+
+```
+# values.yaml kopieren
+cp -a ~/helm-exercises/my-dep/values.yaml values.yaml
+```
+
+```
+cd ..
+helm template umbrella 
+helm upgrade --install app-with-redis umbrella
+```
+
+
+

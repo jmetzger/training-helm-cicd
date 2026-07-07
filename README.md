@@ -21,6 +21,7 @@
 
   1. Helm Basics
      * [Datentypen in values.yaml](basics/datentypen-in-values-yaml.md)
+     * [Definition wo von includes / values](/basics/definition-wo-von-includes-values.md)
 
   1. Helm Installation und Konfiguration (inkl. kubectl) 
      * [Installation von kubectl unter Linux](kubectl/installation/linux.md)
